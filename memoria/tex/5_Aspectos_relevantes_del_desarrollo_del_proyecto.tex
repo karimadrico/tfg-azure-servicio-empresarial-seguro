@@ -73,3 +73,17 @@ Uno de los aspectos relevantes del sistema desarrollado es la posibilidad de mon
 Para ello se utilizan servicios como Azure Monitor y Application Insights, que permiten recopilar métricas de rendimiento, registrar eventos del sistema y analizar posibles errores en la aplicación.
 
 La monitorización continua del sistema facilita la detección temprana de incidencias, mejora la observabilidad del sistema y permite realizar análisis sobre el comportamiento de la aplicación en entornos reales de uso.
+
+\section{Seguridad del sistema y gestión de secretos}
+
+Uno de los requisitos más importantes del sistema desarrollado es garantizar un acceso seguro a la información sensible utilizada por la aplicación. En entornos cloud, almacenar credenciales, cadenas de conexión o claves de acceso directamente en el código fuente supone un riesgo de seguridad, ya que facilita su exposición accidental y dificulta su mantenimiento.
+
+Para evitar este problema, la arquitectura propuesta utiliza \textbf{Azure Key Vault} como servicio centralizado para la gestión de secretos. En este servicio se almacenan de forma segura elementos sensibles como contraseñas, claves, tokens o configuraciones críticas necesarias para el funcionamiento de la aplicación.
+
+El acceso a estos secretos no se realiza mediante credenciales embebidas en la aplicación, sino a través de \textbf{Managed Identity}. Este mecanismo permite que el servicio desplegado en Azure disponga de una identidad administrada por la propia plataforma, que puede autenticarse frente a otros servicios de Azure sin necesidad de almacenar usuarios, contraseñas o claves en el código fuente ni en archivos de configuración inseguros.
+
+De este modo, cuando la aplicación necesita acceder a un secreto, solicita dicho recurso a Azure Key Vault utilizando su identidad gestionada. Azure valida los permisos asociados a esa identidad y, únicamente si dispone de autorización, permite el acceso al secreto solicitado. Este modelo mejora significativamente la seguridad del sistema y sigue el principio de mínimo privilegio, ya que cada componente solo puede acceder a los recursos estrictamente necesarios para desempeñar su función.
+
+Además de mejorar la protección de la información sensible, este enfoque simplifica la administración del sistema. La actualización o rotación de secretos puede realizarse directamente en Azure Key Vault sin necesidad de modificar el código de la aplicación, lo que reduce el riesgo operativo y facilita el mantenimiento futuro del sistema.
+
+En conjunto, la utilización de Azure Key Vault junto con Managed Identity constituye una decisión técnica clave dentro de la arquitectura del proyecto, al permitir una gestión de secretos más segura, escalable y alineada con las buenas prácticas de seguridad en entornos cloud.
