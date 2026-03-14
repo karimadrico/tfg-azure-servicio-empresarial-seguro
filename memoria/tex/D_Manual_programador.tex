@@ -2,10 +2,92 @@
 
 \section{Introducción}
 
+Este anexo describe los aspectos técnicos del proyecto desde el punto de vista del desarrollo software. Se incluye información sobre la estructura del repositorio, las herramientas utilizadas y el procedimiento necesario para instalar, compilar y ejecutar el sistema.
+
+El objetivo de este documento es facilitar la comprensión del proyecto a futuros desarrolladores o personas interesadas en extender el sistema.
+
 \section{Estructura de directorios}
+
+El proyecto se encuentra alojado en un repositorio Git gestionado mediante la plataforma GitHub. La estructura principal del repositorio es la siguiente:
+
+\begin{itemize}
+
+\item \textbf{.github}  
+Contiene los flujos de trabajo de integración continua configurados mediante GitHub Actions.
+
+\item \textbf{src}  
+Directorio principal donde se encuentra el código fuente del sistema.
+
+\item \textbf{docs}  
+Incluye documentación técnica adicional, como diagramas de arquitectura, decisiones de diseño y documentación del sistema.
+
+\item \textbf{anexos}  
+Contiene documentación complementaria relacionada con el proyecto como requisitos, diseño del sistema o manuales.
+
+\item \textbf{memoria}  
+Incluye los archivos fuente en formato LaTeX utilizados para generar la memoria del Trabajo Fin de Grado.
+
+\item \textbf{README.md}  
+Documento principal del repositorio que describe el proyecto y su funcionamiento general.
+
+\end{itemize}
+
+Esta estructura permite separar claramente el código fuente, la documentación técnica y la memoria del proyecto.
 
 \section{Manual del programador}
 
+Para trabajar con el proyecto es necesario disponer de las siguientes herramientas:
+
+\begin{itemize}
+
+\item Git
+\item Cuenta en GitHub
+\item Entorno de desarrollo compatible (Visual Studio Code)
+\item Acceso a Microsoft Azure para el despliegue del sistema
+\end{itemize}
+
+El desarrollo del proyecto se ha realizado siguiendo buenas prácticas de ingeniería del software, incluyendo control de versiones, seguimiento de incidencias y automatización de tareas.
+
+Los cambios en el código se gestionan mediante commits en el repositorio Git, lo que permite mantener un historial completo de modificaciones.
+
 \section{Compilación, instalación y ejecución del proyecto}
 
+Para ejecutar el proyecto es necesario seguir los siguientes pasos:
+
+\begin{enumerate}
+
+\item Clonar el repositorio desde GitHub utilizando el comando:
+
+\begin{verbatim}
+git clone <url-del-repositorio>
+\end{verbatim}
+
+\item Acceder al directorio del proyecto:
+
+\begin{verbatim}
+cd tfg-azure-servicio-empresarial-seguro
+\end{verbatim}
+
+\item Configurar las variables de entorno necesarias para la conexión con los servicios cloud.
+
+\item Ejecutar el sistema desde el entorno de desarrollo o desplegarlo en la plataforma Microsoft Azure.
+
+\end{enumerate}
+
+El sistema también puede desplegarse automáticamente mediante los pipelines de integración continua configurados en GitHub Actions.
+
 \section{Pruebas del sistema}
+
+Para verificar el correcto funcionamiento del sistema se han realizado diferentes tipos de pruebas:
+
+\begin{itemize}
+
+\item Pruebas funcionales para comprobar que las funcionalidades del sistema funcionan correctamente.
+
+\item Pruebas de integración para verificar la comunicación entre los diferentes componentes del sistema.
+
+\item Pruebas de despliegue para comprobar que la aplicación puede ejecutarse correctamente en la plataforma Microsoft Azure.
+
+\end{itemize}
+
+Estas pruebas permiten garantizar un funcionamiento adecuado del sistema desarrollado.
