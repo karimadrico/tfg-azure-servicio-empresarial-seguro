@@ -4,58 +4,72 @@ Este capítulo describe los aspectos más relevantes del desarrollo del sistema,
 
 \section{Ciclo de vida del proyecto}
 
-El desarrollo del proyecto se ha realizado siguiendo un enfoque basado en metodologías ágiles. En concreto, el trabajo se ha organizado en diferentes sprints que permiten dividir el desarrollo en iteraciones cortas con objetivos concretos.
+El desarrollo del proyecto se ha realizado siguiendo un enfoque basado en metodologías ágiles. En concreto, el trabajo se ha organizado en diferentes iteraciones o \textit{sprints} que permiten dividir el desarrollo en fases cortas con objetivos concretos y medibles.
 
-Cada sprint incluye tareas relacionadas con el análisis, diseño, implementación y documentación del sistema. Para la gestión de estas tareas se ha utilizado el sistema de incidencias de GitHub, permitiendo realizar un seguimiento del progreso del proyecto.
+Cada iteración incluye tareas relacionadas con el análisis, diseño, implementación y documentación del sistema. Este enfoque facilita la evolución progresiva de la arquitectura y permite introducir mejoras de forma incremental a lo largo del desarrollo del proyecto.
+
+Para la gestión de tareas y seguimiento del progreso se ha utilizado el sistema de incidencias de GitHub. Esta herramienta permite organizar el trabajo mediante tareas, registrar incidencias y mantener una trazabilidad completa de los cambios realizados durante el desarrollo.
 
 \section{Arquitectura del sistema}
 
-El sistema desarrollado sigue una arquitectura basada en servicios cloud desplegados en la plataforma Microsoft Azure. Esta arquitectura permite separar las diferentes responsabilidades del sistema y facilita su escalabilidad y mantenimiento.
+El sistema desarrollado sigue una arquitectura basada en servicios cloud desplegados en la plataforma Microsoft Azure. Esta arquitectura permite separar las diferentes responsabilidades del sistema y facilita su escalabilidad, seguridad y mantenimiento.
+
+La Figura \ref{fig:arquitectura_cloud} muestra la arquitectura general del sistema implementado en este proyecto.
+
+\imagen{arquitectura_cloud_azure.png}
+{Arquitectura cloud del sistema desplegado en Microsoft Azure.}
+{1}
+
+En esta arquitectura el usuario accede a la aplicación mediante un navegador web. Las solicitudes son procesadas por una aplicación desplegada en Azure App Service, que actúa como punto de entrada al sistema.
+
+La aplicación se comunica con diferentes servicios gestionados de Azure para realizar las operaciones necesarias, como el acceso seguro a secretos o el almacenamiento de información empresarial. Además, el sistema incorpora mecanismos de monitorización que permiten analizar el comportamiento de la aplicación y detectar posibles incidencias.
 
 Los principales componentes de la arquitectura son:
 
 \begin{itemize}
 
-\item Aplicación web o servicio backend encargado de procesar las solicitudes de los usuarios.
+\item \textbf{Aplicación web o backend}: servicio desplegado en Azure App Service encargado de procesar las solicitudes de los usuarios y coordinar el funcionamiento del sistema.
 
-\item Servicios de almacenamiento en la nube para la gestión de la información empresarial.
+\item \textbf{Azure Key Vault}: servicio utilizado para almacenar de forma segura credenciales, claves y configuraciones sensibles. El acceso a estos secretos se realiza mediante identidades gestionadas (\textit{Managed Identity}), evitando almacenar credenciales directamente en el código fuente.
 
-\item Servicios de monitorización que permiten supervisar el funcionamiento del sistema.
+\item \textbf{Azure Storage}: servicio de almacenamiento en la nube utilizado para gestionar información empresarial, documentos o registros generados por la aplicación.
 
-\item Sistema de integración continua encargado de automatizar tareas de construcción y despliegue.
+\item \textbf{Azure Monitor y Application Insights}: herramientas de monitorización que permiten analizar el rendimiento del sistema, registrar eventos y detectar posibles errores en la aplicación.
+
+\item \textbf{Sistema de integración continua}: pipeline automatizado basado en GitHub Actions encargado de ejecutar tareas de verificación, análisis y despliegue del sistema.
 
 \end{itemize}
 
-Esta arquitectura permite desacoplar los diferentes componentes del sistema y facilita su evolución futura.
+Esta arquitectura basada en servicios gestionados permite desacoplar los distintos componentes del sistema y facilita su evolución futura, permitiendo añadir nuevos servicios o ampliar la capacidad del sistema sin modificar su estructura principal.
 
 \section{Gestión del código y control de versiones}
 
 El código fuente del proyecto se gestiona mediante el sistema de control de versiones Git, utilizando la plataforma GitHub como repositorio central.
 
-El uso de Git permite mantener un historial completo de cambios en el proyecto, facilitando la colaboración y la trazabilidad del desarrollo.
+El uso de Git permite mantener un historial completo de cambios en el proyecto, facilitando la trazabilidad del desarrollo y permitiendo revertir modificaciones en caso necesario.
 
-Además, GitHub proporciona herramientas para la gestión de incidencias, planificación de tareas y control de versiones que han sido utilizadas durante el desarrollo del proyecto.
+Además, GitHub proporciona herramientas adicionales que han sido utilizadas durante el desarrollo del proyecto, como la gestión de incidencias, la planificación de tareas y la revisión de cambios en el código.
 
 \section{Integración continua y despliegue}
 
 Para automatizar parte del proceso de desarrollo se ha configurado un sistema de integración continua utilizando GitHub Actions.
 
-Este sistema permite ejecutar diferentes tareas automáticamente cuando se realizan cambios en el repositorio, como por ejemplo:
+Este sistema permite ejecutar diferentes tareas automáticamente cada vez que se realizan cambios en el repositorio. Entre estas tareas se incluyen:
 
 \begin{itemize}
 
 \item Verificación del código fuente.
-
 \item Ejecución de análisis de calidad.
-
-\item Preparación del sistema para su despliegue.
+\item Preparación del sistema para su despliegue en la plataforma Azure.
 
 \end{itemize}
 
-La automatización de estos procesos permite mejorar la calidad del software y reducir errores durante el desarrollo.
+La automatización de estos procesos permite mejorar la calidad del software y reducir errores durante el desarrollo, además de facilitar el despliegue continuo de nuevas versiones de la aplicación.
 
 \section{Monitorización del sistema}
 
 Uno de los aspectos relevantes del sistema desarrollado es la posibilidad de monitorizar su funcionamiento mediante herramientas de la plataforma Azure.
 
-La monitorización permite recopilar información sobre el comportamiento del sistema, detectar posibles incidencias y analizar el rendimiento de los distintos componentes.
+Para ello se utilizan servicios como Azure Monitor y Application Insights, que permiten recopilar métricas de rendimiento, registrar eventos del sistema y analizar posibles errores en la aplicación.
+
+La monitorización continua del sistema facilita la detección temprana de incidencias, mejora la observabilidad del sistema y permite realizar análisis sobre el comportamiento de la aplicación en entornos reales de uso.
