@@ -2,39 +2,42 @@
 
 \section{Introducción}
 
-Una muestra de cómo podría ser una tabla de casos de uso:
-
-% Caso de Uso 1 -> Consultar Experimentos.
-\begin{table}[p]
-	\centering
-	\begin{tabularx}{\linewidth}{ p{0.21\columnwidth} p{0.71\columnwidth} }
-		\toprule
-		\textbf{CU-1}    & \textbf{Ejemplo de caso de uso}\\
-		\toprule
-		\textbf{Versión}              & 1.0    \\
-		\textbf{Autor}                & Alumno \\
-		\textbf{Requisitos asociados} & RF-xx, RF-xx \\
-		\textbf{Descripción}          & La descripción del CU \\
-		\textbf{Precondición}         & Precondiciones (podría haber más de una) \\
-		\textbf{Acciones}             &
-		\begin{enumerate}
-			\def\labelenumi{\arabic{enumi}.}
-			\tightlist
-			\item Pasos del CU
-			\item Pasos del CU (añadir tantos como sean necesarios)
-		\end{enumerate}\\
-		\textbf{Postcondición}        & Postcondiciones (podría haber más de una) \\
-		\textbf{Excepciones}          & Excepciones \\
-		\textbf{Importancia}          & Alta o Media o Baja... \\
-		\bottomrule
-	\end{tabularx}
-	\caption{CU-1 Nombre del caso de uso.}
-\end{table}
+En este apartado se describen los requisitos funcionales y no funcionales del sistema desarrollado.
 
 \section{Objetivos generales}
 
+El objetivo del sistema es proporcionar una plataforma que permita gestionar información empresarial utilizando servicios cloud.
+
 \section{Catálogo de requisitos}
+
+\subsection{Requisitos funcionales}
+
+\begin{itemize}
+
+\item RF-01 El sistema debe permitir almacenar información empresarial.
+
+\item RF-02 El sistema debe permitir consultar la información almacenada.
+
+\item RF-03 El sistema debe permitir gestionar incidencias relacionadas con el sistema.
+
+\item RF-04 El sistema debe permitir visualizar métricas de uso del sistema.
+
+\end{itemize}
+
+\subsection{Requisitos no funcionales}
+
+\begin{itemize}
+
+\item RNF-01 El sistema debe garantizar la seguridad de la información.
+
+\item RNF-02 El sistema debe ser accesible a través de Internet.
+
+\item RNF-03 El sistema debe poder desplegarse en una plataforma cloud.
+
+\item RNF-04 El sistema debe permitir la monitorización de su funcionamiento.
+
+\end{itemize}
 
 \section{Especificación de requisitos}
 
-
+Cada uno de los requisitos definidos debe ser considerado durante el diseño e implementación del sistema.
