@@ -1,7 +1,61 @@
 \capitulo{5}{Aspectos relevantes del desarrollo del proyecto}
 
-Este apartado pretende recoger los aspectos más interesantes del desarrollo del proyecto, comentados por los autores del mismo.
-Debe incluir desde la exposición del ciclo de vida utilizado, hasta los detalles de mayor relevancia de las fases de análisis, diseño e implementación.
-Se busca que no sea una mera operación de copiar y pegar diagramas y extractos del código fuente, sino que realmente se justifiquen los caminos de solución que se han tomado, especialmente aquellos que no sean triviales.
-Puede ser el lugar más adecuado para documentar los aspectos más interesantes del diseño y de la implementación, con un mayor hincapié en aspectos tales como el tipo de arquitectura elegido, los índices de las tablas de la base de datos, normalización y desnormalización, distribución en ficheros3, reglas de negocio dentro de las bases de datos (EDVHV GH GDWRV DFWLYDV), aspectos de desarrollo relacionados con el WWW...
-Este apartado, debe convertirse en el resumen de la experiencia práctica del proyecto, y por sí mismo justifica que la memoria se convierta en un documento útil, fuente de referencia para los autores, los tutores y futuros alumnos.
+Este capítulo describe los aspectos más relevantes del desarrollo del sistema, incluyendo el ciclo de vida utilizado, la arquitectura adoptada y las principales decisiones técnicas tomadas durante el desarrollo del proyecto.
+
+\section{Ciclo de vida del proyecto}
+
+El desarrollo del proyecto se ha realizado siguiendo un enfoque basado en metodologías ágiles. En concreto, el trabajo se ha organizado en diferentes sprints que permiten dividir el desarrollo en iteraciones cortas con objetivos concretos.
+
+Cada sprint incluye tareas relacionadas con el análisis, diseño, implementación y documentación del sistema. Para la gestión de estas tareas se ha utilizado el sistema de incidencias de GitHub, permitiendo realizar un seguimiento del progreso del proyecto.
+
+\section{Arquitectura del sistema}
+
+El sistema desarrollado sigue una arquitectura basada en servicios cloud desplegados en la plataforma Microsoft Azure. Esta arquitectura permite separar las diferentes responsabilidades del sistema y facilita su escalabilidad y mantenimiento.
+
+Los principales componentes de la arquitectura son:
+
+\begin{itemize}
+
+\item Aplicación web o servicio backend encargado de procesar las solicitudes de los usuarios.
+
+\item Servicios de almacenamiento en la nube para la gestión de la información empresarial.
+
+\item Servicios de monitorización que permiten supervisar el funcionamiento del sistema.
+
+\item Sistema de integración continua encargado de automatizar tareas de construcción y despliegue.
+
+\end{itemize}
+
+Esta arquitectura permite desacoplar los diferentes componentes del sistema y facilita su evolución futura.
+
+\section{Gestión del código y control de versiones}
+
+El código fuente del proyecto se gestiona mediante el sistema de control de versiones Git, utilizando la plataforma GitHub como repositorio central.
+
+El uso de Git permite mantener un historial completo de cambios en el proyecto, facilitando la colaboración y la trazabilidad del desarrollo.
+
+Además, GitHub proporciona herramientas para la gestión de incidencias, planificación de tareas y control de versiones que han sido utilizadas durante el desarrollo del proyecto.
+
+\section{Integración continua y despliegue}
+
+Para automatizar parte del proceso de desarrollo se ha configurado un sistema de integración continua utilizando GitHub Actions.
+
+Este sistema permite ejecutar diferentes tareas automáticamente cuando se realizan cambios en el repositorio, como por ejemplo:
+
+\begin{itemize}
+
+\item Verificación del código fuente.
+
+\item Ejecución de análisis de calidad.
+
+\item Preparación del sistema para su despliegue.
+
+\end{itemize}
+
+La automatización de estos procesos permite mejorar la calidad del software y reducir errores durante el desarrollo.
+
+\section{Monitorización del sistema}
+
+Uno de los aspectos relevantes del sistema desarrollado es la posibilidad de monitorizar su funcionamiento mediante herramientas de la plataforma Azure.
+
+La monitorización permite recopilar información sobre el comportamiento del sistema, detectar posibles incidencias y analizar el rendimiento de los distintos componentes.
