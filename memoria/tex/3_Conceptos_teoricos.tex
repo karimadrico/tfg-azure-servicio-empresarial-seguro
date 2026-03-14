@@ -1,83 +1,32 @@
 \capitulo{3}{Conceptos teóricos}
 
-En aquellos proyectos que necesiten para su comprensión y desarrollo de unos conceptos teóricos de una determinada materia o de un determinado dominio de conocimiento, debe existir un apartado que sintetice dichos conceptos.
+\section{Cloud Computing}
 
-Algunos conceptos teóricos de \LaTeX{} \footnote{Créditos a los proyectos de Álvaro López Cantero: Configurador de Presupuestos y Roberto Izquierdo Amo: PLQuiz}.
+El cloud computing es un modelo de computación que permite el acceso bajo demanda a recursos informáticos compartidos a través de Internet. Estos recursos pueden incluir servidores, almacenamiento, bases de datos, redes, software o servicios analíticos.
 
-\section{Secciones}
+Las plataformas cloud permiten escalar recursos de forma dinámica, pagar únicamente por el uso realizado y reducir la complejidad de la gestión de infraestructuras físicas.
 
-Las secciones se incluyen con el comando section.
+\section{Microsoft Azure}
 
-\subsection{Subsecciones}
+Microsoft Azure es una plataforma de servicios cloud proporcionada por Microsoft que permite desarrollar, desplegar y gestionar aplicaciones en centros de datos distribuidos a nivel mundial.
 
-Además de secciones tenemos subsecciones.
-
-\subsubsection{Subsubsecciones}
-
-Y subsecciones. 
-
-
-\section{Referencias}
-
-Las referencias se incluyen en el texto usando cite~\cite{wiki:latex}. Para citar webs, artículos o libros~\cite{koza92}, si se desean citar más de uno en el mismo lugar~\cite{bortolot2005, koza92}.
-
-
-\section{Imágenes}
-
-Se pueden incluir imágenes con los comandos standard de \LaTeX, pero esta plantilla dispone de comandos propios como por ejemplo el siguiente:
-
-\imagen{escudoInfor}{Autómata para una expresión vacía}{.5}
-
-
-
-\section{Listas de items}
-
-Existen tres posibilidades:
+Entre los servicios más relevantes que ofrece Azure se encuentran:
 
 \begin{itemize}
-	\item primer item.
-	\item segundo item.
+\item Azure App Service
+\item Azure Storage
+\item Azure Monitor
+\item Azure Virtual Machines
 \end{itemize}
 
-\begin{enumerate}
-	\item primer item.
-	\item segundo item.
-\end{enumerate}
+\section{Arquitectura basada en servicios}
 
-\begin{description}
-	\item[Primer item] más información sobre el primer item.
-	\item[Segundo item] más información sobre el segundo item.
-\end{description}
-	
-\begin{itemize}
-\item 
-\end{itemize}
+Las arquitecturas basadas en servicios permiten estructurar aplicaciones en componentes independientes que se comunican entre sí mediante interfaces bien definidas.
 
-\section{Tablas}
+Este tipo de arquitectura facilita la escalabilidad, el mantenimiento y la evolución de los sistemas software.
 
-Igualmente se pueden usar los comandos específicos de \LaTeX o bien usar alguno de los comandos de la plantilla.
+\section{DevOps}
 
-\tablaSmall{Herramientas y tecnologías utilizadas en cada parte del proyecto}{l c c c c}{herramientasportipodeuso}
-{ \multicolumn{1}{l}{Herramientas} & App AngularJS & API REST & BD & Memoria \\}{ 
-HTML5 & X & & &\\
-CSS3 & X & & &\\
-BOOTSTRAP & X & & &\\
-JavaScript & X & & &\\
-AngularJS & X & & &\\
-Bower & X & & &\\
-PHP & & X & &\\
-Karma + Jasmine & X & & &\\
-Slim framework & & X & &\\
-Idiorm & & X & &\\
-Composer & & X & &\\
-JSON & X & X & &\\
-PhpStorm & X & X & &\\
-MySQL & & & X &\\
-PhpMyAdmin & & & X &\\
-Git + BitBucket & X & X & X & X\\
-Mik\TeX{} & & & & X\\
-\TeX{}Maker & & & & X\\
-Astah & & & & X\\
-Balsamiq Mockups & X & & &\\
-VersionOne & X & X & X & X\\
-} 
+DevOps es una metodología que integra el desarrollo de software y las operaciones de sistemas con el objetivo de mejorar la velocidad de entrega y la calidad del software.
+
+Entre las prácticas habituales de DevOps se encuentran la integración continua, el despliegue continuo y la automatización de pruebas.
