@@ -2,42 +2,33 @@
 
 \section{Introducción}
 
-En este apartado se describen los requisitos funcionales y no funcionales del sistema desarrollado.
+Este anexo describe los requisitos funcionales y no funcionales definidos para el sistema desarrollado.
 
 \section{Objetivos generales}
 
-El objetivo del sistema es proporcionar una plataforma que permita gestionar información empresarial utilizando servicios cloud.
+El objetivo del sistema es permitir la gestión segura de incidencias empresariales utilizando servicios cloud desplegados en Microsoft Azure.
 
 \section{Catálogo de requisitos}
 
 \subsection{Requisitos funcionales}
 
 \begin{itemize}
-
-\item RF-01 El sistema debe permitir almacenar información empresarial.
-
-\item RF-02 El sistema debe permitir consultar la información almacenada.
-
-\item RF-03 El sistema debe permitir gestionar incidencias relacionadas con el sistema.
-
-\item RF-04 El sistema debe permitir visualizar métricas de uso del sistema.
-
+    \item RF-01 Crear incidencias.
+    \item RF-02 Consultar incidencias.
+    \item RF-03 Obtener métricas del sistema.
+    \item RF-04 Gestionar almacenamiento cloud.
+    \item RF-05 Gestionar secretos mediante Azure Key Vault.
 \end{itemize}
 
 \subsection{Requisitos no funcionales}
 
 \begin{itemize}
-
-\item RNF-01 El sistema debe garantizar la seguridad de la información.
-
-\item RNF-02 El sistema debe ser accesible a través de Internet.
-
-\item RNF-03 El sistema debe poder desplegarse en una plataforma cloud.
-
-\item RNF-04 El sistema debe permitir la monitorización de su funcionamiento.
-
+    \item RNF-01 Seguridad.
+    \item RNF-02 Escalabilidad.
+    \item RNF-03 Disponibilidad.
+    \item RNF-04 Trazabilidad.
 \end{itemize}
 
 \section{Especificación de requisitos}
 
-Cada uno de los requisitos definidos debe ser considerado durante el diseño e implementación del sistema.
+El sistema debe permitir registrar incidencias empresariales mediante peticiones HTTP y almacenar la información de forma segura.

@@ -1,23 +1,57 @@
 \capitulo{4}{Técnicas y herramientas}
 
-Durante el desarrollo del proyecto se han utilizado diversas metodologías y herramientas que han permitido gestionar el proceso de desarrollo de forma estructurada.
-
 \section{Metodología de desarrollo}
 
-El proyecto se ha desarrollado siguiendo principios de metodologías ágiles, organizando el trabajo en diferentes iteraciones o sprints en la herramienta de Zube. Para el seguimiento de las tareas se ha utilizado el sistema de gestión de incidencias de GitHub.
+El proyecto se ha desarrollado siguiendo principios de metodologías ágiles utilizando iteraciones organizadas en sprints.
+
+Para la gestión de tareas se ha utilizado Zube.io, permitiendo organizar historias de usuario, tareas técnicas y seguimiento del progreso.
+
+\section{Lenguaje y framework backend}
+
+La aplicación backend se ha desarrollado utilizando Python junto con el framework Flask.
+
+Flask permite construir APIs REST ligeras y fáciles de mantener.
 
 \section{Control de versiones}
 
-El control de versiones del proyecto se ha gestionado mediante Git, utilizando la plataforma GitHub como repositorio central del código fuente y la documentación.
+El control de versiones se ha realizado utilizando Git y GitHub.
+
+Se han realizado commits frecuentes para mantener trazabilidad completa del desarrollo.
 
 \section{Plataforma cloud}
 
-El despliegue del sistema se realiza utilizando la plataforma Microsoft Azure, que permite gestionar la infraestructura necesaria para la ejecución de la aplicación.
+La infraestructura cloud se basa en Microsoft Azure.
+
+Los servicios principales utilizados son:
+
+\begin{itemize}
+    \item Azure App Service.
+    \item Azure Storage.
+    \item Azure Key Vault.
+    \item Azure Monitor.
+\end{itemize}
 
 \section{Integración continua}
 
-Se ha configurado un sistema de integración continua mediante GitHub Actions que permite automatizar tareas de compilación y verificación del código.
+Se ha configurado un pipeline CI/CD utilizando GitHub Actions.
+
+Este sistema automatiza:
+
+\begin{itemize}
+    \item Validación del código.
+    \item Preparación del despliegue.
+    \item Automatización de tareas.
+\end{itemize}
 
 \section{Calidad del código}
 
-Para evaluar la calidad del código desarrollado se ha utilizado la herramienta SonarQube, que permite analizar aspectos como la complejidad del código, la duplicidad o posibles vulnerabilidades de seguridad.
+La calidad del código se analiza mediante SonarQube.
+
+Esta herramienta permite detectar:
+
+\begin{itemize}
+    \item Vulnerabilidades.
+    \item Duplicidad.
+    \item Complejidad excesiva.
+    \item Posibles errores.
+\end{itemize}

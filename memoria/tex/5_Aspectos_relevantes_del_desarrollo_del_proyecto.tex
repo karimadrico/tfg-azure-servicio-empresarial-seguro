@@ -1,89 +1,67 @@
 \capitulo{5}{Aspectos relevantes del desarrollo del proyecto}
 
-Este capítulo describe los aspectos más relevantes del desarrollo del sistema, incluyendo el ciclo de vida utilizado, la arquitectura adoptada y las principales decisiones técnicas tomadas durante el desarrollo del proyecto.
-
 \section{Ciclo de vida del proyecto}
 
-El desarrollo del proyecto se ha realizado siguiendo un enfoque basado en metodologías ágiles. En concreto, el trabajo se ha organizado en diferentes iteraciones o \textit{sprints} que permiten dividir el desarrollo en fases cortas con objetivos concretos y medibles.
+El proyecto se ha organizado en tres sprints principales.
 
-Cada iteración incluye tareas relacionadas con el análisis, diseño, implementación y documentación del sistema. Este enfoque facilita la evolución progresiva de la arquitectura y permite introducir mejoras de forma incremental a lo largo del desarrollo del proyecto.
+\begin{itemize}
+    \item Sprint 1: Preparación de infraestructura y arquitectura.
+    \item Sprint 2: Desarrollo backend e integración cloud.
+    \item Sprint 3: Seguridad, monitorización y documentación final.
+\end{itemize}
 
-Para la gestión de tareas y seguimiento del progreso se ha utilizado el sistema de incidencias de GitHub. Esta herramienta permite organizar el trabajo mediante tareas, registrar incidencias y mantener una trazabilidad completa de los cambios realizados durante el desarrollo.
+Durante cada sprint se han realizado tareas de análisis, diseño, implementación y documentación.
 
 \section{Arquitectura del sistema}
 
-El sistema desarrollado sigue una arquitectura basada en servicios cloud desplegados en la plataforma Microsoft Azure. Esta arquitectura permite separar las diferentes responsabilidades del sistema y facilita su escalabilidad, seguridad y mantenimiento.
+La arquitectura del sistema sigue un modelo basado en servicios cloud desplegados en Microsoft Azure.
 
-La Figura muestra la arquitectura general del sistema implementado en este proyecto.
+El flujo principal del sistema es el siguiente:
 
-\imagen{arquitectura_cloud_azure.png}
-{Arquitectura cloud del sistema desplegado en Microsoft Azure.}
-{1}
+\begin{enumerate}
+    \item El usuario accede a la API mediante peticiones HTTP.
+    \item Azure App Service procesa las solicitudes.
+    \item La API Flask valida la información.
+    \item Los datos se almacenan utilizando Azure Storage.
+    \item Los secretos se obtienen desde Azure Key Vault.
+    \item Azure Monitor registra métricas y eventos.
+\end{enumerate}
 
-En esta arquitectura el usuario accede a la aplicación mediante un navegador web. Las solicitudes son procesadas por una aplicación desplegada en Azure App Service, que actúa como punto de entrada al sistema.
+\section{API REST implementada}
 
-La aplicación se comunica con diferentes servicios gestionados de Azure para realizar las operaciones necesarias, como el acceso seguro a secretos o el almacenamiento de información empresarial. Además, el sistema incorpora mecanismos de monitorización que permiten analizar el comportamiento de la aplicación y detectar posibles incidencias.
-
-Los principales componentes de la arquitectura son:
+La API desarrollada incluye diferentes endpoints:
 
 \begin{itemize}
-
-\item \textbf{Aplicación web o backend}: servicio desplegado en Azure App Service encargado de procesar las solicitudes de los usuarios y coordinar el funcionamiento del sistema.
-
-\item \textbf{Azure Key Vault}: servicio utilizado para almacenar de forma segura credenciales, claves y configuraciones sensibles. El acceso a estos secretos se realiza mediante identidades gestionadas (\textit{Managed Identity}), evitando almacenar credenciales directamente en el código fuente.
-
-\item \textbf{Azure Storage}: servicio de almacenamiento en la nube utilizado para gestionar información empresarial, documentos o registros generados por la aplicación.
-
-\item \textbf{Azure Monitor y Application Insights}: herramientas de monitorización que permiten analizar el rendimiento del sistema, registrar eventos y detectar posibles errores en la aplicación.
-
-\item \textbf{Sistema de integración continua}: pipeline automatizado basado en GitHub Actions encargado de ejecutar tareas de verificación, análisis y despliegue del sistema.
-
+    \item GET /incidencias
+    \item POST /incidencias
+    \item GET /metricas
 \end{itemize}
 
-Esta arquitectura basada en servicios gestionados permite desacoplar los distintos componentes del sistema y facilita su evolución futura, permitiendo añadir nuevos servicios o ampliar la capacidad del sistema sin modificar su estructura principal.
-
-\section{Gestión del código y control de versiones}
-
-El código fuente del proyecto se gestiona mediante el sistema de control de versiones Git, utilizando la plataforma GitHub como repositorio central.
-
-El uso de Git permite mantener un historial completo de cambios en el proyecto, facilitando la trazabilidad del desarrollo y permitiendo revertir modificaciones en caso necesario.
-
-Además, GitHub proporciona herramientas adicionales que han sido utilizadas durante el desarrollo del proyecto, como la gestión de incidencias, la planificación de tareas y la revisión de cambios en el código.
+Estas operaciones permiten gestionar incidencias empresariales y obtener información básica del sistema.
 
 \section{Integración continua y despliegue}
 
-Para automatizar parte del proceso de desarrollo se ha configurado un sistema de integración continua utilizando GitHub Actions.
+Se ha implementado un sistema básico de integración continua mediante GitHub Actions.
 
-Este sistema permite ejecutar diferentes tareas automáticamente cada vez que se realizan cambios en el repositorio. Entre estas tareas se incluyen:
-
-\begin{itemize}
-
-\item Verificación del código fuente.
-\item Ejecución de análisis de calidad.
-\item Preparación del sistema para su despliegue en la plataforma Azure.
-
-\end{itemize}
-
-La automatización de estos procesos permite mejorar la calidad del software y reducir errores durante el desarrollo, además de facilitar el despliegue continuo de nuevas versiones de la aplicación.
+Cada vez que se realiza un commit sobre la rama principal se ejecutan tareas automáticas relacionadas con validación y despliegue.
 
 \section{Monitorización del sistema}
 
-Uno de los aspectos relevantes del sistema desarrollado es la posibilidad de monitorizar su funcionamiento mediante herramientas de la plataforma Azure.
+La arquitectura incluye mecanismos de monitorización mediante Azure Monitor y Application Insights.
 
-Para ello se utilizan servicios como Azure Monitor y Application Insights, que permiten recopilar métricas de rendimiento, registrar eventos del sistema y analizar posibles errores en la aplicación.
+Estas herramientas permiten registrar:
 
-La monitorización continua del sistema facilita la detección temprana de incidencias, mejora la observabilidad del sistema y permite realizar análisis sobre el comportamiento de la aplicación en entornos reales de uso.
+\begin{itemize}
+    \item Errores.
+    \item Métricas.
+    \item Eventos.
+    \item Rendimiento del sistema.
+\end{itemize}
 
-\section{Seguridad del sistema y gestión de secretos}
+\section{Seguridad y gestión de secretos}
 
-Uno de los requisitos más importantes del sistema desarrollado es garantizar un acceso seguro a la información sensible utilizada por la aplicación. En entornos cloud, almacenar credenciales, cadenas de conexión o claves de acceso directamente en el código fuente supone un riesgo de seguridad, ya que facilita su exposición accidental y dificulta su mantenimiento.
+Uno de los aspectos más importantes del proyecto es la gestión segura de secretos.
 
-Para evitar este problema, la arquitectura propuesta utiliza \textbf{Azure Key Vault} como servicio centralizado para la gestión de secretos. En este servicio se almacenan de forma segura elementos sensibles como contraseñas, claves, tokens o configuraciones críticas necesarias para el funcionamiento de la aplicación.
+Para ello se utiliza Azure Key Vault junto con Managed Identity.
 
-El acceso a estos secretos no se realiza mediante credenciales embebidas en la aplicación, sino a través de \textbf{Managed Identity}. Este mecanismo permite que el servicio desplegado en Azure disponga de una identidad administrada por la propia plataforma, que puede autenticarse frente a otros servicios de Azure sin necesidad de almacenar usuarios, contraseñas o claves en el código fuente ni en archivos de configuración inseguros.
-
-De este modo, cuando la aplicación necesita acceder a un secreto, solicita dicho recurso a Azure Key Vault utilizando su identidad gestionada. Azure valida los permisos asociados a esa identidad y, únicamente si dispone de autorización, permite el acceso al secreto solicitado. Este modelo mejora significativamente la seguridad del sistema y sigue el principio de mínimo privilegio, ya que cada componente solo puede acceder a los recursos estrictamente necesarios para desempeñar su función.
-
-Además de mejorar la protección de la información sensible, este enfoque simplifica la administración del sistema. La actualización o rotación de secretos puede realizarse directamente en Azure Key Vault sin necesidad de modificar el código de la aplicación, lo que reduce el riesgo operativo y facilita el mantenimiento futuro del sistema.
-
-En conjunto, la utilización de Azure Key Vault junto con Managed Identity constituye una decisión técnica clave dentro de la arquitectura del proyecto, al permitir una gestión de secretos más segura, escalable y alineada con las buenas prácticas de seguridad en entornos cloud.
+Este enfoque evita almacenar credenciales directamente en el código fuente y mejora significativamente la seguridad de la aplicación.

@@ -2,28 +2,24 @@
 
 \section{Introducción}
 
-Este anexo describe el diseño del sistema desarrollado durante el proyecto.
-
-\section{Diseño de datos}
-
-El sistema almacena información relacionada con documentos empresariales e incidencias generadas durante el uso del sistema.
+Este anexo describe el diseño general del sistema desarrollado.
 
 \section{Diseño arquitectónico}
 
-La arquitectura del sistema se basa en el uso de servicios cloud proporcionados por Microsoft Azure.
+La arquitectura sigue un modelo basado en servicios cloud desplegados sobre Microsoft Azure.
 
-Los principales componentes del sistema son:
+Los principales componentes son:
 
 \begin{itemize}
-
-\item Servicio de aplicación encargado de procesar las solicitudes.
-
-\item Servicio de almacenamiento para persistir la información.
-
-\item Servicios de monitorización para supervisar el sistema.
-
+    \item Azure App Service.
+    \item API Flask.
+    \item Azure Storage.
+    \item Azure Key Vault.
+    \item Azure Monitor.
 \end{itemize}
 
 \section{Diseño procedimental}
 
-El sistema sigue un flujo de procesamiento en el que los usuarios realizan solicitudes al sistema, las cuales son procesadas por la aplicación y almacenadas en los servicios de almacenamiento correspondientes.
+El flujo principal del sistema comienza cuando un usuario crea una incidencia mediante una petición HTTP.
+
+La API valida la información recibida y almacena los datos utilizando servicios cloud gestionados.
