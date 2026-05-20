@@ -226,3 +226,10 @@ __marimo__/
 *.idx
 *.ilg
 *.ind
+
+.terraform/
+*.tfstate
+*.backup
+*.exe
+.env
+__pycache__/
