@@ -1,0 +1,72 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {},
+  "resources": [
+    {
+      "type": "Microsoft.Logic/workflows",
+      "apiVersion": "2019-05-01",
+      "name": "la-tfg-provisioning",
+      "location": "West Europe",
+      "properties": {
+        "state": "Enabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2019-05-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "triggers": {
+            "manual": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "projectName": {
+                      "type": "string"
+                    },
+                    "environment": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "projectName",
+                    "environment"
+                  ]
+                }
+              }
+            }
+          },
+          "actions": {
+            "Compose_Response": {
+              "type": "Compose",
+              "inputs": {
+                "message": "Provisionamiento iniciado correctamente",
+                "project": "@triggerBody()?['projectName']",
+                "environment": "@triggerBody()?['environment']"
+              },
+              "runAfter": {}
+            },
+            "Response": {
+              "type": "Response",
+              "kind": "Http",
+              "inputs": {
+                "statusCode": 200,
+                "body": {
+                  "status": "success",
+                  "message": "Infraestructura cloud procesada correctamente"
+                }
+              },
+              "runAfter": {
+                "Compose_Response": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "outputs": {}
+        }
+      }
+    }
+  ]
+}
