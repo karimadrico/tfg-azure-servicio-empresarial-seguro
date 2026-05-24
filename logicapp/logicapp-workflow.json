@@ -1,0 +1,54 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2019-05-01/workflowdefinition.json#",
+    "actions": {
+
+      "Approval": {
+        "type": "ApiConnection",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['office365']['connectionId']"
+            }
+          },
+          "method": "post",
+          "path": "/v2/Mail"
+        }
+      },
+
+      "Run_Provision_Pipeline": {
+        "runAfter": {
+          "Approval": [
+            "Succeeded"
+          ]
+        },
+        "type": "Http",
+        "inputs": {
+          "method": "POST",
+          "uri": "https://dev.azure.com/YOURORG/YOURPROJECT/_apis/pipelines/1/runs?api-version=7.1-preview.1"
+        }
+      },
+
+      "Run_Baseline_Pipeline": {
+        "runAfter": {
+          "Run_Provision_Pipeline": [
+            "Succeeded"
+          ]
+        },
+        "type": "Http",
+        "inputs": {
+          "method": "POST",
+          "uri": "https://dev.azure.com/YOURORG/YOURPROJECT/_apis/pipelines/2/runs?api-version=7.1-preview.1"
+        }
+      }
+
+    },
+
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Http"
+      }
+    }
+  }
+}

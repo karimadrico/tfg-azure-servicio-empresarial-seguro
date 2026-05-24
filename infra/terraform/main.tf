@@ -1,6 +1,6 @@
-resource "azurerm_resource_group" "rg" {
+resource "azurerm_resource_group" "main" {
   name     = "rg-tfg-cloudautomation-dev"
-  location = "West Europe"
+  location = "North Europe"
 }
 
 resource "azurerm_storage_account" "storage" {
