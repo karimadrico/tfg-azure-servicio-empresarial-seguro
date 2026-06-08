@@ -5,18 +5,19 @@ pool:
 
 variables:
   terraformVersion: '1.6.6'
+  workingDirectory: 'infra/terraform'
 
 stages:
 - stage: Provision
   jobs:
   - job: TerraformDeploy
     steps:
-
     - task: TerraformInstaller@1
       inputs:
         terraformVersion: $(terraformVersion)
 
     - task: AzureCLI@2
+      displayName: Azure Login
       inputs:
         azureSubscription: 'azure-service-connection'
         scriptType: bash
@@ -24,22 +25,18 @@ stages:
         inlineScript: |
           az account show
 
-    - script: |
-        terraform init
-      workingDirectory: infra
+    - script: terraform init
+      workingDirectory: $(workingDirectory)
       displayName: Terraform Init
 
-    - script: |
-        terraform validate
-      workingDirectory: infra
+    - script: terraform validate
+      workingDirectory: $(workingDirectory)
       displayName: Terraform Validate
 
-    - script: |
-        terraform plan -out=tfplan
-      workingDirectory: infra
+    - script: terraform plan -out=tfplan
+      workingDirectory: $(workingDirectory)
       displayName: Terraform Plan
 
-    - script: |
-        terraform apply -auto-approve tfplan
-      workingDirectory: infra
+    - script: terraform apply -auto-approve tfplan
+      workingDirectory: $(workingDirectory)
       displayName: Terraform Apply

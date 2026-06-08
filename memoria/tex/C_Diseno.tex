@@ -20,6 +20,20 @@ Los principales componentes son:
 
 \section{Diseño procedimental}
 
-El flujo principal del sistema comienza cuando un usuario crea una incidencia mediante una petición HTTP.
+El flujo principal del sistema es:
 
-La API valida la información recibida y almacena los datos utilizando servicios cloud gestionados.
+\begin{enumerate}
+    \item Recepción de la incidencia por API REST o Logic App.
+    \item Validación de campos obligatorios.
+    \item Clasificación automática mediante análisis de palabras clave.
+    \item Persistencia en Blob Storage o fichero local.
+    \item Respuesta JSON con identificador, prioridad y confianza de clasificación.
+\end{enumerate}
+
+\section{Integración cloud}
+
+\begin{itemize}
+    \item \textbf{Terraform}: provisiona Resource Group, App Service, Storage y Key Vault.
+    \item \textbf{GitHub Actions}: prueba, valida y despliega la solución.
+    \item \textbf{Logic App}: automatiza el registro de incidencias desde un trigger HTTP.
+\end{itemize}

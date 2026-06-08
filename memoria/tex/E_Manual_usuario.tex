@@ -2,43 +2,63 @@
 
 \section{Introducción}
 
-Este anexo describe el funcionamiento básico de la aplicación desarrollada.
+Este anexo describe cómo utilizar el sistema de gestión de incidencias empresariales desplegado en Microsoft Azure.
 
-\section{Requisitos de usuarios}
+\section{Requisitos}
 
-El usuario únicamente necesita disponer de:
+El usuario necesita:
 
 \begin{itemize}
-    \item Navegador web.
+    \item Cliente HTTP (navegador, Postman o curl).
     \item Conexión a Internet.
+    \item Token de autenticación Bearer (excepto en entorno local sin clave configurada).
 \end{itemize}
 
-\section{Instalación}
+\section{Acceso al servicio}
 
-La aplicación se encuentra desplegada en Microsoft Azure mediante Azure App Service.
+La API está desplegada en Azure App Service:
 
-\section{Manual del usuario}
+\begin{verbatim}
+https://app-tfg-incidencias-dev.azurewebsites.net
+\end{verbatim}
 
-El sistema permite:
+También puede registrarse una incidencia mediante la Logic App, que reenvía la petición automáticamente a la API.
 
-\begin{itemize}
-    \item Crear incidencias.
-    \item Consultar incidencias.
-    \item Consultar métricas básicas.
-\end{itemize}
+\section{Operaciones disponibles}
 
-Ejemplo de creación de incidencia:
+\subsection{Consultar estado del servicio}
+
+\begin{verbatim}
+GET /
+\end{verbatim}
+
+\subsection{Crear incidencia}
 
 \begin{verbatim}
 POST /incidencias
+Authorization: Bearer <token>
+Content-Type: application/json
+
 {
   "titulo": "Error servidor",
+  "descripcion": "El servidor principal no responde",
+  "reportado_por": "usuario@empresa.com",
   "prioridad": "alta"
 }
 \end{verbatim}
 
-Consulta de incidencias:
+El sistema clasificará automáticamente la incidencia y devolverá prioridad, categoría y nivel de confianza.
+
+\subsection{Consultar incidencias}
 
 \begin{verbatim}
-GET /incidencias
+GET /incidencias?estado=abierta&prioridad=alta
+Authorization: Bearer <token>
+\end{verbatim}
+
+\subsection{Consultar métricas}
+
+\begin{verbatim}
+GET /metricas
+Authorization: Bearer <token>
 \end{verbatim}

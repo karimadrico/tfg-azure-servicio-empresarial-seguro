@@ -2,66 +2,77 @@
 
 \section{Ciclo de vida del proyecto}
 
-El proyecto se ha organizado en tres sprints principales.
+El proyecto se ha organizado en cinco sprints siguiendo una metodología ágil.
 
 \begin{itemize}
-    \item Sprint 1: Preparación de infraestructura y arquitectura.
-    \item Sprint 2: Desarrollo backend e integración cloud.
-    \item Sprint 3: Seguridad, monitorización y documentación final.
+    \item Sprint 1: Análisis del problema empresarial, definición de requisitos y arquitectura inicial.
+    \item Sprint 2: Provisionamiento de infraestructura Azure y configuración de Terraform.
+    \item Sprint 3: Desarrollo de la API Flask y persistencia en Azure Storage.
+    \item Sprint 4: Seguridad con Key Vault, Managed Identity y automatización con Logic App.
+    \item Sprint 5: Pruebas, CI/CD, documentación y validación del prototipo.
 \end{itemize}
-
-Durante cada sprint se han realizado tareas de análisis, diseño, implementación y documentación.
 
 \section{Arquitectura del sistema}
 
-La arquitectura del sistema sigue un modelo basado en servicios cloud desplegados en Microsoft Azure.
+La arquitectura implementada sigue un modelo de servicios gestionados en Microsoft Azure. Los componentes principales son:
+
+\begin{itemize}
+    \item \textbf{Azure App Service}: hospeda la API Flask en Python 3.11.
+    \item \textbf{Azure Storage}: persiste las incidencias en un contenedor Blob privado.
+    \item \textbf{Azure Key Vault}: almacena el token de autenticación de la API.
+    \item \textbf{Azure Logic App}: automatiza el registro de incidencias mediante un trigger HTTP.
+    \item \textbf{GitHub Actions}: ejecuta pruebas, validación Terraform y despliegue continuo.
+\end{itemize}
 
 El flujo principal del sistema es el siguiente:
 
 \begin{enumerate}
-    \item El usuario accede a la API mediante peticiones HTTP.
-    \item Azure App Service procesa las solicitudes.
-    \item La API Flask valida la información.
-    \item Los datos se almacenan utilizando Azure Storage.
-    \item Los secretos se obtienen desde Azure Key Vault.
-    \item Azure Monitor registra métricas y eventos.
+    \item Un usuario o la Logic App envía una petición HTTP a la API.
+    \item Azure App Service procesa la solicitud con Gunicorn.
+    \item La API valida los datos y clasifica automáticamente la incidencia.
+    \item Los datos se almacenan en Azure Blob Storage.
+    \item Los secretos se obtienen desde Azure Key Vault mediante Managed Identity.
+    \item El endpoint de métricas expone el estado agregado del sistema.
 \end{enumerate}
 
 \section{API REST implementada}
 
-La API desarrollada incluye diferentes endpoints:
+La API desarrollada en \texttt{src/app.py} expone los siguientes endpoints:
 
 \begin{itemize}
-    \item GET /incidencias
-    \item POST /incidencias
-    \item GET /metricas
+    \item \texttt{GET /}: estado del servicio y versión.
+    \item \texttt{GET /health}: comprobación de salud y modo de almacenamiento.
+    \item \texttt{GET /incidencias}: listado con filtros por estado y prioridad.
+    \item \texttt{POST /incidencias}: creación de incidencias con clasificación automática.
+    \item \texttt{GET /metricas}: métricas agregadas del sistema.
 \end{itemize}
 
-Estas operaciones permiten gestionar incidencias empresariales y obtener información básica del sistema.
+Al crear una incidencia, el módulo \texttt{classifier.py} analiza el título y la descripción para asignar prioridad (\textit{baja}, \textit{media}, \textit{alta}) y categoría (\textit{seguridad}, \textit{infraestructura}, \textit{soporte}, \textit{general}), devolviendo un valor de confianza asociado.
+
+\section{Componente de inteligencia artificial}
+
+Se ha incorporado un clasificador ligero basado en reglas y análisis de palabras clave. Aunque no utiliza un modelo de aprendizaje profundo, cumple el objetivo del TFG de aportar análisis automático de información operativa. El clasificador evalúa términos relacionados con seguridad, infraestructura y soporte para determinar la categoría y prioridad de cada incidencia.
 
 \section{Integración continua y despliegue}
 
-Se ha implementado un sistema básico de integración continua mediante GitHub Actions.
+Se ha implementado un pipeline en GitHub Actions (\texttt{.github/workflows/deploy.yml}) que:
 
-Cada vez que se realiza un commit sobre la rama principal se ejecutan tareas automáticas relacionadas con validación y despliegue.
+\begin{enumerate}
+    \item Ejecuta pruebas unitarias de la API.
+    \item Valida y aplica la infraestructura con Terraform.
+    \item Despliega el código Python en Azure App Service.
+\end{enumerate}
 
-\section{Monitorización del sistema}
+Adicionalmente, Azure DevOps dispone de pipelines para provisionamiento y aplicación de baselines de seguridad.
 
-La arquitectura incluye mecanismos de monitorización mediante Azure Monitor y Application Insights.
+\section{Automatización con Logic App}
 
-Estas herramientas permiten registrar:
-
-\begin{itemize}
-    \item Errores.
-    \item Métricas.
-    \item Eventos.
-    \item Rendimiento del sistema.
-\end{itemize}
+La Logic App \texttt{logic-tfg-incidencias} recibe incidencias mediante un trigger HTTP y las reenvía a la API. Este componente demuestra la automatización de procesos empresariales sin intervención manual directa sobre la API.
 
 \section{Seguridad y gestión de secretos}
 
-Uno de los aspectos más importantes del proyecto es la gestión segura de secretos.
+La autenticación de la API utiliza un token Bearer almacenado en Azure Key Vault. La App Service accede al secreto mediante Managed Identity, evitando credenciales embebidas en el código fuente. El almacenamiento de incidencias reside en un contenedor Blob con acceso privado.
 
-Para ello se utiliza Azure Key Vault junto con Managed Identity.
+\section{Validación del prototipo}
 
-Este enfoque evita almacenar credenciales directamente en el código fuente y mejora significativamente la seguridad de la aplicación.
+Las pruebas unitarias en \texttt{tests/test\_api.py} verifican la creación de incidencias, el listado, las métricas y la clasificación automática. El prototipo puede ejecutarse localmente con almacenamiento en fichero JSON o desplegarse en Azure con persistencia en Blob Storage.

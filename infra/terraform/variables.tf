@@ -1,11 +1,24 @@
 variable "location" {
-  default = "West Europe"
+  description = "Región de Azure donde se despliegan los recursos"
+  type        = string
+  default     = "West Europe"
 }
 
 variable "tenant_id" {
-  default = "2aa3b0b5-a782-4f38-a898-e483b20e8d61"
+  description = "Tenant ID de Azure AD (opcional, se obtiene del contexto actual)"
+  type        = string
+  default     = ""
 }
 
 variable "object_id" {
-  default = "73e3f106-2717-4bf0-81e3-f58b7a8cbe58"
+  description = "Object ID del desplegador (opcional)"
+  type        = string
+  default     = ""
+}
+
+variable "api_key" {
+  description = "Clave API almacenada en Key Vault"
+  type        = string
+  sensitive   = true
+  default     = "tfg-demo-api-key-2026"
 }

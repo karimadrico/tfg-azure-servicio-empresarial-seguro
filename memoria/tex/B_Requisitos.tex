@@ -31,4 +31,32 @@ El objetivo del sistema es permitir la gestión segura de incidencias empresaria
 
 \section{Especificación de requisitos}
 
-El sistema debe permitir registrar incidencias empresariales mediante peticiones HTTP y almacenar la información de forma segura.
+\subsection{RF-01 Crear incidencias}
+El sistema debe permitir registrar incidencias mediante \texttt{POST /incidencias}, validando título, descripción y email del reportador.
+
+\subsection{RF-02 Consultar incidencias}
+El sistema debe listar incidencias con filtros opcionales por estado y prioridad.
+
+\subsection{RF-03 Obtener métricas}
+El sistema debe exponer métricas agregadas en \texttt{GET /metricas}.
+
+\subsection{RF-04 Gestionar almacenamiento cloud}
+Las incidencias deben persistirse en Azure Blob Storage en entorno cloud y en fichero JSON en desarrollo local.
+
+\subsection{RF-05 Gestionar secretos mediante Azure Key Vault}
+El token de autenticación debe almacenarse en Key Vault y recuperarse mediante Managed Identity.
+
+\subsection{RF-06 Clasificación automática}
+El sistema debe clasificar automáticamente prioridad y categoría de cada incidencia.
+
+\subsection{RNF-01 Seguridad}
+Autenticación Bearer, almacenamiento privado y gestión de secretos centralizada.
+
+\subsection{RNF-02 Escalabilidad}
+Arquitectura basada en servicios gestionados de Azure App Service y Blob Storage.
+
+\subsection{RNF-03 Disponibilidad}
+Endpoint de salud \texttt{/health} y despliegue automatizado.
+
+\subsection{RNF-04 Trazabilidad}
+Registro de fecha de creación, estado, prioridad y clasificación de cada incidencia.
