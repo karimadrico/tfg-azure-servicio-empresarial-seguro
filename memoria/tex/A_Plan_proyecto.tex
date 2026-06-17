@@ -2,11 +2,15 @@
 
 \section{Introducción}
 
-Este anexo describe la planificación del proyecto y el análisis de viabilidad realizado antes del desarrollo del sistema.
+Este anexo describe la planificación del proyecto, el seguimiento realizado con Zube y el análisis de viabilidad del sistema.
 
 \section{Planificación temporal}
 
-El desarrollo del proyecto se ha organizado en diferentes fases siguiendo un enfoque incremental basado en sprints.
+El desarrollo del proyecto se ha organizado siguiendo un enfoque incremental basado en sprints. El seguimiento se ha realizado en Zube, utilizando historias de usuario, tareas técnicas y cambios asociados a commits del repositorio. El tablero del proyecto se encuentra en:
+
+\begin{center}
+\url{https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban}
+\end{center}
 
 Las principales fases del proyecto han sido:
 
@@ -24,13 +28,32 @@ Las principales fases del proyecto han sido:
 
 \end{itemize}
 
+\subsection{Iteraciones realizadas}
+
+La planificación se ha dividido en cinco iteraciones, superando el mínimo de tres sprints indicado en la guía docente. Cada iteración generó un incremento funcional o documental verificable:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Sprint} & \textbf{Objetivo} & \textbf{Resultado} \\
+\hline
+Sprint 1 & Definición del problema, requisitos iniciales y arquitectura base. & Repositorio, documentación inicial y backlog en Zube. \\
+Sprint 2 & Infraestructura Azure y persistencia cloud. & Terraform, Storage Account, Key Vault y App Service definidos. \\
+Sprint 3 & Implementación de API Flask y pruebas. & Endpoints de solicitudes, métricas, clasificación y pruebas unitarias. \\
+Sprint 4 & Despliegue, portal web y automatización. & Portal funcional en App Service, Logic App y scripts de despliegue. \\
+Sprint 5 & Cierre documental, calidad y entrega. & Memoria, anexos, bibliografía, SonarCloud preparado y evidencias de despliegue. \\
+\end{tabularx}
+\caption{Resumen de iteraciones del proyecto}
+\end{table}
+
 \section{Estudio de viabilidad}
 
 \subsection{Viabilidad económica}
 
-El proyecto se ha desarrollado utilizando principalmente herramientas disponibles en versiones gratuitas, de código abierto o académicas, como GitHub, SonarCloud y Microsoft Azure for Students.
+El proyecto se ha desarrollado utilizando principalmente herramientas disponibles en versiones gratuitas, de código abierto o académicas, como GitHub, Zube y Microsoft Azure for Students. SonarCloud se ha preparado como herramienta de análisis de calidad, pero su ejecución queda documentada como una comprobación específica previa a la entrega final.
 
-La mayor parte del coste corresponde al esfuerzo de desarrollo. Para estimar el coste de personal se ha considerado una dedicación aproximada de 300 horas y un coste de referencia de 18 euros/hora para un perfil junior de desarrollo cloud. Esta cifra no representa una factura real, sino una estimación académica del valor del trabajo realizado.
+La mayor parte del coste corresponde al esfuerzo de desarrollo. Para estimar el coste de personal se ha considerado una dedicación aproximada de 300 horas y un coste de referencia de 18 euros/hora para un perfil junior de desarrollo cloud. Sobre este coste se añade una estimación del 32\% de costes empresariales asociados a Seguridad Social y otras aportaciones obligatorias. Esta cifra no representa una factura real, sino una estimación académica del valor del trabajo realizado.
 
 \begin{table}[h]
 \centering
@@ -43,15 +66,16 @@ Diseño de arquitectura & 45 h & 18 EUR/h & 810 EUR \\
 Implementación backend y portal & 90 h & 18 EUR/h & 1.620 EUR \\
 Infraestructura Azure y despliegue & 60 h & 18 EUR/h & 1.080 EUR \\
 Pruebas, documentación y memoria & 60 h & 18 EUR/h & 1.080 EUR \\
+Costes empresariales de personal & 32\% & 5.400 EUR & 1.728 EUR \\
 Servicios Azure for Students & 1 suscripción & 0 EUR & 0 EUR \\
-GitHub, Zube y SonarCloud & 1 cuenta académica & 0 EUR & 0 EUR \\
+GitHub y Zube & 1 cuenta académica & 0 EUR & 0 EUR \\
 \hline
-\textbf{Total estimado} & \textbf{300 h} & & \textbf{5.400 EUR} \\
+\textbf{Total estimado} & \textbf{300 h} & & \textbf{7.128 EUR} \\
 \end{tabularx}
 \caption{Estimación económica del proyecto}
 \end{table}
 
-En un entorno empresarial real también deberían considerarse costes de operación continuada, soporte, monitorización, almacenamiento y transferencia de datos. En este TFG se han mantenido los recursos dentro de un entorno de desarrollo de bajo consumo, por lo que el coste de infraestructura se ha reducido al mínimo.
+En un entorno empresarial real también deberían considerarse costes de operación continuada, soporte, monitorización, almacenamiento y transferencia de datos. En este TFG se han mantenido los recursos dentro de un entorno de desarrollo de bajo consumo, por lo que el coste de infraestructura se ha reducido al mínimo. El equipo informático y el software de escritorio no se imputan por su coste completo, ya que conservan valor tras el proyecto y pueden reutilizarse en otros trabajos; en una contabilidad empresarial se imputaría únicamente su amortización proporcional al periodo de uso.
 
 \subsection{Viabilidad legal}
 
@@ -69,7 +93,7 @@ Gunicorn & MIT & Servidor WSGI en App Service \\
 Azure SDK for Python & MIT & Integración con Storage y Key Vault \\
 Terraform & Business Source License & Infraestructura como código \\
 GitHub Actions & Servicio GitHub & Integración continua y despliegue \\
-SonarCloud & Servicio SonarSource & Análisis de calidad de código \\
+SonarCloud & Servicio SonarSource & Análisis de calidad preparado para la entrega \\
 Microsoft Azure & Servicio cloud & App Service, Storage, Key Vault y Logic App \\
 \end{tabularx}
 \caption{Licencias y servicios utilizados}

@@ -6,7 +6,7 @@ Este anexo describe el diseño general de la plataforma cloud para la automatiza
 
 \section{Diseño arquitectónico}
 
-La arquitectura sigue un modelo basado en servicios cloud desplegados sobre Microsoft Azure.
+La arquitectura sigue un modelo basado en servicios cloud desplegados sobre Microsoft Azure. La aplicación se ejecuta en Azure App Service, utiliza Azure Blob Storage para persistir solicitudes, Azure Key Vault para secretos y Managed Identity para reducir la exposición de credenciales \cite{azure_appservice_python,azure_blob_python,azure_appservice_managed_identity,azure_appservice_keyvault_refs}.
 
 Los principales componentes son:
 
@@ -50,3 +50,31 @@ El flujo principal del sistema es:
     \item \textbf{GitHub Actions}: prueba, valida y despliega la solución.
     \item \textbf{Logic App}: automatiza el procesamiento de solicitudes desde un trigger HTTP.
 \end{itemize}
+
+\section{Diseño de datos}
+
+La persistencia del prototipo utiliza un documento JSON por solicitud en Azure Blob Storage. No existe una base de datos relacional, por lo que el modelo de datos se describe como una entidad documental.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l l X}
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\
+\hline
+id & texto & Identificador único de la solicitud. \\
+titulo & texto & Resumen de la petición enviada por el usuario. \\
+descripcion & texto & Detalle de la solicitud o incidencia. \\
+tipo\_solicitud & texto & Acceso, entorno, aplicación, configuración o incidencia. \\
+prioridad & texto & Prioridad calculada por el clasificador. \\
+categoria & texto & Área funcional detectada: infraestructura, seguridad, software u otra. \\
+estado & texto & Estado operativo de la solicitud. \\
+recomendacion & texto & Acción sugerida para el equipo TI. \\
+reportado\_por & texto & Correo o identificador del solicitante. \\
+created\_at & fecha & Fecha de creación de la solicitud. \\
+\end{tabularx}
+\caption{Diccionario de datos de la solicitud}
+\end{table}
+
+\section{Calidad y observabilidad}
+
+La calidad se comprueba mediante pruebas automáticas y un flujo de análisis preparado con SonarCloud. En el momento de cerrar este anexo, SonarCloud está configurado en el repositorio mediante \texttt{sonar-project.properties} y el workflow \texttt{SonarCloud Quality Analysis}, pero debe ejecutarse antes de la entrega para obtener la URL y la captura final del panel de calidad. La observabilidad técnica se apoya en el endpoint \texttt{/health}, en los logs de App Service y en las métricas disponibles desde Azure Monitor \cite{azure_monitor}.

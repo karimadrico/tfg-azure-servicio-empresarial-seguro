@@ -10,6 +10,8 @@ El objetivo del sistema es permitir la gestión segura de solicitudes operativas
 
 \section{Catálogo de requisitos}
 
+Los requisitos funcionales recogen las capacidades visibles del sistema para usuarios, API y automatizaciones externas:
+
 \subsection{Requisitos funcionales}
 
 \begin{itemize}
@@ -20,6 +22,8 @@ El objetivo del sistema es permitir la gestión segura de solicitudes operativas
     \item RF-05 Gestionar secretos mediante Azure Key Vault.
     \item RF-06 Clasificar solicitudes automáticamente.
 \end{itemize}
+
+Los requisitos no funcionales recogen propiedades transversales necesarias para que el sistema sea evaluable, seguro y mantenible:
 
 \subsection{Requisitos no funcionales}
 
@@ -61,3 +65,23 @@ Endpoint de salud \texttt{/health} y despliegue automatizado.
 
 \subsection{RNF-04 Trazabilidad}
 Registro de fecha de creación, estado, prioridad, tipo, clasificación y recomendación de cada solicitud.
+
+\section{Casos de uso}
+
+El sistema se ha diseñado alrededor de los siguientes casos de uso principales:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Caso de uso} & \textbf{Actor} & \textbf{Descripción} \\
+\hline
+CU-01 Registrar solicitud & Usuario interno & Envía una solicitud desde el portal o mediante API REST. \\
+CU-02 Clasificar solicitud & Sistema & Asigna tipo, prioridad, categoría y recomendación operativa. \\
+CU-03 Consultar solicitudes & Equipo TI & Lista solicitudes y filtra por estado, tipo o prioridad. \\
+CU-04 Consultar métricas & Equipo TI & Revisa métricas agregadas para seguimiento operativo. \\
+CU-05 Automatizar registro & Sistema externo & Usa Logic App para iniciar el flujo sin acceder directamente a la API. \\
+CU-06 Gestionar secretos & Administrador cloud & Mantiene tokens y configuración sensible en Azure Key Vault. \\
+\end{tabularx}
+\caption{Casos de uso principales}
+\end{table}

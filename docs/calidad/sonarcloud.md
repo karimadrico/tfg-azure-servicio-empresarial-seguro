@@ -1,6 +1,6 @@
 # SonarCloud / SonarQube
 
-Este proyecto utiliza SonarCloud como servicio gestionado de SonarQube para analizar calidad, mantenibilidad y seguridad del código.
+Este proyecto deja preparado SonarCloud como servicio gestionado de SonarQube para analizar calidad, mantenibilidad y seguridad del código. La ejecución del análisis debe realizarse antes de la entrega final para obtener la URL y las capturas de evidencia.
 
 ## Puesta en marcha
 

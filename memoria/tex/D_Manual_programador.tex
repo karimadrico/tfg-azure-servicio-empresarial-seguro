@@ -2,7 +2,7 @@
 
 \section{Introducción}
 
-Este anexo describe la estructura técnica del repositorio y los pasos para ejecutar, probar y desplegar la solución.
+Este anexo describe la estructura técnica del repositorio y los pasos para ejecutar, probar y desplegar la solución, apoyándose en despliegue continuo con GitHub Actions y servicios gestionados de Azure \cite{github_actions,azure_keyvault,azure_appservice_keyvault_refs}.
 
 \section{Estructura de directorios}
 
@@ -44,7 +44,7 @@ La API quedará disponible en \texttt{http://localhost:5000}.
 \begin{enumerate}
     \item Configurar el secreto \texttt{AZURE\_CREDENTIALS} en GitHub.
     \item Ejecutar \texttt{terraform apply} en \texttt{infra/terraform}.
-    \item Desplegar la carpeta \texttt{src} en App Service mediante GitHub Actions.
+    \item Desplegar la carpeta \texttt{src} en App Service mediante GitHub Actions o mediante el script \texttt{scripts/deploy-azure.ps1}.
     \item Importar la Logic App desde \texttt{logicapp/logicapp-workflow.json}.
 \end{enumerate}
 
@@ -55,3 +55,15 @@ python -m unittest discover -s tests -p "test_*.py"
 \end{verbatim}
 
 Las pruebas verifican endpoints, creación de incidencias, métricas y clasificación automática.
+
+\section{Análisis de calidad}
+
+El repositorio incluye la configuración necesaria para ejecutar SonarCloud como servicio gestionado de SonarQube:
+
+\begin{itemize}
+    \item \texttt{sonar-project.properties}: define clave de proyecto, organización, fuentes y tests.
+    \item \texttt{.github/workflows/sonarcloud.yml}: instala dependencias, ejecuta pruebas y lanza el análisis.
+    \item \texttt{docs/calidad/sonarcloud.md}: documenta la puesta en marcha y las evidencias que deben guardarse.
+\end{itemize}
+
+Para completar la evidencia de calidad se debe crear el secreto \texttt{SONAR\_TOKEN} en GitHub Actions y ejecutar el workflow \texttt{SonarCloud Quality Analysis}. La URL del panel de calidad y una captura del Quality Gate deben incorporarse al documento final de enlaces o a la documentación de evidencias.
