@@ -26,5 +26,37 @@
     "reportado_por": "usuario@empresa.com",
     "fecha_creacion": "2026-06-08T11:10:26Z",
     "asignado_a": "soporte_equipo"
+  },
+  {
+    "id": "SOL-003",
+    "titulo": "Solicitud acceso VPN",
+    "descripcion": "Necesito acceso VPN al entorno cloud de desarrollo",
+    "estado": "abierta",
+    "prioridad": "baja",
+    "tipo_solicitud": "acceso",
+    "clasificacion": "infraestructura",
+    "clasificacion_automatica": "infraestructura",
+    "confianza_clasificacion": 0.77,
+    "recomendacion": "Prioridad baja: programar en backlog de soporte. Registrar la solicitud, asignar responsable y dar seguimiento hasta su cierre.",
+    "categoria": "soporte",
+    "reportado_por": "karima@ubu.es",
+    "fecha_creacion": "2026-06-17T12:35:11Z",
+    "asignado_a": "equipo_cloud"
+  },
+  {
+    "id": "SOL-004",
+    "titulo": "Solicitud acceso al recurso VPN",
+    "descripcion": "Necesito conectar la VPN",
+    "estado": "abierta",
+    "prioridad": "baja",
+    "tipo_solicitud": "acceso",
+    "clasificacion": "infraestructura",
+    "clasificacion_automatica": "infraestructura",
+    "confianza_clasificacion": 0.71,
+    "recomendacion": "Prioridad baja: programar en backlog de soporte. Registrar la solicitud, asignar responsable y dar seguimiento hasta su cierre.",
+    "categoria": "soporte",
+    "reportado_por": "kdr1001@alu.ubu.es",
+    "fecha_creacion": "2026-06-17T12:38:55Z",
+    "asignado_a": "equipo_cloud"
   }
 ]

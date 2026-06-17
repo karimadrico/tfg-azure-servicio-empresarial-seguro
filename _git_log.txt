@@ -1,0 +1,5 @@
+aaf4400 Alineacion final del TFG con automatizacion de solicitudes operativas TI
+de44a2d Plataforma de solicitudes TI con portal web, IA y Logic App.
+897bf02 Añadir scripts de despliegue y verificación en Azure.
+b44ab8a Sistema cloud en Azure para gestionar incidencias empresariales con API REST, clasificación automática, almacenamiento seguro, secretos en Key Vault, despliegue automatizado (Terraform + GitHub Actions) y automatización con Logic App
+b11faf1 azure devops configuracion

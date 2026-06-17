@@ -1,0 +1,26 @@
+A  _commit1.txt
+A  _commit1_err.txt
+A  _commit_err.txt
+A  _commit_msg.txt
+A  _commit_out.txt
+A  _run_local_err.txt
+A  _run_local_out.txt
+M  docs/arquitectura/recursos-azure.md
+A  docs/despliegue/guia-completa.md
+A  docs/despliegue/guion-video.md
+M  infra/terraform/keyvault.tf
+M  infra/terraform/storage.tf
+M  infra/terraform/variables.tf
+A  pip_err.txt
+A  pip_out.txt
+ M src/data/incidencias.json
+?? _git_status.txt
+?? app_err.txt
+?? app_out.txt
+?? "docs/arquitectura/Aplicacion Portal de Solicitudes TI.png"
+?? "docs/arquitectura/Aplicacion solicitud enviada.png"
+?? health_err.txt
+?? health_out.txt
+?? local_test_err.txt
+?? local_test_out.txt
+?? src/test_local_api.py
