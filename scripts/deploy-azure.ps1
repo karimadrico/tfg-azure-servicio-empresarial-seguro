@@ -229,7 +229,7 @@ try {
             $_.Name -notin @("run-local.ps1", "run-local.sh", "test_local_api.py")
         } |
         ForEach-Object {
-            $relativePath = [System.IO.Path]::GetRelativePath($srcRoot, $_.FullName).Replace("\", "/")
+            $relativePath = $_.FullName.Substring($srcRoot.Length).TrimStart("\", "/").Replace("\", "/")
             [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $relativePath) | Out-Null
         }
 }
@@ -258,6 +258,7 @@ Write-Host ""
 Write-Host "  Invoke-RestMethod -Method POST $url/solicitudes ``"
 Write-Host "    -ContentType 'application/json' ``"
 Write-Host "    -Body '{\"tipo_solicitud\":\"acceso\",\"titulo\":\"Acceso VPN\",\"descripcion\":\"Necesito acceso VPN al entorno cloud\",\"reportado_por\":\"kdr1001@alu.ubu.es\"}'"
+
 
 
 
