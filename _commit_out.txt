@@ -1,12 +1,2 @@
-[main de44a2d] Plataforma de solicitudes TI con portal web, IA y Logic App.
- 16 files changed, 1019 insertions(+), 117 deletions(-)
- create mode 100644 docs/arquitectura/solucion-plataforma-ti.md
- create mode 100644 docs/despliegue/guia-azure-paso-a-paso.md
- create mode 100644 infra/bicep/appservice.bicep
- create mode 100644 infra/bicep/keyvault.bicep
- create mode 100644 infra/bicep/main.bicep
- create mode 100644 infra/bicep/storage.bicep
- create mode 100644 logicapp/workflow.json
- create mode 100644 src/data/incidencias.json
- create mode 100644 src/run-local.sh
- create mode 100644 src/static/index.html
+[feature/tfg-alineacion-final bf653e5] Corregir deploy-azure.ps1 para resolver Azure CLI en Windows.
+ 1 file changed, 22 insertions(+), 4 deletions(-)
