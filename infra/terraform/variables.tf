@@ -1,7 +1,7 @@
 variable "location" {
   description = "Región de Azure donde se despliegan los recursos"
   type        = string
-  default     = "West Europe"
+  default     = "Sweden Central"
 }
 
 variable "tenant_id" {
@@ -20,5 +20,5 @@ variable "api_key" {
   description = "Clave API almacenada en Key Vault"
   type        = string
   sensitive   = true
-  default     = "tfg-demo-api-key-2026"
+  default     = "tfg-api-key-ubu-2026"
 }
