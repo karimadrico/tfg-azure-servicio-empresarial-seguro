@@ -39,6 +39,24 @@ function Resolve-AzCli {
     throw "Azure CLI no encontrado. Instala Azure CLI o anade az.cmd al PATH."
 }
 
+function Join-ProcessArguments {
+    param([string[]]$ArgumentList)
+
+    $quoted = foreach ($arg in $ArgumentList) {
+        if ($null -eq $arg) {
+            '""'
+        }
+        elseif ($arg -match '[\s"]') {
+            '"' + $arg.Replace('"', '\"') + '"'
+        }
+        else {
+            $arg
+        }
+    }
+
+    return ($quoted -join ' ')
+}
+
 $AzCli = Resolve-AzCli
 Write-Host "Ruta detectada: $AzCli"
 
@@ -51,20 +69,32 @@ Write-Host "Ruta final: $AzCli"
 function Invoke-Az {
     param([string[]]$AzArgs)
 
-    $output = & $script:AzCli @AzArgs 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        throw "Error ejecutando: $script:AzCli $($AzArgs -join ' ')`n$output"
+    $psi = [System.Diagnostics.ProcessStartInfo]::new()
+    $psi.FileName = $AzCli
+    $psi.Arguments = Join-ProcessArguments $AzArgs
+    $psi.UseShellExecute = $false
+    $psi.RedirectStandardOutput = $true
+    $psi.RedirectStandardError = $true
+
+    $process = [System.Diagnostics.Process]::Start($psi)
+    $stdout = $process.StandardOutput.ReadToEnd()
+    $stderr = $process.StandardError.ReadToEnd()
+    $process.WaitForExit()
+
+    if ($process.ExitCode -ne 0) {
+        $details = (($stdout, $stderr) | Where-Object { $_ } | ForEach-Object { $_.Trim() }) -join "`n"
+        throw "Error ejecutando: $AzCli $($AzArgs -join ' ')`n$details"
     }
 
-    return $output
+    return $stdout.TrimEnd()
 }
 
 function Invoke-AzInteractive {
     param([string[]]$AzArgs)
 
-    & $script:AzCli @AzArgs
+    & $AzCli @AzArgs
     if ($LASTEXITCODE -ne 0) {
-        throw "Error ejecutando: $script:AzCli $($AzArgs -join ' ')"
+        Write-Host "El comando interactivo devolvio codigo $LASTEXITCODE. Se verificara la sesion igualmente..." -ForegroundColor Yellow
     }
 }
 
@@ -102,6 +132,20 @@ $kvUrl = Invoke-Az @(
     "--query", "properties.vaultUri",
     "-o", "tsv"
 )
+$kvId = Invoke-Az @(
+    "keyvault", "show",
+    "--name", $KeyVaultName,
+    "--resource-group", $ResourceGroup,
+    "--query", "id",
+    "-o", "tsv"
+)
+$kvRbacEnabled = Invoke-Az @(
+    "keyvault", "show",
+    "--name", $KeyVaultName,
+    "--resource-group", $ResourceGroup,
+    "--query", "properties.enableRbacAuthorization",
+    "-o", "tsv"
+)
 
 Write-Host "[3/6] Habilitando Managed Identity en App Service..."
 $identity = Invoke-Az @(
@@ -113,12 +157,31 @@ $identity = Invoke-Az @(
 )
 
 Write-Host "[4/6] Configurando acceso de App Service a Key Vault..."
-Invoke-Az @(
-    "keyvault", "set-policy",
-    "--name", $KeyVaultName,
-    "--object-id", $identity,
-    "--secret-permissions", "get", "list"
-) | Out-Null
+if ($kvRbacEnabled -eq "true") {
+    Write-Host "Key Vault usa RBAC. Asignando rol Key Vault Secrets User..."
+    try {
+        Invoke-Az @(
+            "role", "assignment", "create",
+            "--assignee", $identity,
+            "--role", "Key Vault Secrets User",
+            "--scope", $kvId
+        ) | Out-Null
+    }
+    catch {
+        if ($_.Exception.Message -notmatch "RoleAssignmentExists") {
+            throw
+        }
+        Write-Host "El rol Key Vault Secrets User ya estaba asignado."
+    }
+}
+else {
+    Invoke-Az @(
+        "keyvault", "set-policy",
+        "--name", $KeyVaultName,
+        "--object-id", $identity,
+        "--secret-permissions", "get", "list"
+    ) | Out-Null
+}
 
 Invoke-Az @(
     "keyvault", "secret", "set",
@@ -154,7 +217,25 @@ Invoke-Az @(
 Write-Host "[6/6] Publicando codigo de src/..."
 $zipPath = Join-Path $env:TEMP "tfg-api-deploy.zip"
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
-Compress-Archive -Path (Join-Path $RepoRoot "src\*") -DestinationPath $zipPath -Force
+
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$srcRoot = Join-Path $RepoRoot "src"
+$zip = [System.IO.Compression.ZipFile]::Open($zipPath, [System.IO.Compression.ZipArchiveMode]::Create)
+try {
+    Get-ChildItem -Path $srcRoot -Recurse -File |
+        Where-Object {
+            $_.FullName -notmatch "\\__pycache__\\" -and
+            $_.Extension -ne ".pyc" -and
+            $_.Name -notin @("run-local.ps1", "run-local.sh", "test_local_api.py")
+        } |
+        ForEach-Object {
+            $relativePath = [System.IO.Path]::GetRelativePath($srcRoot, $_.FullName).Replace("\", "/")
+            [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $relativePath) | Out-Null
+        }
+}
+finally {
+    $zip.Dispose()
+}
 
 Invoke-Az @(
     "webapp", "deployment", "source", "config-zip",
@@ -163,7 +244,8 @@ Invoke-Az @(
     "--src", $zipPath
 ) | Out-Null
 
-$url = "https://$WebAppName.azurewebsites.net"
+$defaultHostName = Invoke-Az @("webapp", "show", "--name", $WebAppName, "--resource-group", $ResourceGroup, "--query", "defaultHostName", "-o", "tsv")
+$url = "https://$defaultHostName"
 Write-Host ""
 Write-Host "Despliegue finalizado." -ForegroundColor Green
 Write-Host "URL:     $url"
@@ -176,4 +258,7 @@ Write-Host ""
 Write-Host "  Invoke-RestMethod -Method POST $url/solicitudes ``"
 Write-Host "    -ContentType 'application/json' ``"
 Write-Host "    -Body '{\"tipo_solicitud\":\"acceso\",\"titulo\":\"Acceso VPN\",\"descripcion\":\"Necesito acceso VPN al entorno cloud\",\"reportado_por\":\"kdr1001@alu.ubu.es\"}'"
+
+
+
 
