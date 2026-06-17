@@ -11,28 +11,61 @@ $KeyVaultName = "kv-tfg-incidencias-dev"
 $ApiKey = if ($env:API_KEY) { $env:API_KEY } else { "tfg-api-key-ubu-2026" }
 
 function Resolve-AzCli {
-    $candidates = @(
-        (Get-Command az -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source),
-        "$env:ProgramFiles\Microsoft SDKs\Azure\CLI2\wbin\az.cmd",
-        "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
-    ) | Where-Object { $_ -and (Test-Path $_) }
+    $paths = @(
+        "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\CLI2\wbin\az.cmd",
+        "$env:ProgramFiles\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
+    )
 
-    if (-not $candidates) {
-        throw "Azure CLI no encontrado. Instala desde https://learn.microsoft.com/cli/azure/install-azure-cli-windows"
+    foreach ($p in $paths) {
+        if (Test-Path $p) {
+            return $p
+        }
     }
 
-    return $candidates[0]
+    $cmd = Get-Command az.cmd -ErrorAction SilentlyContinue
+    if ($cmd) {
+        return $cmd.Source
+    }
+
+    $cmd = Get-Command az -ErrorAction SilentlyContinue
+    if ($cmd) {
+        $path = $cmd.Source
+        if (-not $path.EndsWith(".cmd") -and (Test-Path "$path.cmd")) {
+            $path = "$path.cmd"
+        }
+        return $path
+    }
+
+    throw "Azure CLI no encontrado. Instala Azure CLI o anade az.cmd al PATH."
 }
 
 $AzCli = Resolve-AzCli
+Write-Host "Ruta detectada: $AzCli"
+
+if (-not $AzCli.EndsWith(".cmd") -and (Test-Path "$AzCli.cmd")) {
+    $AzCli = "$AzCli.cmd"
+}
+
+Write-Host "Ruta final: $AzCli"
 
 function Invoke-Az {
-    param([string[]]$Args)
-    $output = & $AzCli @Args 2>&1
+    param([string[]]$AzArgs)
+
+    $output = & $script:AzCli @AzArgs 2>&1
     if ($LASTEXITCODE -ne 0) {
-        throw "Error ejecutando: az $($Args -join ' ')`n$output"
+        throw "Error ejecutando: $script:AzCli $($AzArgs -join ' ')`n$output"
     }
+
     return $output
+}
+
+function Invoke-AzInteractive {
+    param([string[]]$AzArgs)
+
+    & $script:AzCli @AzArgs
+    if ($LASTEXITCODE -ne 0) {
+        throw "Error ejecutando: $script:AzCli $($AzArgs -join ' ')"
+    }
 }
 
 Write-Host "Azure CLI: $AzCli" -ForegroundColor DarkGray
@@ -44,11 +77,14 @@ Write-Host ""
 
 Write-Host "[1/6] Comprobando sesion en Azure..."
 try {
-    Invoke-Az @("account", "show", "--output", "none") | Out-Null
+    Invoke-Az @("account", "show", "--query", "id", "-o", "tsv") | Out-Null
 }
 catch {
-    Write-Host "No hay sesion activa. Ejecutando az login..."
-    Invoke-Az @("login") | Out-Null
+    Write-Host "No se pudo confirmar la sesion con az account show:" -ForegroundColor Yellow
+    Write-Host $_.Exception.Message -ForegroundColor DarkYellow
+    Write-Host "Ejecutando az login --use-device-code..."
+    Invoke-AzInteractive @("login", "--use-device-code")
+    Invoke-Az @("account", "show", "--query", "id", "-o", "tsv") | Out-Null
 }
 
 Write-Host "[2/6] Obteniendo configuracion de Storage y Key Vault..."
@@ -140,3 +176,4 @@ Write-Host ""
 Write-Host "  Invoke-RestMethod -Method POST $url/solicitudes ``"
 Write-Host "    -ContentType 'application/json' ``"
 Write-Host "    -Body '{\"tipo_solicitud\":\"acceso\",\"titulo\":\"Acceso VPN\",\"descripcion\":\"Necesito acceso VPN al entorno cloud\",\"reportado_por\":\"kdr1001@alu.ubu.es\"}'"
+
