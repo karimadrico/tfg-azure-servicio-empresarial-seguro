@@ -10,14 +10,32 @@ $StorageAccount = "sttfgincidenciasdev"
 $KeyVaultName = "kv-tfg-incidencias-dev"
 $ApiKey = if ($env:API_KEY) { $env:API_KEY } else { "tfg-api-key-ubu-2026" }
 
+function Resolve-AzCli {
+    $candidates = @(
+        (Get-Command az -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source),
+        "$env:ProgramFiles\Microsoft SDKs\Azure\CLI2\wbin\az.cmd",
+        "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
+    ) | Where-Object { $_ -and (Test-Path $_) }
+
+    if (-not $candidates) {
+        throw "Azure CLI no encontrado. Instala desde https://learn.microsoft.com/cli/azure/install-azure-cli-windows"
+    }
+
+    return $candidates[0]
+}
+
+$AzCli = Resolve-AzCli
+
 function Invoke-Az {
     param([string[]]$Args)
-    $output = & az @Args 2>&1
+    $output = & $AzCli @Args 2>&1
     if ($LASTEXITCODE -ne 0) {
         throw "Error ejecutando: az $($Args -join ' ')`n$output"
     }
     return $output
 }
+
+Write-Host "Azure CLI: $AzCli" -ForegroundColor DarkGray
 
 Write-Host "=== Despliegue API TFG en Azure ===" -ForegroundColor Cyan
 Write-Host "Resource Group: $ResourceGroup"
@@ -117,8 +135,8 @@ Write-Host "API Key: $ApiKey (almacenada en Key Vault)"
 Write-Host ""
 Write-Host "Comprobacion:"
 Write-Host "  Invoke-RestMethod $url/health"
+Write-Host "  Start-Process $url/portal"
 Write-Host ""
-Write-Host "  Invoke-RestMethod -Method POST $url/incidencias ``"
-Write-Host "    -Headers @{ Authorization = 'Bearer $ApiKey' } ``"
+Write-Host "  Invoke-RestMethod -Method POST $url/solicitudes ``"
 Write-Host "    -ContentType 'application/json' ``"
-Write-Host "    -Body '{\"titulo\":\"Prueba Azure\",\"descripcion\":\"Servidor caido en produccion\",\"reportado_por\":\"karima@ubu.es\"}'"
+Write-Host "    -Body '{\"tipo_solicitud\":\"acceso\",\"titulo\":\"Acceso VPN\",\"descripcion\":\"Necesito acceso VPN al entorno cloud\",\"reportado_por\":\"kdr1001@alu.ubu.es\"}'"
