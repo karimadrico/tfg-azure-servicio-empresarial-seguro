@@ -101,8 +101,8 @@ class ApiTests(unittest.TestCase):
 class ClassifierTests(unittest.TestCase):
     def test_security_classification(self) -> None:
         result = classify_incidencia(
-            "Intrusion critica detectada",
-            "Se detecto un intento de intrusión urgente en el panel de administración",
+            "Alerta de seguridad critica",
+            "Se detecto un intento de intrusión y acceso no autorizado en el panel",
         )
         self.assertEqual(result.clasificacion, "seguridad")
         self.assertEqual(result.prioridad, "alta")

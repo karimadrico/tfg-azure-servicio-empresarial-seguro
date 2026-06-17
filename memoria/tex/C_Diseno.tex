@@ -2,7 +2,7 @@
 
 \section{Introducción}
 
-Este anexo describe el diseño general del sistema desarrollado.
+Este anexo describe el diseño general de la plataforma cloud para la automatización de solicitudes operativas TI.
 
 \section{Diseño arquitectónico}
 
@@ -11,11 +11,11 @@ La arquitectura sigue un modelo basado en servicios cloud desplegados sobre Micr
 Los principales componentes son:
 
 \begin{itemize}
-    \item Azure App Service.
-    \item API Flask.
-    \item Azure Storage.
-    \item Azure Key Vault.
-    \item Azure Monitor.
+    \item Azure App Service (API Flask y portal web).
+    \item Azure Storage (persistencia de solicitudes).
+    \item Azure Key Vault (gestión de secretos).
+    \item Azure Logic App (orquestación del flujo).
+    \item GitHub Actions (integración y despliegue continuo).
 \end{itemize}
 
 \section{Diseño procedimental}
@@ -23,17 +23,30 @@ Los principales componentes son:
 El flujo principal del sistema es:
 
 \begin{enumerate}
-    \item Recepción de la incidencia por API REST o Logic App.
+    \item Recepción de solicitudes operativas TI por portal web, API REST o Logic App.
     \item Validación de campos obligatorios.
-    \item Clasificación automática mediante análisis de palabras clave.
-    \item Persistencia en Blob Storage o fichero local.
-    \item Respuesta JSON con identificador, prioridad y confianza de clasificación.
+    \item Clasificación automática mediante componente de IA ligera.
+    \item Generación de recomendaciones de actuación operativa.
+    \item Persistencia de solicitudes en Blob Storage o fichero local.
+    \item Respuesta JSON con identificador, prioridad, tipo, recomendación y confianza.
+    \item Automatización del flujo mediante Logic App y notificación al equipo TI.
 \end{enumerate}
+
+\subsection{Tipos de solicitud soportados}
+
+\begin{itemize}
+    \item Acceso a recursos (VPN, permisos, cuentas).
+    \item Provisión de entornos (desarrollo, staging, producción).
+    \item Alta de aplicaciones o servicios.
+    \item Cambios de configuración.
+    \item Incidencias o peticiones de soporte.
+\end{itemize}
 
 \section{Integración cloud}
 
 \begin{itemize}
     \item \textbf{Terraform}: provisiona Resource Group, App Service, Storage y Key Vault.
+    \item \textbf{Bicep}: plantillas alternativas para reproducir la infraestructura.
     \item \textbf{GitHub Actions}: prueba, valida y despliega la solución.
-    \item \textbf{Logic App}: automatiza el registro de incidencias desde un trigger HTTP.
+    \item \textbf{Logic App}: automatiza el procesamiento de solicitudes desde un trigger HTTP.
 \end{itemize}
