@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal TI Empresarial — TFG Azure</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #38bdf8;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --ok: #4ade80;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      padding: 2rem 1.5rem 1rem;
+      text-align: center;
+    }
+    header h1 { margin: 0 0 0.5rem; font-size: 1.8rem; }
+    header p { margin: 0; color: var(--muted); }
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 3rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    label { display: block; margin: 1rem 0 0.35rem; font-size: 0.9rem; }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.7rem 0.8rem;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      background: #0f172a;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    button {
+      margin-top: 1.25rem;
+      width: 100%;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover { filter: brightness(1.05); }
+    #resultado {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      display: none;
+      white-space: pre-wrap;
+      font-family: Consolas, monospace;
+      font-size: 0.85rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: #164e63;
+      color: var(--ok);
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Portal de Solicitudes TI <span class="badge">Azure Cloud</span></h1>
+    <p>Automatización segura de procesos internos — Universidad de Burgos TFG</p>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>Nueva solicitud</h2>
+      <p style="color: var(--muted); margin-top: 0;">
+        Registra accesos, entornos, aplicaciones o incidencias. El sistema clasifica y recomienda acciones automáticamente.
+      </p>
+
+      <form id="form-solicitud">
+        <label for="tipo">Tipo de solicitud</label>
+        <select id="tipo" name="tipo_solicitud">
+          <option value="acceso">Acceso a recurso</option>
+          <option value="entorno">Creación de entorno</option>
+          <option value="aplicacion">Alta de aplicación</option>
+          <option value="configuracion">Cambio de configuración</option>
+          <option value="incidencia">Incidencia / soporte</option>
+        </select>
+
+        <label for="titulo">Título</label>
+        <input id="titulo" name="titulo" required maxlength="200"
+               placeholder="Ej: Solicitud acceso VPN departamento financiero">
+
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" name="descripcion" required minlength="10" maxlength="2000"
+                  placeholder="Describe la necesidad operativa con el máximo detalle posible."></textarea>
+
+        <label for="email">Solicitante (email corporativo)</label>
+        <input id="email" name="reportado_por" type="email" required
+               placeholder="usuario@empresa.com">
+
+        <button type="submit">Enviar solicitud</button>
+      </form>
+
+      <pre id="resultado"></pre>
+    </div>
+  </main>
+
+  <footer>TFG — Cloud Computing en Microsoft Azure — Karima Drafli Rico</footer>
+
+  <script>
+    const form = document.getElementById("form-solicitud");
+    const resultado = document.getElementById("resultado");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      resultado.style.display = "block";
+      resultado.textContent = "Procesando solicitud...";
+
+      const payload = {
+        tipo_solicitud: form.tipo_solicitud.value,
+        titulo: form.titulo.value.trim(),
+        descripcion: form.descripcion.value.trim(),
+        reportado_por: form.reportado_por.value.trim(),
+      };
+
+      try {
+        const response = await fetch("/solicitudes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          resultado.textContent = "Error: " + JSON.stringify(data, null, 2);
+          return;
+        }
+        resultado.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        resultado.textContent = "No se pudo conectar con la API: " + error.message;
+      }
+    });
+  </script>
+</body>
+</html>

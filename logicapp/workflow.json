@@ -1,0 +1,124 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logicAppName": {
+      "type": "string",
+      "defaultValue": "logic-tfg-solicitudes-dev"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "swedencentral"
+    },
+    "apiBaseUrl": {
+      "type": "string",
+      "defaultValue": "https://app-tfg-incidencias-dev.azurewebsites.net"
+    },
+    "apiKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Token Bearer almacenado en Key Vault"
+      }
+    },
+    "notificationEmail": {
+      "type": "string",
+      "defaultValue": "karima@ubu.es",
+      "metadata": {
+        "description": "Email de notificación del equipo TI"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Logic/workflows",
+      "apiVersion": "2019-05-01",
+      "name": "[parameters('logicAppName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "state": "Enabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "apiBaseUrl": {
+              "type": "string",
+              "defaultValue": "[parameters('apiBaseUrl')]"
+            },
+            "apiKey": {
+              "type": "securestring",
+              "defaultValue": "[parameters('apiKey')]"
+            },
+            "notificationEmail": {
+              "type": "string",
+              "defaultValue": "[parameters('notificationEmail')]"
+            }
+          },
+          "triggers": {
+            "Solicitud_HTTP": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tipo_solicitud": { "type": "string" },
+                    "titulo": { "type": "string" },
+                    "descripcion": { "type": "string" },
+                    "reportado_por": { "type": "string" }
+                  },
+                  "required": ["titulo", "descripcion", "reportado_por"]
+                }
+              }
+            }
+          },
+          "actions": {
+            "Registrar_solicitud_en_API": {
+              "type": "Http",
+              "inputs": {
+                "method": "POST",
+                "uri": "@{concat(parameters('apiBaseUrl'), '/solicitudes')}",
+                "headers": {
+                  "Content-Type": "application/json",
+                  "Authorization": "@{concat('Bearer ', parameters('apiKey'))}"
+                },
+                "body": "@triggerBody()"
+              },
+              "runAfter": {}
+            },
+            "Construir_notificacion": {
+              "type": "Compose",
+              "inputs": {
+                "destinatario": "@parameters('notificationEmail')",
+                "asunto": "@{concat('Solicitud TI ', body('Registrar_solicitud_en_API')?['id'])}",
+                "mensaje": "@{concat('Nueva solicitud: ', body('Registrar_solicitud_en_API')?['titulo'], ' | Prioridad: ', body('Registrar_solicitud_en_API')?['prioridad'], ' | Recomendacion: ', body('Registrar_solicitud_en_API')?['recomendacion'])}",
+                "solicitud": "@body('Registrar_solicitud_en_API')"
+              },
+              "runAfter": {
+                "Registrar_solicitud_en_API": ["Succeeded"]
+              }
+            },
+            "Respuesta_al_usuario": {
+              "type": "Response",
+              "kind": "Http",
+              "inputs": {
+                "statusCode": 201,
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "body": {
+                  "mensaje": "Solicitud procesada y clasificada automaticamente",
+                  "solicitud": "@body('Registrar_solicitud_en_API')",
+                  "notificacion": "@outputs('Construir_notificacion')"
+                }
+              },
+              "runAfter": {
+                "Construir_notificacion": ["Succeeded"]
+              }
+            }
+          },
+          "outputs": {}
+        }
+      }
+    }
+  ]
+}

@@ -37,12 +37,13 @@ Write-Host ""
 
 Test-Endpoint -Name "Estado del servicio" -Path "/"
 Test-Endpoint -Name "Health check" -Path "/health"
-Test-Endpoint -Name "Crear incidencia" -Method "POST" -Path "/incidencias" -Body @{
+Test-Endpoint -Name "Crear solicitud TI" -Method "POST" -Path "/solicitudes" -Body @{
+    tipo_solicitud = "acceso"
     titulo = "Prueba tribunal"
-    descripcion = "Servidor caido en produccion desde script de verificacion"
+    descripcion = "Solicito acceso VPN al entorno cloud de desarrollo"
     reportado_por = "karima@ubu.es"
 }
-Test-Endpoint -Name "Listar incidencias" -Path "/incidencias"
+Test-Endpoint -Name "Listar solicitudes" -Path "/solicitudes"
 Test-Endpoint -Name "Metricas" -Path "/metricas"
 
 Write-Host "Verificacion completada." -ForegroundColor Green

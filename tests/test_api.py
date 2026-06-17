@@ -50,12 +50,36 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(create_response.status_code, 201)
         created = create_response.get_json()
         self.assertEqual(created["prioridad"], "alta")
-        self.assertIn("clasificacion_automatica", created)
+        self.assertIn("recomendacion", created)
+        self.assertIn("tipo_solicitud", created)
 
         list_response = self.client.get("/incidencias")
         self.assertEqual(list_response.status_code, 200)
         payload = list_response.get_json()
         self.assertEqual(payload["total"], 1)
+
+    def test_create_solicitud_endpoint(self) -> None:
+        response = self.client.post(
+            "/solicitudes",
+            data=json.dumps(
+                {
+                    "tipo_solicitud": "acceso",
+                    "titulo": "Solicitud acceso VPN",
+                    "descripcion": "Necesito acceso VPN al entorno de desarrollo cloud",
+                    "reportado_por": "usuario@empresa.com",
+                }
+            ),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 201)
+        payload = response.get_json()
+        self.assertEqual(payload["tipo_solicitud"], "acceso")
+        self.assertTrue(payload["recomendacion"])
+
+    def test_portal_endpoint(self) -> None:
+        response = self.client.get("/portal")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Portal de Solicitudes TI", response.data)
 
     def test_metricas(self) -> None:
         self.client.post(
@@ -71,17 +95,18 @@ class ApiTests(unittest.TestCase):
         )
         response = self.client.get("/metricas")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.get_json()["total_incidencias"], 1)
+        self.assertEqual(response.get_json()["total_solicitudes"], 1)
 
 
 class ClassifierTests(unittest.TestCase):
     def test_security_classification(self) -> None:
         result = classify_incidencia(
-            "Acceso no autorizado detectado",
-            "Se detectó un intento de intrusión en el panel de administración",
+            "Intrusion critica detectada",
+            "Se detecto un intento de intrusión urgente en el panel de administración",
         )
         self.assertEqual(result.clasificacion, "seguridad")
         self.assertEqual(result.prioridad, "alta")
+        self.assertTrue(result.recomendacion)
 
 
 if __name__ == "__main__":

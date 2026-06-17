@@ -1,67 +1,91 @@
-# TFG - Servicio Empresarial Seguro en Microsoft Azure
+# Plataforma de Automatización de Solicitudes TI — TFG Azure
 
-**Autor:** Karima Drafli Rico  
-**Universidad de Burgos**  
-**Tutor:** D. José Ignacio Santos Martín
+**Autora:** Karima Drafli Rico — Universidad de Burgos  
+**Título:** Cloud Computing: Análisis, Diseño y Despliegue de un Servicio Empresarial Seguro en Microsoft Azure
 
-## Descripción
+## Qué es
 
-Sistema cloud para la gestión automatizada de incidencias empresariales en Microsoft Azure. Incluye API REST en Flask, persistencia en Blob Storage, gestión segura de secretos con Key Vault, clasificación automática de incidencias y automatización mediante Logic App.
+Plataforma cloud en Microsoft Azure para **automatizar solicitudes internas de TI** de una empresa:
+
+1. El usuario envía una solicitud (acceso, entorno, aplicación, configuración o incidencia).
+2. La **Logic App** orquesta el flujo.
+3. La **API Flask** clasifica la solicitud con un componente de **IA ligera** (reglas + análisis semántico).
+4. Se genera una **recomendación operativa** automática.
+5. Los datos se almacenan en **Blob Storage** y los secretos en **Key Vault**.
 
 ## Arquitectura
 
-- **Azure App Service** — API Flask (Python 3.11)
-- **Azure Blob Storage** — persistencia de incidencias
-- **Azure Key Vault** — token de autenticación
-- **Azure Logic App** — registro automatizado de incidencias
-- **GitHub Actions** — CI/CD (tests + Terraform + despliegue)
-
-## Estructura del repositorio
-
+```text
+Portal Web (App Service)
+        |
+        v
+Logic App (trigger HTTP)
+        |
+        +--> API Flask (clasificación IA + recomendación)
+        |
+        +--> Azure Blob Storage
+        |
+        +--> Azure Key Vault
+        |
+        +--> Notificación (email / respuesta JSON)
 ```
-src/                  API Flask
-tests/                Pruebas unitarias
-infra/terraform/      Infraestructura como código
-logicapp/             Logic App de automatización
-memoria/              Memoria y anexos LaTeX
-docs/                 Documentación técnica
-pipelines/            Azure DevOps pipelines
-```
+
+## Recursos Azure
+
+| Recurso | Nombre |
+|---------|--------|
+| Resource Group | `rg-tfg-cloudautomation-dev` |
+| App Service | `app-tfg-incidencias-dev` |
+| Storage Account | `sttfgincidenciasdev` |
+| Key Vault | `kv-tfg-incidencias-dev` |
+| Logic App | `logic-tfg-solicitudes-dev` |
+
+**URL API:** https://app-tfg-incidencias-dev.azurewebsites.net  
+**Portal:** https://app-tfg-incidencias-dev.azurewebsites.net/portal
 
 ## Ejecución local
 
-```bash
+```powershell
 cd src
+$env:STORAGE_MODE = "local"
 pip install -r requirements.txt
-set STORAGE_MODE=local
 python app.py
 ```
 
-API disponible en `http://localhost:5000`.
+Abrir http://localhost:5000/portal
 
-## Pruebas
+## Despliegue en Azure (PowerShell)
 
-```bash
-python -m unittest discover -s tests -p "test_*.py"
+```powershell
+az login
+.\scripts\deploy-azure.ps1
+.\scripts\verify-azure.ps1
 ```
 
-## Despliegue en Azure
-
-1. Configurar secretos en GitHub: `AZURE_CREDENTIALS`, `TFG_API_KEY`
-2. Push a `main` → GitHub Actions despliega infraestructura y API
-3. URL de la API: `https://app-tfg-incidencias-dev.azurewebsites.net`
-4. Importar Logic App desde `logicapp/logicapp-workflow.json`
-
-## Endpoints principales
+## Endpoints
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| GET | `/` | Estado del servicio |
+| GET | `/portal` | Portal web empresarial |
 | GET | `/health` | Salud del sistema |
-| GET | `/incidencias` | Listar incidencias |
-| POST | `/incidencias` | Crear incidencia |
-| GET | `/metricas` | Métricas agregadas |
+| POST | `/solicitudes` | Crear solicitud TI (público) |
+| GET | `/solicitudes` | Listar solicitudes (auth) |
+| GET | `/metricas` | Métricas agregadas (auth) |
 
-## Backlog
+## Repositorio y gestión
 
-https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban
+- **GitHub:** https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro
+- **Zube (sprints):** https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban
+- **Tribunal:** invitar usuario `ubutfgm`
+
+## Estructura
+
+```text
+src/              API Flask + portal web
+logicapp/         Logic App workflow.json
+infra/terraform/  Infraestructura (Terraform)
+infra/bicep/      Infraestructura alternativa (Bicep)
+tests/            Pruebas unitarias
+memoria/          Memoria LaTeX
+docs/             Documentación
+```

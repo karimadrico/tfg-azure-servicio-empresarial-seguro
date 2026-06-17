@@ -1,0 +1,30 @@
+[
+  {
+    "id": "INC-001",
+    "titulo": "Servidor caido",
+    "descripcion": "El servidor principal no responde desde esta manana",
+    "estado": "abierta",
+    "prioridad": "alta",
+    "clasificacion": "infraestructura",
+    "clasificacion_automatica": "infraestructura",
+    "confianza_clasificacion": 0.77,
+    "categoria": "soporte",
+    "reportado_por": "usuario@empresa.com",
+    "fecha_creacion": "2026-06-08T11:10:15Z",
+    "asignado_a": "soporte_equipo"
+  },
+  {
+    "id": "INC-002",
+    "titulo": "Servidor caido",
+    "descripcion": "El servidor principal no responde desde esta manana",
+    "estado": "abierta",
+    "prioridad": "alta",
+    "clasificacion": "infraestructura",
+    "clasificacion_automatica": "infraestructura",
+    "confianza_clasificacion": 0.77,
+    "categoria": "soporte",
+    "reportado_por": "usuario@empresa.com",
+    "fecha_creacion": "2026-06-08T11:10:26Z",
+    "asignado_a": "soporte_equipo"
+  }
+]
