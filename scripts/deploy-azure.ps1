@@ -10,12 +10,35 @@ $StorageAccount = "sttfgincidenciasdev"
 $KeyVaultName = "kv-tfg-incidencias-dev"
 $ApiKey = if ($env:API_KEY) { $env:API_KEY } else { "tfg-api-key-ubu-2026" }
 
-function Invoke-Az {
-    param([string[]]$Args)
-    $output = & az @Args 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        throw "Error ejecutando: az $($Args -join ' ')`n$output"
+function Resolve-AzCli {
+    $command = Get-Command az.cmd -ErrorAction SilentlyContinue
+    if (-not $command) {
+        $command = Get-Command az -ErrorAction SilentlyContinue
     }
+
+    if (-not $command) {
+        throw "No se encontro Azure CLI. Instala Azure CLI o anade az.cmd al PATH."
+    }
+
+    $path = $command.Source
+    if (-not $path.EndsWith(".cmd") -and (Test-Path "$path.cmd")) {
+        $path = "$path.cmd"
+    }
+
+    return $path
+}
+
+$AzCli = Resolve-AzCli
+Write-Host "Azure CLI: $AzCli"
+
+function Invoke-Az {
+    param([string[]]$AzArgs)
+
+    $output = & $script:AzCli @AzArgs 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Error ejecutando: $script:AzCli $($AzArgs -join ' ')`n$output"
+    }
+
     return $output
 }
 
