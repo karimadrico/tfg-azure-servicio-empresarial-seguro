@@ -1,2 +1,0 @@
- M _git_status.txt
- M scripts/deploy-azure.ps1

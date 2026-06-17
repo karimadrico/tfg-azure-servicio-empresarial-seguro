@@ -28,10 +28,51 @@ Las principales fases del proyecto han sido:
 
 \subsection{Viabilidad económica}
 
-El proyecto se ha desarrollado utilizando principalmente herramientas y servicios disponibles en versiones gratuitas o académicas, como GitHub o Microsoft Azure para estudiantes.
+El proyecto se ha desarrollado utilizando principalmente herramientas disponibles en versiones gratuitas, de código abierto o académicas, como GitHub, SonarCloud y Microsoft Azure for Students.
 
-Por este motivo, el coste económico del proyecto ha sido reducido.
+La mayor parte del coste corresponde al esfuerzo de desarrollo. Para estimar el coste de personal se ha considerado una dedicación aproximada de 300 horas y un coste de referencia de 18 euros/hora para un perfil junior de desarrollo cloud. Esta cifra no representa una factura real, sino una estimación académica del valor del trabajo realizado.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{X r r r}
+\textbf{Concepto} & \textbf{Cantidad} & \textbf{Coste unitario} & \textbf{Coste estimado} \\
+\hline
+Análisis y planificación & 45 h & 18 EUR/h & 810 EUR \\
+Diseño de arquitectura & 45 h & 18 EUR/h & 810 EUR \\
+Implementación backend y portal & 90 h & 18 EUR/h & 1.620 EUR \\
+Infraestructura Azure y despliegue & 60 h & 18 EUR/h & 1.080 EUR \\
+Pruebas, documentación y memoria & 60 h & 18 EUR/h & 1.080 EUR \\
+Servicios Azure for Students & 1 suscripción & 0 EUR & 0 EUR \\
+GitHub, Zube y SonarCloud & 1 cuenta académica & 0 EUR & 0 EUR \\
+\hline
+\textbf{Total estimado} & \textbf{300 h} & & \textbf{5.400 EUR} \\
+\end{tabularx}
+\caption{Estimación económica del proyecto}
+\end{table}
+
+En un entorno empresarial real también deberían considerarse costes de operación continuada, soporte, monitorización, almacenamiento y transferencia de datos. En este TFG se han mantenido los recursos dentro de un entorno de desarrollo de bajo consumo, por lo que el coste de infraestructura se ha reducido al mínimo.
 
 \subsection{Viabilidad legal}
 
 Durante el desarrollo del proyecto se han utilizado herramientas de software bajo licencias abiertas o gratuitas para uso académico. Además, no se han utilizado datos personales reales, por lo que no se han generado problemas relacionados con la protección de datos.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l l X}
+\textbf{Componente} & \textbf{Licencia / modalidad} & \textbf{Uso en el proyecto} \\
+\hline
+Python & PSF License & Lenguaje backend \\
+Flask & BSD-3-Clause & API REST y portal web \\
+Gunicorn & MIT & Servidor WSGI en App Service \\
+Azure SDK for Python & MIT & Integración con Storage y Key Vault \\
+Terraform & Business Source License & Infraestructura como código \\
+GitHub Actions & Servicio GitHub & Integración continua y despliegue \\
+SonarCloud & Servicio SonarSource & Análisis de calidad de código \\
+Microsoft Azure & Servicio cloud & App Service, Storage, Key Vault y Logic App \\
+\end{tabularx}
+\caption{Licencias y servicios utilizados}
+\end{table}
+
+Las licencias empleadas son compatibles con un proyecto académico y permiten la distribución del código fuente del prototipo. El repositorio incluye un archivo \texttt{LICENSE} con licencia MIT para el código propio desarrollado durante el TFG. Las credenciales y secretos no se almacenan en el repositorio, sino en variables de entorno, GitHub Secrets y Azure Key Vault.

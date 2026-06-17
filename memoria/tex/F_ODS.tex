@@ -2,19 +2,16 @@
 
 \section{Introducción}
 
-El desarrollo de soluciones cloud puede contribuir significativamente a mejorar la sostenibilidad tecnológica y organizativa.
+El desarrollo de soluciones cloud puede contribuir significativamente a mejorar la sostenibilidad tecnológica y organizativa cuando se diseña con criterios de eficiencia, seguridad y responsabilidad. En este proyecto se ha desarrollado una plataforma para automatizar solicitudes operativas TI en Microsoft Azure, evitando un enfoque basado en procesos manuales, correos dispersos o documentación no estructurada. Esta orientación se relaciona con varios Objetivos de Desarrollo Sostenible, especialmente con el ODS 9, industria, innovación e infraestructura; el ODS 12, producción y consumo responsables; y el ODS 13, acción por el clima.
 
-En este proyecto se han aplicado diferentes principios relacionados con sostenibilidad tecnológica:
+Desde el punto de vista del ODS 9, la solución propone una infraestructura digital moderna basada en servicios gestionados. El uso de Azure App Service, Storage, Key Vault y Logic Apps permite construir un sistema escalable sin necesidad de adquirir, instalar y mantener servidores físicos propios. La infraestructura como código mediante Terraform y Bicep favorece la reproducibilidad, reduce errores de configuración y permite que el entorno pueda recrearse de forma controlada. Esto contribuye a una innovación más sostenible, ya que el conocimiento generado no queda limitado a una configuración manual difícil de auditar.
 
-\begin{itemize}
-    \item Uso eficiente de recursos cloud.
-    \item Automatización de procesos.
-    \item Reducción de infraestructuras físicas.
-    \item Escalabilidad bajo demanda.
-\end{itemize}
+En relación con el ODS 12, el proyecto fomenta un uso responsable de recursos tecnológicos. La aplicación se ha desplegado en un entorno de bajo consumo, ajustado al alcance académico y sin sobredimensionar la infraestructura. La plataforma cloud permite activar únicamente los recursos necesarios para validar el prototipo, evitando gastos innecesarios y reduciendo el desperdicio tecnológico. Además, la automatización de despliegues y verificaciones disminuye la repetición de tareas manuales y reduce la probabilidad de errores humanos, lo que mejora la eficiencia operativa.
 
-Además, la utilización de plataformas cloud gestionadas permite reducir el consumo energético asociado a infraestructuras locales tradicionales.
+El ODS 13 también está presente de forma indirecta. Aunque cualquier servicio digital consume energía, el uso de proveedores cloud permite beneficiarse de centros de datos optimizados, con mejores tasas de utilización que muchas infraestructuras locales pequeñas. En lugar de mantener servidores dedicados infrautilizados, el proyecto usa servicios compartidos y escalables. Esta decisión no elimina el impacto ambiental, pero sí representa una alternativa más eficiente para un prototipo académico y para muchas organizaciones pequeñas que necesitan digitalizar procesos internos.
 
-La automatización de despliegues y monitorización también mejora la eficiencia operativa y reduce errores humanos.
+La sostenibilidad también tiene una dimensión social y organizativa. La plataforma mejora la trazabilidad de solicitudes internas, facilita priorizar incidencias críticas, registra recomendaciones operativas y permite consultar métricas del servicio. Esto puede ayudar a equipos técnicos a trabajar con mayor transparencia y a reducir tiempos de respuesta. Un proceso más ordenado también evita duplicidades, pérdidas de información y dependencia excesiva de conocimiento informal.
 
-Desde un punto de vista formativo, este proyecto ha permitido desarrollar competencias relacionadas con sostenibilidad tecnológica, seguridad informática y desarrollo responsable de software.
+Por último, el proyecto incorpora criterios de seguridad y protección de la información. El uso de Key Vault, Managed Identity y autenticación Bearer evita almacenar secretos directamente en el código fuente. Esta práctica favorece un desarrollo responsable y reduce riesgos asociados a fugas de credenciales. Aunque el sistema utiliza datos de prueba y no datos personales reales, se han aplicado principios básicos de minimización y protección.
+
+En conjunto, el TFG demuestra que una solución cloud académica puede diseñarse no solo para funcionar, sino también para ser mantenible, segura, eficiente y alineada con criterios de sostenibilidad curricular. La principal aportación no es únicamente el software desarrollado, sino la aplicación de buenas prácticas profesionales para automatizar procesos internos con un impacto razonable y controlado.

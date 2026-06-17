@@ -47,6 +47,8 @@ Este sistema automatiza:
 
 La calidad del código se analiza mediante SonarQube/SonarCloud integrado con GitHub Actions.
 
+En este proyecto se utiliza SonarCloud como servicio gestionado compatible con repositorios GitHub. Su uso permite obtener métricas objetivas de mantenibilidad, fiabilidad y seguridad sin desplegar un servidor SonarQube propio. El análisis se ejecuta desde el pipeline de integración continua y complementa a las pruebas unitarias.
+
 Esta herramienta permite detectar:
 
 \begin{itemize}
@@ -54,7 +56,10 @@ Esta herramienta permite detectar:
     \item Duplicidad.
     \item Complejidad excesiva.
     \item Posibles errores.
+    \item Deuda técnica y problemas de mantenibilidad.
 \end{itemize}
+
+Los resultados del análisis se emplean como evidencia de calidad del código y como apoyo para priorizar mejoras antes de la entrega final.
 
 \section{Terraform}
 

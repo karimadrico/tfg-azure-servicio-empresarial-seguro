@@ -1,3 +1,0 @@
-Añadir guías de despliegue y actualizar Terraform para Azure.
-
-Documenta el despliegue, el guion del vídeo y los recursos cloud del TFG.

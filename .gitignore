@@ -218,6 +218,12 @@ __marimo__/
 *.synctex.gz
 *.fdb_latexmk
 *.fls
+
+# Local execution artifacts
+_*.txt
+*_out.txt
+*_err.txt
+AzureCLI.msi
 *.nav
 *.snm
 *.vrb

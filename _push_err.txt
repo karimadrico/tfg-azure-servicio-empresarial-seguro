@@ -1,2 +1,0 @@
-To https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro.git
-   925f727..bf653e5  feature/tfg-alineacion-final -> feature/tfg-alineacion-final

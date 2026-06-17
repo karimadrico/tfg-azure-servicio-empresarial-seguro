@@ -1,3 +1,0 @@
-Corregir deploy-azure.ps1 para resolver Azure CLI en Windows.
-
-Usa la ruta completa de az.cmd cuando el comando no está en PATH, el mismo problema que python/pip en local.

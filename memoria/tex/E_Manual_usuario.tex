@@ -2,7 +2,7 @@
 
 \section{Introducción}
 
-Este anexo describe cómo utilizar el sistema de gestión de incidencias empresariales desplegado en Microsoft Azure.
+Este anexo describe cómo utilizar la plataforma de gestión de solicitudes operativas TI desplegada en Microsoft Azure.
 
 \section{Requisitos}
 
@@ -22,7 +22,13 @@ La API está desplegada en Azure App Service:
 https://app-tfg-incidencias-dev.azurewebsites.net
 \end{verbatim}
 
-También puede registrarse una incidencia mediante la Logic App, que reenvía la petición automáticamente a la API.
+El portal web está disponible en:
+
+\begin{verbatim}
+https://app-tfg-incidencias-dev.azurewebsites.net/portal
+\end{verbatim}
+
+También puede registrarse una solicitud mediante la Logic App, que reenvía la petición automáticamente a la API.
 
 \section{Operaciones disponibles}
 
@@ -32,29 +38,35 @@ También puede registrarse una incidencia mediante la Logic App, que reenvía la
 GET /
 \end{verbatim}
 
-\subsection{Crear incidencia}
+\subsection{Crear solicitud desde el portal}
+
+El usuario puede abrir el portal web, seleccionar el tipo de solicitud, introducir título, descripción y correo del solicitante, y enviar el formulario. La API devolverá un identificador, prioridad, clasificación y recomendación operativa.
+
+\subsection{Crear solicitud desde API}
 
 \begin{verbatim}
-POST /incidencias
-Authorization: Bearer <token>
+POST /solicitudes
 Content-Type: application/json
 
 {
-  "titulo": "Error servidor",
-  "descripcion": "El servidor principal no responde",
+  "tipo_solicitud": "acceso",
+  "titulo": "Acceso VPN",
+  "descripcion": "Necesito acceso VPN al entorno cloud",
   "reportado_por": "usuario@empresa.com",
-  "prioridad": "alta"
+  "prioridad": "media"
 }
 \end{verbatim}
 
-El sistema clasificará automáticamente la incidencia y devolverá prioridad, categoría y nivel de confianza.
+El sistema clasificará automáticamente la solicitud y devolverá prioridad, categoría, tipo, nivel de confianza y recomendación.
 
-\subsection{Consultar incidencias}
+\subsection{Consultar solicitudes}
 
 \begin{verbatim}
-GET /incidencias?estado=abierta&prioridad=alta
+GET /solicitudes?estado=abierta&prioridad=alta&tipo_solicitud=acceso
 Authorization: Bearer <token>
 \end{verbatim}
+
+Si se accede a esta URL directamente desde el navegador sin cabecera de autorización, la API responde \texttt{\{"error":"No autenticado"\}}, que es el comportamiento esperado para proteger el listado.
 
 \subsection{Consultar métricas}
 

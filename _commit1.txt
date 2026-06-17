@@ -1,7 +1,0 @@
-[main 897bf02] Añadir scripts de despliegue y verificación en Azure.
- 5 files changed, 349 insertions(+)
- create mode 100644 LICENSE
- create mode 100644 scripts/deploy-azure.ps1
- create mode 100644 scripts/deploy-azure.sh
- create mode 100644 scripts/setup-github-cicd.sh
- create mode 100644 scripts/verify-azure.ps1

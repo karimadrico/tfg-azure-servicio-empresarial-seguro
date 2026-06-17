@@ -1,2 +1,0 @@
-[feature/tfg-alineacion-final bf653e5] Corregir deploy-azure.ps1 para resolver Azure CLI en Windows.
- 1 file changed, 22 insertions(+), 4 deletions(-)
