@@ -166,7 +166,7 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 | `tests/` | Pruebas unitarias de API, portal, metricas y clasificador. | Permite comprobar validacion automatica del comportamiento. |
 | `scripts/` | Scripts PowerShell de despliegue y verificacion en Azure. | Documenta como se publica y valida la solucion real. |
 | `logicapp/` | Definicion del flujo HTTP hacia `POST /solicitudes`. | Evidencia la automatizacion del proceso empresarial. |
-| `infra/terraform/` | Definicion Terraform de recursos Azure. | Sirve como infraestructura declarativa documentada. |
+| `infra/terraform/` | Definicion Terraform de Resource Group, App Service, Storage, Key Vault, RBAC y Application Insights. | Sirve como infraestructura declarativa documentada y auditable. |
 | `infra/bicep/` | Plantillas Bicep alternativas/documentales. | Complementa la documentacion de infraestructura Azure. |
 | `memoria/` | Memoria y anexos en LaTeX, junto con los PDF generados. | Contiene los documentos oficiales de entrega. |
 | `memoria/tex/` | Capitulos 1-7 de memoria y anexos A-F. | Fuente editable de la documentacion academica. |
@@ -193,3 +193,4 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 - Capturas finales explicadas en `docs/evidencias/README.md`.
 - Base del PDF de enlaces en `docs/entrega/enlaces-tfg.md`.
 - Licencia MIT en `LICENSE`.
+

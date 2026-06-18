@@ -187,7 +187,7 @@ La figura \ref{fig:flujo-solicitud-ti} representa el flujo funcional seguido por
 \section{Integración cloud}
 
 \begin{itemize}
-    \item \textbf{Terraform}: documenta Resource Group, App Service, Storage y Key Vault como infraestructura declarativa.
+    \item \textbf{Terraform}: documenta Resource Group, App Service, Storage, Key Vault, RBAC y Application Insights como infraestructura declarativa.
     \item \textbf{Bicep}: plantillas alternativas para reproducir la infraestructura.
     \item \textbf{Script PowerShell}: configura recursos existentes y publica la aplicación en Azure App Service.
     \item \textbf{Logic App}: expone un trigger HTTP que transforma una solicitud externa en una llamada controlada a \texttt{POST /solicitudes}.
@@ -284,6 +284,7 @@ created\_at & fecha & Fecha de creación de la solicitud. \\
 \section{Calidad y observabilidad}
 
 La calidad se comprueba mediante pruebas automáticas y análisis manual en SonarCloud. El panel de SonarCloud se aporta como evidencia de mantenibilidad, fiabilidad, seguridad y duplicidad del código. La observabilidad técnica se apoya en el endpoint \texttt{/health}, en los logs de App Service y en las métricas disponibles desde Application Insights y Azure Monitor \cite{azure_monitor}.
+
 
 
 

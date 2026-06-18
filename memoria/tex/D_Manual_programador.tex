@@ -39,6 +39,29 @@ La API quedará disponible en \texttt{http://localhost:5000}.
     \item \texttt{API\_KEY}: token Bearer opcional para desarrollo local.
 \end{itemize}
 
+
+\section{Infraestructura como código}
+
+El repositorio incluye definiciones de infraestructura como código en Terraform y Bicep. En el alcance final del TFG, el despliegue operativo se realiza mediante scripts PowerShell y Azure CLI, mientras que Terraform y Bicep actúan como documentación técnica reproducible de los recursos cloud necesarios. Esta separación permite defender tanto la ejecución práctica del despliegue como el diseño declarativo de la infraestructura.
+
+La tabla \ref{tabla:iac_comparativa} resume el papel de cada mecanismo utilizado.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Mecanismo} & \textbf{Uso en el proyecto} & \textbf{Ventaja principal} \\
+\hline
+PowerShell + Azure CLI & Despliegue real del App Service, configuración de variables, Key Vault y verificación. & Permite ejecutar y demostrar el despliegue desde el entorno local. \\
+Terraform & Definición declarativa de Resource Group, App Service, Storage, Key Vault, RBAC y Application Insights. & Documenta la infraestructura de forma portable y auditable. \\
+Bicep & Plantillas alternativas de recursos Azure, incluida la Logic App. & Expresa recursos Azure de forma nativa y revisable por SonarCloud. \\
+Portal Azure & Validación visual y capturas de evidencias. & Facilita al tribunal comprobar recursos reales desplegados. \\
+\end{tabularx}
+\caption{Comparativa de mecanismos de infraestructura y despliegue}
+\label{tabla:iac_comparativa}
+\end{table}
+
+En Terraform se han descrito los recursos principales del prototipo: grupo de recursos, plan de App Service, aplicación Linux, cuenta de almacenamiento con cifrado e identidad, contenedor privado, Key Vault con RBAC y Application Insights. Estas definiciones no sustituyen a las pruebas del despliegue real, sino que complementan la documentación técnica del sistema y reflejan cómo podría evolucionar hacia un proceso IaC completo.
 \section{Despliegue en Azure}
 
 \begin{enumerate}
@@ -141,4 +164,5 @@ El mantenimiento del prototipo se organiza alrededor de los siguientes puntos:
     \item Revisar SonarCloud tras cambios relevantes para mantener el Quality Gate aprobado.
     \item Documentar evidencias finales en \texttt{docs/evidencias/} antes de generar los entregables.
 \end{itemize}
+
 
