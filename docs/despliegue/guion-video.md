@@ -16,6 +16,8 @@ Mostrar el resource group `rg-tfg-cloudautomation-dev` y los recursos:
 - `sttfgincidenciasdev`: Storage Account para persistencia.
 - `kv-tfg-incidencias-dev`: Key Vault para el token de autenticación.
 - Managed Identity del App Service.
+- `logic-tfg-solicitudes-dev`: automatización externa de solicitudes.
+- `appi-tfg-incidencias-dev`: observabilidad con Application Insights.
 
 ## 3. Demostración funcional
 
@@ -25,7 +27,7 @@ Abrir:
 https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/portal
 ```
 
-Crear una solicitud desde el portal y explicar que el sistema devuelve prioridad, clasificación y recomendación.
+Crear una solicitud desde el portal y explicar que el sistema devuelve prioridad, clasificación y recomendación. Después, mostrar brevemente que la Logic App permite recibir una solicitud externa y llamar al mismo endpoint `POST /solicitudes`.
 
 ## 4. Prueba técnica de API
 

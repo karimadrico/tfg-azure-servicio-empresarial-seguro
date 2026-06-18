@@ -2,11 +2,11 @@
 
 Última actualización: 18 de junio de 2026
 
-Porcentaje completado: ~90%
+Porcentaje completado: ~95%
 
 ## Resumen Ejecutivo
 
-El proyecto dispone de una solución funcional desplegada en Microsoft Azure: API Flask con gestión de solicitudes TI, portal web, clasificación automática, persistencia en Azure Blob Storage, gestión de secretos con Key Vault, Managed Identity y despliegue reproducible mediante PowerShell y Azure CLI.
+El proyecto dispone de una solución funcional desplegada en Microsoft Azure: API Flask con gestión de solicitudes TI, portal web, clasificación automática, Logic App para automatización externa, persistencia en Azure Blob Storage, gestión de secretos con Key Vault, Managed Identity, Application Insights/Azure Monitor y despliegue reproducible mediante PowerShell y Azure CLI.
 
 Quedan como tareas finales la grabación de los dos vídeos obligatorios, la generación del PDF final de enlaces y la creación de la release final del repositorio.
 
@@ -24,6 +24,7 @@ Quedan como tareas finales la grabación de los dos vídeos obligatorios, la gen
 - Planificación: cinco sprints en Zube con enlace en README y anexos.
 - Calidad: SonarCloud manual con Quality Gate aprobado.
 - Memoria y anexos en LaTeX/PDF.
+- Diagramas, gráficos de costes/esfuerzo y evidencias finales en `docs/evidencias/` y `memoria/img/`.
 
 ### Pendientes de entrega
 
@@ -31,7 +32,7 @@ Quedan como tareas finales la grabación de los dos vídeos obligatorios, la gen
 - Grabar vídeo de demostración funcional del producto.
 - Crear PDF final de enlaces para UBUVirtual.
 - Crear release final en GitHub.
-- Guardar capturas finales: Azure Portal, Zube, SonarCloud y aplicación desplegada.
+- Revisar que las URLs de vídeos se sustituyen en `docs/entrega/enlaces-tfg.md`.
 
 ## Checklist de Evaluación
 

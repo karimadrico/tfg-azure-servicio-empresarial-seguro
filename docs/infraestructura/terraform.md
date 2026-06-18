@@ -13,6 +13,8 @@ El repositorio mantiene definiciones Terraform en `infra/terraform/` y plantilla
 | Blob Container | Contenedor privado `incidencias` |
 | Key Vault | Secreto `api-key` |
 | Managed Identity | Acceso seguro de App Service a Key Vault |
+| RBAC de Key Vault | Roles `Key Vault Secrets Officer` y `Key Vault Secrets User` |
+| Application Insights | Telemetría del App Service y apoyo a observabilidad |
 
 ## Uso recomendado
 

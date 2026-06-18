@@ -13,7 +13,7 @@
 | Calidad de código | Preparado | SonarCloud manual: `docs/calidad/sonarcloud.md` |
 | Vídeo de presentación | Pendiente | Máximo 5 minutos, cámara y audio |
 | Vídeo de demostración | Pendiente | Máximo 5 minutos, producto funcionando |
-| PDF con enlaces | Pendiente | Vídeos, repositorio, despliegue, Zube y SonarCloud |
+| PDF con enlaces | Pendiente | Falta sustituir URLs de vídeos en `docs/entrega/enlaces-tfg.md` y exportar a PDF |
 
 ## Reglas revisadas
 
@@ -29,17 +29,17 @@
 | Licencias | Cumplido | Tabla de licencias en Anexo A y `LICENSE`. |
 | Costes con cargas empresariales | Cumplido | Anexo A. |
 | Sostenibilidad 600-800 palabras | Cumplido | Anexo F. |
-| Bibliografía citada en texto | En revisión | Mantener solo fuentes citadas. |
+| Bibliografía citada en texto | Cumplido | Bibliografía incluida en memoria y anexos. |
 | Calidad con SonarQube/SonarCloud | Cumplido | Panel SonarCloud enlazado y documentado. |
 | Releases | Pendiente | Crear release final `v1.0.0`. |
 
 ## Acciones pendientes antes de entregar
 
-1. Guardar captura del Quality Gate de SonarCloud.
-2. Guardar capturas de Zube con los cinco sprints.
-3. Comprobar `/portal`, `/health`, creación de solicitudes y consulta protegida.
+1. Sustituir las URLs pendientes de los dos vídeos en `docs/entrega/enlaces-tfg.md`.
+2. Exportar `docs/entrega/enlaces-tfg.md` a PDF para UBUVirtual.
+3. Comprobar `/portal` y `/health`; para consulta protegida definir antes `API_KEY`.
 4. Grabar vídeo de presentación con cámara y audio.
 5. Grabar vídeo de demostración funcional con portal, API y Azure Portal.
-6. Crear PDF final de enlaces para UBUVirtual.
-7. Crear release final en GitHub.
+6. Revisar que la release final de GitHub apunta al commit de entrega.
+7. Subir memoria, anexos, código y PDF de enlaces a UBUVirtual.
 
