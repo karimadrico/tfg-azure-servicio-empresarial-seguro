@@ -58,6 +58,55 @@ La figura \ref{fig:azure-resource-group} recoge una evidencia del grupo de recur
 \label{fig:azure-resource-group}
 \end{figure}
 
+
+\section{Gobernanza cloud aplicada}
+
+Aunque el alcance del TFG no incluye una zona de aterrizaje corporativa completa, se ha aplicado una gobernanza ligera para que el prototipo sea defendible como solución empresarial. Esta gobernanza se centra en cuatro aspectos: nomenclatura consistente, etiquetado de recursos, separación de responsabilidades y controles básicos de seguridad y operación.
+
+La tabla \ref{tabla:nomenclatura_recursos_azure} resume los recursos principales y el criterio de nomenclatura utilizado en el entorno desplegado.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l l X}
+\textbf{Recurso} & \textbf{Nombre} & \textbf{Criterio aplicado} \\
+\hline
+Resource Group & \texttt{rg-tfg-cloudautomation-dev} & Agrupa todos los recursos del prototipo e identifica proyecto y entorno. \\
+App Service & \texttt{app-tfg-incidencias-dev} & Indica tipo de recurso, finalidad funcional y entorno de desarrollo. \\
+Storage Account & \texttt{sttfgincidenciasdev} & Nombre compatible con las restricciones de Azure Storage. \\
+Key Vault & \texttt{kv-tfg-incidencias-dev} & Identifica el almacén de secretos asociado a la solución. \\
+Logic App & \texttt{logic-tfg-solicitudes-dev} & Describe el flujo de automatización de solicitudes. \\
+Application Insights & \texttt{appi-tfg-incidencias-dev} & Recurso de observabilidad asociado al App Service. \\
+\end{tabularx}
+\caption{Nomenclatura de recursos Azure utilizada en el prototipo}
+\label{tabla:nomenclatura_recursos_azure}
+\end{table}
+
+El etiquetado facilita reconocer el propósito de los recursos, su entorno y su relación con el TFG. La tabla \ref{tabla:etiquetado_recursos} recoge las etiquetas mínimas consideradas.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X}
+\textbf{Etiqueta} & \textbf{Uso previsto} \\
+\hline
+\texttt{Project} & Identificar que el recurso pertenece al TFG. \\
+\texttt{Environment} & Distinguir el entorno de desarrollo utilizado para la evaluación. \\
+\texttt{ManagedBy} & Indicar si el recurso se documenta mediante Bicep, Terraform o scripts. \\
+\texttt{Owner} & Facilitar la responsabilidad operativa del recurso en un entorno empresarial. \\
+\end{tabularx}
+\caption{Etiquetas recomendadas para la gobernanza del prototipo}
+\label{tabla:etiquetado_recursos}
+\end{table}
+
+La figura \ref{fig:gobernanza-cloud-azure} sintetiza la gobernanza aplicada al prototipo, relacionando controles técnicos, herramientas de seguimiento y servicios Azure.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{gobernanza_cloud_azure.png}
+\caption{Gobernanza cloud aplicada al prototipo Azure. Fuente: elaboración propia.}
+\label{fig:gobernanza-cloud-azure}
+\end{figure}
 \section{Diseño procedimental}
 
 El flujo principal del sistema es:
@@ -191,6 +240,7 @@ created\_at & fecha & Fecha de creación de la solicitud. \\
 \section{Calidad y observabilidad}
 
 La calidad se comprueba mediante pruebas automáticas y análisis manual en SonarCloud. El panel de SonarCloud se aporta como evidencia de mantenibilidad, fiabilidad, seguridad y duplicidad del código. La observabilidad técnica se apoya en el endpoint \texttt{/health}, en los logs de App Service y en las métricas disponibles desde Application Insights y Azure Monitor \cite{azure_monitor}.
+
 
 
 
