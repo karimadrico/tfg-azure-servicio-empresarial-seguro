@@ -223,6 +223,7 @@ __marimo__/
 _*.txt
 *_out.txt
 *_err.txt
+src/LEER
 AzureCLI.msi
 *.nav
 *.snm
