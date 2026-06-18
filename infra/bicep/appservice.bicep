@@ -40,7 +40,7 @@ resource webApp 'Microsoft.Web/sites@2023-01-01' = { // NOSONAR
     serverFarmId: plan.id
     httpsOnly: true
     clientCertEnabled: true
-    clientCertMode: 'Optional' // NOSONAR
+    clientCertMode: 'Required'
     siteConfig: {
       linuxFxVersion: 'PYTHON|3.11'
       alwaysOn: true
@@ -58,6 +58,27 @@ resource webApp 'Microsoft.Web/sites@2023-01-01' = { // NOSONAR
         { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: applicationInsightsConnectionString }
       ]
     }
+  }
+}
+
+resource authSettings 'Microsoft.Web/sites/config@2023-01-01' = {
+  parent: webApp
+  name: 'authsettingsV2'
+  properties: {
+    platform: {
+      enabled: true
+      runtimeVersion: '~1'
+    }
+    globalValidation: {
+      requireAuthentication: true
+      unauthenticatedClientAction: 'Return401'
+    }
+    login: {
+      tokenStore: {
+        enabled: true
+      }
+    }
+    identityProviders: {}
   }
 }
 
