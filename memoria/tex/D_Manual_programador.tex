@@ -55,6 +55,26 @@ python -m unittest discover -s tests -p "test_*.py"
 
 Las pruebas verifican endpoints, creación de incidencias, métricas y clasificación automática.
 
+La tabla \ref{tabla:pruebas_realizadas} resume las pruebas principales aplicadas durante la validación del prototipo.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Prueba} & \textbf{Objetivo} & \textbf{Resultado esperado} \\
+\hline
+Endpoint raíz & Comprobar disponibilidad básica del servicio. & Respuesta 200 con estado operacional. \\
+Creación de solicitud & Validar entrada, clasificación y persistencia. & Respuesta 201 con identificador, prioridad y recomendación. \\
+Portal web & Verificar acceso a la interfaz de usuario. & HTML del portal cargado correctamente. \\
+Métricas & Comprobar agregación de solicitudes. & Totales por estado, prioridad y tipo. \\
+Clasificación de seguridad & Validar detección de incidencias críticas. & Categoría seguridad y prioridad alta. \\
+Verificación Azure & Probar despliegue real con script. & Health check, creación, listado y métricas correctas. \\
+SonarCloud & Revisar calidad externa del código. & Quality Gate aprobado y duplicación controlada. \\
+\end{tabularx}
+\caption{Pruebas realizadas sobre el prototipo}
+\label{tabla:pruebas_realizadas}
+\end{table}
+
 \section{Análisis de calidad}
 
 El proyecto utiliza SonarCloud como servicio gestionado de SonarQube:

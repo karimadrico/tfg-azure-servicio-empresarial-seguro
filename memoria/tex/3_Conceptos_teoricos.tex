@@ -36,6 +36,24 @@ SaaS & Aplicación completa consumida como servicio por el usuario final. & Micr
 
 La solución desarrollada se apoya principalmente en un enfoque PaaS. Azure App Service permite ejecutar una API Flask y un portal web sin administrar directamente el sistema operativo, el balanceo interno ni la infraestructura física subyacente \cite{azure_app_service_overview}.
 
+La tabla \ref{tabla:responsabilidad_compartida_cloud} resume cómo se reparte la responsabilidad entre el proveedor cloud y el equipo que desarrolla la aplicación. Esta distinción es importante porque el uso de servicios gestionados no elimina la responsabilidad de diseñar correctamente la aplicación, proteger los secretos y validar el despliegue.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Ámbito} & \textbf{Responsabilidad del proveedor cloud} & \textbf{Responsabilidad del proyecto} \\
+\hline
+Infraestructura física & Centros de datos, hardware, red física y energía. & Selección de región y uso responsable de recursos. \\
+Plataforma de ejecución & Mantenimiento del servicio gestionado App Service. & Configuración de runtime, variables de entorno y publicación de la aplicación. \\
+Datos & Disponibilidad del servicio de almacenamiento. & Modelo de datos, privacidad, validación y persistencia correcta. \\
+Identidad y secretos & Servicios como Key Vault y Managed Identity. & Definir permisos mínimos y evitar secretos en el repositorio. \\
+Aplicación & Componentes gestionados de plataforma. & Código Flask, autenticación, pruebas y control de calidad. \\
+\end{tabularx}
+\caption{Responsabilidad compartida en la solución cloud}
+\label{tabla:responsabilidad_compartida_cloud}
+\end{table}
+
 \subsection{Modelos de despliegue}
 
 Además de los modelos de servicio, la nube puede organizarse mediante diferentes modelos de despliegue: nube pública, privada, híbrida o multicloud. Este proyecto utiliza nube pública, ya que los recursos se despliegan en Microsoft Azure y se consumen desde una suscripción Azure for Students. Para un prototipo académico, este enfoque permite validar una arquitectura real con costes controlados y acceso remoto.

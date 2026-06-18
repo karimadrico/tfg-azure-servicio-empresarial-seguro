@@ -55,6 +55,25 @@ La API desarrollada en \texttt{src/app.py} expone los siguientes endpoints:
     \item \texttt{GET /metricas}: métricas agregadas del sistema.
 \end{itemize}
 
+La tabla \ref{tabla:endpoints_api} resume el contrato principal de la API, indicando el mecanismo de seguridad y la forma en que se ha validado cada operación.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l l X X}
+\textbf{Método} & \textbf{Ruta} & \textbf{Seguridad} & \textbf{Validación realizada} \\
+\hline
+GET & \texttt{/} & Pública & Comprobación de estado general del servicio. \\
+GET & \texttt{/portal} & Pública & Acceso al portal web desplegado en App Service. \\
+GET & \texttt{/health} & Pública & Verificación de estado y modo de almacenamiento. \\
+POST & \texttt{/solicitudes} & Pública con validación de entrada & Creación de solicitud y clasificación automática. \\
+GET & \texttt{/solicitudes} & Token Bearer & Consulta protegida con filtros y paginación. \\
+GET & \texttt{/metricas} & Token Bearer & Revisión de métricas agregadas del sistema. \\
+\end{tabularx}
+\caption{Endpoints principales de la API}
+\label{tabla:endpoints_api}
+\end{table}
+
 Al crear una solicitud, el módulo \texttt{classifier.py} analiza el título y la descripción para asignar tipo de solicitud (\textit{acceso}, \textit{entorno}, \textit{aplicación}, \textit{configuración}, \textit{incidencia}), prioridad (\textit{baja}, \textit{media}, \textit{alta}), categoría (\textit{seguridad}, \textit{infraestructura}, \textit{soporte}, \textit{general}) y una recomendación operativa, devolviendo un valor de confianza asociado.
 
 \section{Componente de inteligencia artificial}

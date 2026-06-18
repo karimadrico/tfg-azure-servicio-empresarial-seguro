@@ -31,6 +31,27 @@ Los servicios principales utilizados son:
     \item Azure Monitor.
 \end{itemize}
 
+La tabla \ref{tabla:herramientas_utilizadas} resume las herramientas empleadas y el motivo de su elección dentro del proyecto.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Herramienta} & \textbf{Uso en el proyecto} & \textbf{Motivo de elección} \\
+\hline
+Python y Flask & Implementación de la API REST y lógica de negocio. & Rapidez de desarrollo, claridad y ecosistema de bibliotecas. \\
+Azure App Service & Despliegue del portal y la API. & Servicio PaaS adecuado para exponer aplicaciones web sin administrar servidores. \\
+Azure Blob Storage & Persistencia de solicitudes en JSON. & Almacenamiento sencillo, económico y suficiente para el prototipo. \\
+Azure Key Vault & Gestión del token de autenticación. & Separación de secretos respecto al código fuente. \\
+Managed Identity & Acceso de App Service a Key Vault. & Evita credenciales manuales entre servicios Azure. \\
+PowerShell y Azure CLI & Automatización del despliegue. & Reproducibilidad y trazabilidad de los pasos ejecutados. \\
+Zube & Seguimiento de sprints y tablero Kanban. & Visibilidad del proceso y relación con GitHub. \\
+SonarCloud & Análisis de calidad del código. & Métricas externas de mantenibilidad, fiabilidad, seguridad y duplicación. \\
+\end{tabularx}
+\caption{Herramientas utilizadas y justificación}
+\label{tabla:herramientas_utilizadas}
+\end{table}
+
 \section{Automatización del despliegue}
 
 El despliegue se automatiza mediante el script \texttt{scripts/deploy-azure.ps1}, que utiliza Azure CLI para configurar App Service, Storage, Key Vault, Managed Identity y publicación ZIP de la aplicación. Esta decisión permite reproducir el despliegue desde un equipo local y documentar de forma explícita cada paso técnico aplicado sobre Azure.

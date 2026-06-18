@@ -34,6 +34,29 @@ Los requisitos no funcionales recogen propiedades transversales necesarias para 
     \item RNF-04 Trazabilidad.
 \end{itemize}
 
+La tabla \ref{tabla:requisitos_prioridad_validacion} amplía el catálogo de requisitos indicando prioridad y mecanismo de validación.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l l l X}
+\textbf{Código} & \textbf{Tipo} & \textbf{Prioridad} & \textbf{Validación} \\
+\hline
+RF-01 & Funcional & Alta & Prueba de \texttt{POST /solicitudes} y envío desde portal web. \\
+RF-02 & Funcional & Alta & Prueba de \texttt{GET /solicitudes} con token Bearer. \\
+RF-03 & Funcional & Media & Prueba de \texttt{GET /metricas}. \\
+RF-04 & Funcional & Alta & Comprobación de persistencia en Blob Storage y modo local. \\
+RF-05 & Funcional & Alta & Capturas de Key Vault, secreto e identidad administrada. \\
+RF-06 & Funcional & Media & Pruebas unitarias del clasificador y respuesta de creación de solicitud. \\
+RNF-01 & No funcional & Alta & Revisión de autenticación, secretos fuera del código y SonarCloud. \\
+RNF-02 & No funcional & Media & Uso de App Service y Blob Storage como servicios gestionados. \\
+RNF-03 & No funcional & Media & Endpoint \texttt{/health} y script \texttt{verify-azure.ps1}. \\
+RNF-04 & No funcional & Alta & Identificador, estado, prioridad, tipo, fecha y recomendación por solicitud. \\
+\end{tabularx}
+\caption{Requisitos con prioridad y validación}
+\label{tabla:requisitos_prioridad_validacion}
+\end{table}
+
 \section{Especificación de requisitos}
 
 \subsection{RF-01 Crear solicitudes operativas TI}

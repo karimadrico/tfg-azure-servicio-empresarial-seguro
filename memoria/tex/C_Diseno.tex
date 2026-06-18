@@ -17,6 +17,25 @@ Los principales componentes son:
     \item Script PowerShell con Azure CLI para despliegue reproducible.
 \end{itemize}
 
+La tabla \ref{tabla:decisiones_arquitectura} recoge las decisiones de arquitectura más relevantes y la alternativa principal considerada.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Decisión} & \textbf{Alternativa considerada} & \textbf{Justificación} \\
+\hline
+App Service para la API & Máquina virtual Linux & Reduce administración de sistema operativo y facilita despliegue PaaS. \\
+Blob Storage para persistencia & Base de datos relacional & El prototipo requiere documentos JSON sencillos y bajo coste. \\
+Key Vault para secretos & Variables locales o fichero \texttt{.env} & Evita almacenar credenciales en el repositorio y mejora seguridad. \\
+Managed Identity & Credenciales manuales entre servicios & Permite acceso a Key Vault sin secretos intermedios. \\
+PowerShell + Azure CLI & Pipeline remoto obligatorio & Hace el despliegue reproducible, auditable y demostrable desde el entorno local. \\
+Clasificador ligero & Modelo IA externo complejo & Mantiene el alcance viable y permite explicar las reglas en defensa. \\
+\end{tabularx}
+\caption{Decisiones principales de arquitectura}
+\label{tabla:decisiones_arquitectura}
+\end{table}
+
 La figura \ref{fig:arquitectura-cloud-azure} muestra el esquema general de la solución, centrado en App Service, Blob Storage y Key Vault.
 
 \begin{figure}[h]

@@ -144,15 +144,27 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 
 ## Estructura
 
-```text
-src/               API Flask, clasificador, almacenamiento y portal web
-tests/             Pruebas unitarias
-scripts/           Despliegue y verificacion en Azure
-infra/terraform/   Infraestructura como codigo documentada
-infra/bicep/       Plantillas Bicep alternativas/documentales
-memoria/           Memoria y anexos LaTeX/PDF
-docs/              Evidencias, arquitectura, despliegue, sprints y calidad
-```
+| Ruta | Contenido | Utilidad para el tribunal |
+|------|-----------|---------------------------|
+| `src/` | API Flask, clasificador, almacenamiento y portal web. | Permite revisar el producto software implementado. |
+| `src/static/` | Interfaz web del portal de solicitudes TI. | Evidencia la parte visible y demostrable de la aplicacion. |
+| `tests/` | Pruebas unitarias de API, portal, metricas y clasificador. | Permite comprobar validacion automatica del comportamiento. |
+| `scripts/` | Scripts PowerShell de despliegue y verificacion en Azure. | Documenta como se publica y valida la solucion real. |
+| `infra/terraform/` | Definicion Terraform de recursos Azure. | Sirve como infraestructura declarativa documentada. |
+| `infra/bicep/` | Plantillas Bicep alternativas/documentales. | Complementa la documentacion de infraestructura Azure. |
+| `memoria/` | Memoria y anexos en LaTeX, junto con los PDF generados. | Contiene los documentos oficiales de entrega. |
+| `memoria/tex/` | Capitulos 1-7 de memoria y anexos A-F. | Fuente editable de la documentacion academica. |
+| `memoria/img/` | Imagenes usadas por los documentos LaTeX. | Diagramas y recursos incluidos en memoria/anexos. |
+| `docs/api/` | Descripcion de endpoints y uso de la API. | Apoya la revision tecnica de la interfaz REST. |
+| `docs/arquitectura/` | Capturas y documentacion de arquitectura Azure. | Evidencia recursos cloud y decisiones de diseno. |
+| `docs/calidad/` | Resultado y explicacion de SonarCloud. | Evidencia calidad interna del codigo. |
+| `docs/decisiones/` | Decisiones tecnicas justificadas. | Ayuda a defender alternativas y elecciones realizadas. |
+| `docs/despliegue/` | Guias de despliegue y guion de demostracion. | Facilita reproducir y explicar el despliegue. |
+| `docs/diagramas/` | Diagramas textuales Mermaid. | Complementa visualmente arquitectura, flujo y despliegue. |
+| `docs/entrega/` | Checklist y base del PDF de enlaces. | Organiza los entregables finales de UBUVirtual. |
+| `docs/evidencias/` | Capturas finales de Azure, portal, API, Zube, SonarCloud y GitHub. | Recoge pruebas visuales del producto y del proceso. |
+| `docs/sprints/` | Capturas y resumen de sprints en Zube. | Evidencia la planificacion agil y el seguimiento. |
+| `anexos/` | Indice auxiliar de anexos tecnicos. | Orienta hacia los anexos oficiales generados en `memoria/anexos.pdf`. |
 
 ## Entregables TFG
 
@@ -162,5 +174,6 @@ docs/              Evidencias, arquitectura, despliegue, sprints y calidad
 - Pruebas en `tests/`.
 - Evidencias y documentacion en `docs/`.
 - Diagramas textuales en `docs/diagramas/diagramas.md`.
+- Capturas finales explicadas en `docs/evidencias/README.md`.
 - Base del PDF de enlaces en `docs/entrega/enlaces-tfg.md`.
 - Licencia MIT en `LICENSE`.
