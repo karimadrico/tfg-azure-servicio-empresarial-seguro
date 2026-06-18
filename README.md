@@ -13,6 +13,8 @@ Plataforma cloud en Microsoft Azure para **automatizar solicitudes internas de T
 4. Se genera una **recomendación operativa** automática.
 5. Los datos se almacenan en **Blob Storage** y los secretos en **Key Vault**.
 
+El objetivo del TFG es demostrar una solución completa y evaluable: análisis del problema, diseño cloud, implementación, pruebas, despliegue, seguimiento de tareas en Zube y control de calidad con SonarCloud.
+
 ## Arquitectura
 
 ```text
@@ -54,6 +56,12 @@ python app.py
 
 Abrir http://localhost:5000/portal
 
+Para ejecutar las pruebas automáticas desde la raíz del repositorio:
+
+```powershell
+python -m unittest discover -s tests -p "test_*.py"
+```
+
 ## Despliegue en Azure (PowerShell)
 
 ```powershell
@@ -61,6 +69,24 @@ az login
 .\scripts\deploy-azure.ps1
 .\scripts\verify-azure.ps1
 ```
+
+El despliegue publica la API y el portal en Azure App Service, configura el modo de almacenamiento cloud y permite validar el endpoint técnico `/health`.
+
+## Calidad de Código
+
+El repositorio incluye análisis de calidad con SonarCloud:
+
+- Configuración: `sonar-project.properties`
+- Workflow: `.github/workflows/sonarcloud.yml`
+- Guía: `docs/calidad/sonarcloud.md`
+
+El workflow se ejecuta con cada push a `main` y realiza:
+
+1. Instalación de dependencias Python.
+2. Ejecución de pruebas unitarias.
+3. Escaneo de calidad con SonarCloud.
+
+Para que el análisis funcione en GitHub Actions debe existir el secreto `SONAR_TOKEN` en `Settings -> Secrets and variables -> Actions`.
 
 ## Endpoints
 
@@ -77,6 +103,16 @@ az login
 - **GitHub:** https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro
 - **Zube (sprints):** https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban
 - **Tribunal:** invitar usuario `ubutfgm`
+
+## Entregables TFG
+
+- `memoria/memoria.pdf`: memoria principal.
+- `memoria/anexos.pdf`: anexos técnicos.
+- `src/`: código fuente de la aplicación Flask y portal web.
+- `tests/`: pruebas automáticas.
+- `infra/terraform/` y `infra/bicep/`: infraestructura como código.
+- `logicapp/`: definición del flujo de automatización.
+- `docs/`: documentación de arquitectura, despliegue, decisiones, sprints y calidad.
 
 ## Estructura
 
