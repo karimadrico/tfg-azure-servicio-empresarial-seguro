@@ -20,5 +20,4 @@ variable "api_key" {
   description = "Clave API almacenada en Key Vault"
   type        = string
   sensitive   = true
-  default     = "tfg-api-key-ubu-2026"
 }

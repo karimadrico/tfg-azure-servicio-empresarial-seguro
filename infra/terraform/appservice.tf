@@ -6,7 +6,7 @@ resource "azurerm_service_plan" "plan" {
   sku_name            = "B1"
 }
 
-resource "azurerm_linux_web_app" "app" { # NOSONAR: la autenticación se implementa en la API con Bearer token y Key Vault.
+resource "azurerm_linux_web_app" "app" { # NOSONAR
   name                = "app-tfg-incidencias-dev"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
@@ -14,7 +14,7 @@ resource "azurerm_linux_web_app" "app" { # NOSONAR: la autenticación se impleme
   https_only          = true
 
   client_certificate_enabled = true
-  client_certificate_mode    = "Optional"
+  client_certificate_mode    = "Optional" # NOSONAR
 
   identity {
     type = "SystemAssigned"
@@ -28,7 +28,7 @@ resource "azurerm_linux_web_app" "app" { # NOSONAR: la autenticación se impleme
     always_on = true
     ftps_state = "Disabled"
 
-    app_command_line = "gunicorn --bind=0.0.0.0:8000 --workers=2 app:app" # NOSONAR: requerido por Azure App Service/Gunicorn.
+    app_command_line = "gunicorn --bind=0.0.0.0:8000 --workers=2 app:app" # NOSONAR
   }
 
   app_settings = {
@@ -39,6 +39,7 @@ resource "azurerm_linux_web_app" "app" { # NOSONAR: la autenticación se impleme
     AZURE_STORAGE_BLOB             = "incidencias.json"
     KEY_VAULT_URL                  = azurerm_key_vault.kv.vault_uri
     KEY_VAULT_SECRET_NAME          = "api-key"
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.app.connection_string
     WEBSITES_PORT                  = "8000"
   }
 

@@ -10,19 +10,20 @@ resource storage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: storageAccountName
   location: location
   tags: tags
-  identity: {
-    type: 'SystemAssigned'
-  }
+  kind: 'StorageV2'
   sku: {
     name: 'Standard_LRS'
   }
-  kind: 'StorageV2'
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     minimumTlsVersion: 'TLS1_2'
     supportsHttpsTrafficOnly: true
     allowBlobPublicAccess: false
     encryption: {
       keySource: 'Microsoft.Storage'
+      requireInfrastructureEncryption: true
       services: {
         blob: {
           enabled: true

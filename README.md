@@ -68,7 +68,7 @@ Consultar solicitudes protegidas:
 ```powershell
 Invoke-RestMethod `
   -Uri "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/solicitudes" `
-  -Headers @{ Authorization = "Bearer tfg-api-key-ubu-2026" }
+  -Headers @{ Authorization = "Bearer $env:API_KEY" }
 ```
 
 Crear solicitud:

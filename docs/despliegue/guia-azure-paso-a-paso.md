@@ -43,7 +43,7 @@ Comprobación manual:
 
 ```powershell
 $base = "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net"
-$headers = @{ Authorization = "Bearer tfg-api-key-ubu-2026" }
+$headers = @{ Authorization = "Bearer $env:API_KEY" }
 
 Invoke-RestMethod "$base/health"
 Start-Process "$base/portal"

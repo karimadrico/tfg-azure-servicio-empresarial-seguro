@@ -21,3 +21,7 @@ output "key_vault_name" {
 output "key_vault_uri" {
   value = azurerm_key_vault.kv.vault_uri
 }
+
+output "application_insights_name" {
+  value = azurerm_application_insights.app.name
+}

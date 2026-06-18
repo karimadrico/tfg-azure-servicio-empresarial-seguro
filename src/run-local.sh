@@ -3,7 +3,7 @@
 
 PYTHON="/c/Users/kdraf/AppData/Local/Programs/Python/Python311/python.exe"
 
-if [ ! -f "$PYTHON" ]; then
+if [[ ! -f "$PYTHON" ]]; then
   echo "No se encontró Python 3.11 en la ruta esperada."
   echo "Instálalo desde https://www.python.org/downloads/"
   exit 1

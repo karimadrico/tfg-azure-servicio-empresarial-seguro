@@ -43,7 +43,7 @@ Campos principales:
 ## Consultar solicitudes
 
 ```powershell
-$headers = @{ Authorization = "Bearer tfg-api-key-ubu-2026" }
+$headers = @{ Authorization = "Bearer $env:API_KEY" }
 Invoke-RestMethod `
   -Uri "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/solicitudes" `
   -Headers $headers

@@ -12,7 +12,8 @@ from classifier import VALID_TIPOS, classify_solicitud
 from config import Config
 from storage import IncidenciaStorage
 
-app = Flask(__name__, static_folder="static")  # NOSONAR: API REST sin sesiones por cookie; las operaciones protegidas usan Bearer token.
+# API REST sin sesiones por cookie; los endpoints protegidos usan Bearer token.
+app = Flask(__name__, static_folder="static")  # NOSONAR
 config = Config()
 storage = IncidenciaStorage(config)
 
@@ -38,10 +39,10 @@ def _next_id(incidencias: list[dict[str, Any]]) -> str:
         return "SOL-001"
     numbers = []
     for item in incidencias:
-        for prefix in ("SOL", "INC"):
-            match = re.match(rf"{prefix}-(\d+)$", item.get("id", ""))
-            if match:
-                numbers.append(int(match.group(1)))
+        identifier = str(item.get("id", ""))
+        prefix, separator, number = identifier.partition("-")
+        if separator and prefix in {"SOL", "INC"} and number.isdecimal():
+            numbers.append(int(number))
     return f"SOL-{max(numbers, default=0) + 1:03d}"
 
 
@@ -247,7 +248,7 @@ def metricas() -> Any:
     incidencias = storage.load()
     por_prioridad = {"baja": 0, "media": 0, "alta": 0}
     por_estado = {"abierta": 0, "en_proceso": 0, "cerrada": 0}
-    por_tipo = {tipo: 0 for tipo in VALID_TIPOS}
+    por_tipo = dict.fromkeys(VALID_TIPOS, 0)
 
     for item in incidencias:
         prioridad = item.get("prioridad", "media")

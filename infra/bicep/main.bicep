@@ -28,6 +28,14 @@ module keyvault 'keyvault.bicep' = {
   }
 }
 
+module monitoring 'monitoring.bicep' = {
+  name: 'monitoringDeployment'
+  params: {
+    location: location
+    tags: tags
+  }
+}
+
 module appservice 'appservice.bicep' = {
   name: 'appserviceDeployment'
   params: {
@@ -35,9 +43,11 @@ module appservice 'appservice.bicep' = {
     tags: tags
     storageConnectionString: storage.outputs.connectionString
     keyVaultUri: keyvault.outputs.vaultUri
+    applicationInsightsConnectionString: monitoring.outputs.connectionString
   }
 }
 
 output webAppUrl string = appservice.outputs.webAppUrl
 output keyVaultUri string = keyvault.outputs.vaultUri
 output storageAccountName string = storage.outputs.storageAccountName
+output applicationInsightsName string = monitoring.outputs.appInsightsName

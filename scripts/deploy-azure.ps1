@@ -8,6 +8,7 @@ $ResourceGroup = "rg-tfg-cloudautomation-dev"
 $WebAppName = "app-tfg-incidencias-dev"
 $StorageAccount = "sttfgincidenciasdev"
 $KeyVaultName = "kv-tfg-incidencias-dev"
+$AppInsightsName = "appi-tfg-incidencias-dev"
 if (-not $env:API_KEY) {
     throw "Define la variable de entorno API_KEY antes de desplegar."
 }
@@ -108,7 +109,7 @@ Write-Host "Resource Group: $ResourceGroup"
 Write-Host "App Service:    $WebAppName"
 Write-Host ""
 
-Write-Host "[1/6] Comprobando sesion en Azure..."
+Write-Host "[1/7] Comprobando sesion en Azure..."
 try {
     Invoke-Az @("account", "show", "--query", "id", "-o", "tsv") | Out-Null
 }
@@ -120,7 +121,7 @@ catch {
     Invoke-Az @("account", "show", "--query", "id", "-o", "tsv") | Out-Null
 }
 
-Write-Host "[2/6] Obteniendo configuracion de Storage y Key Vault..."
+Write-Host "[2/7] Obteniendo configuracion de Storage y Key Vault..."
 $storageConn = Invoke-Az @(
     "storage", "account", "show-connection-string",
     "--name", $StorageAccount,
@@ -150,7 +151,43 @@ $kvRbacEnabled = Invoke-Az @(
     "-o", "tsv"
 )
 
-Write-Host "[3/6] Habilitando Managed Identity en App Service..."
+Write-Host "[3/7] Preparando Application Insights..."
+$appInsights = ""
+try {
+    $appInsights = Invoke-Az @(
+        "resource", "show",
+        "--resource-group", $ResourceGroup,
+        "--resource-type", "Microsoft.Insights/components",
+        "--name", $AppInsightsName,
+        "--query", "id",
+        "-o", "tsv"
+    )
+}
+catch {
+    $appInsights = ""
+}
+
+if (-not $appInsights) {
+    Invoke-Az @(
+        "resource", "create",
+        "--resource-group", $ResourceGroup,
+        "--resource-type", "Microsoft.Insights/components",
+        "--name", $AppInsightsName,
+        "--location", "swedencentral",
+        "--properties", '{"Application_Type":"web"}'
+    ) | Out-Null
+}
+
+$appInsightsConnectionString = Invoke-Az @(
+    "resource", "show",
+    "--resource-group", $ResourceGroup,
+    "--resource-type", "Microsoft.Insights/components",
+    "--name", $AppInsightsName,
+    "--query", "properties.ConnectionString",
+    "-o", "tsv"
+)
+
+Write-Host "[4/7] Habilitando Managed Identity en App Service..."
 $identity = Invoke-Az @(
     "webapp", "identity", "assign",
     "--name", $WebAppName,
@@ -159,7 +196,7 @@ $identity = Invoke-Az @(
     "-o", "tsv"
 )
 
-Write-Host "[4/6] Configurando acceso de App Service a Key Vault..."
+Write-Host "[5/7] Configurando acceso de App Service a Key Vault..."
 if ($kvRbacEnabled -eq "true") {
     Write-Host "Key Vault usa RBAC. Asignando rol Key Vault Secrets User..."
     try {
@@ -193,7 +230,7 @@ Invoke-Az @(
     "--value", $ApiKey
 ) | Out-Null
 
-Write-Host "[5/6] Configurando variables de entorno..."
+Write-Host "[6/7] Configurando variables de entorno..."
 Invoke-Az @(
     "webapp", "config", "appsettings", "set",
     "--name", $WebAppName,
@@ -205,6 +242,7 @@ Invoke-Az @(
     "AZURE_STORAGE_BLOB=incidencias.json",
     "KEY_VAULT_URL=$kvUrl",
     "KEY_VAULT_SECRET_NAME=api-key",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING=$appInsightsConnectionString",
     "API_KEY=",
     "SCM_DO_BUILD_DURING_DEPLOYMENT=true",
     "WEBSITES_PORT=8000"
@@ -214,10 +252,10 @@ Invoke-Az @(
     "webapp", "config", "set",
     "--name", $WebAppName,
     "--resource-group", $ResourceGroup,
-    "--startup-file", "gunicorn --bind=0.0.0.0:8000 --workers=2 app:app" # NOSONAR: requerido por Azure App Service/Gunicorn.
+    "--startup-file", "gunicorn --bind=0.0.0.0:8000 --workers=2 app:app"
 ) | Out-Null
 
-Write-Host "[6/6] Publicando codigo de src/..."
+Write-Host "[7/7] Publicando codigo de src/..."
 $zipPath = Join-Path $env:TEMP "tfg-api-deploy.zip"
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 
@@ -252,7 +290,7 @@ $url = "https://$defaultHostName"
 Write-Host ""
 Write-Host "Despliegue finalizado." -ForegroundColor Green
 Write-Host "URL:     $url"
-Write-Host "API Key: $ApiKey (almacenada en Key Vault)"
+Write-Host "API Key: almacenada en Key Vault"
 Write-Host ""
 Write-Host "Comprobacion:"
 Write-Host "  Invoke-RestMethod $url/health"

@@ -9,6 +9,13 @@ resource "azurerm_storage_account" "storage" {
   identity {
     type = "SystemAssigned"
   }
+
+  allow_nested_items_to_be_public    = false
+  infrastructure_encryption_enabled = true
+
+  blob_properties {
+    versioning_enabled = true
+  }
 }
 
 resource "azurerm_storage_container" "incidencias" {
