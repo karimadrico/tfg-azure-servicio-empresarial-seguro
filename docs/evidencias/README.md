@@ -78,18 +78,32 @@ Salida de `scripts/verify-azure.ps1`, que valida automáticamente `/`, `/health`
 
 ## 2.1. Automatizacion con Logic App
 
-Cuando este desplegada la Logic App, anadir estas capturas a esta carpeta:
+La Logic App `logic-tfg-solicitudes-dev` automatiza la entrada de solicitudes externas mediante un trigger HTTP y una llamada a la API desplegada en App Service. Para documentarla en anexos, anadir estas capturas a esta carpeta:
 
 - `logic-app-workflow.png`: disenador de la Logic App con trigger HTTP y accion HTTP hacia la API.
 - `logic-app-run-history.png`: historial de ejecucion correcto al enviar una solicitud.
+- `logic-app-created-request.png`: salida de la ejecucion o solicitud creada en la API, ocultando cualquier firma `sig` o secreto.
 
 Estas evidencias sirven para defender la automatizacion cloud del proceso empresarial.
+
+## 2.2. Observabilidad con Azure Monitor
+
+Application Insights y Azure Monitor permiten justificar que el prototipo no solo se despliega, sino que tambien puede supervisarse durante su ejecucion.
+
+Anadir estas capturas:
+
+- `application-insights-overview.png`: vista general del recurso `appi-tfg-incidencias-dev`.
+- `azure-monitor-metrics.png`: metricas del App Service o de Application Insights, por ejemplo peticiones, errores o tiempo de respuesta.
 
 ## 3. Calidad de código
 
 ![Quality Gate SonarCloud](sonarcloud-quality-gate.png)
 
 Captura del Quality Gate aprobado en SonarCloud. Es la evidencia principal para el criterio de calidad interna.
+
+Cuando el ultimo analisis quede limpio, guardar tambien:
+
+- `sonarcloud-quality-gate-clean.png`: Quality Gate final tras corregir los avisos de SonarCloud y revisar los Security Hotspots necesarios.
 
 ![Issues SonarCloud](sonarcloud-issues.png)
 

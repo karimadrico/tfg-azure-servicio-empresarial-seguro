@@ -6,7 +6,7 @@ Este anexo describe el diseño general de la plataforma cloud para la automatiza
 
 \section{Diseño arquitectónico}
 
-La arquitectura sigue un modelo basado en servicios cloud desplegados sobre Microsoft Azure. La aplicación se ejecuta en Azure App Service, utiliza Azure Blob Storage para persistir solicitudes, Azure Key Vault para secretos y Managed Identity para reducir la exposición de credenciales \cite{azure_appservice_python,azure_blob_python,azure_appservice_managed_identity,azure_appservice_keyvault_python}.
+La arquitectura sigue un modelo basado en servicios cloud desplegados sobre Microsoft Azure. La aplicación se ejecuta en Azure App Service, utiliza Azure Blob Storage para persistir solicitudes, Azure Key Vault para secretos y Managed Identity para reducir la exposición de credenciales \cite{azure_appservice_python,azure_blob_python,azure_appservice_managed_identity,azure_appservice_keyvault_python}. Además, incorpora Azure Logic Apps como mecanismo de automatización de entrada y Application Insights/Azure Monitor para observabilidad básica del servicio \cite{azure_logic_apps,azure_monitor}.
 
 Los principales componentes son:
 
@@ -14,6 +14,8 @@ Los principales componentes son:
     \item Azure App Service (API Flask y portal web).
     \item Azure Storage (persistencia de solicitudes).
     \item Azure Key Vault (gestión de secretos).
+    \item Azure Logic Apps (automatización HTTP de solicitudes).
+    \item Application Insights y Azure Monitor (observabilidad del despliegue).
     \item Script PowerShell con Azure CLI para despliegue reproducible.
 \end{itemize}
 
@@ -31,6 +33,8 @@ Key Vault para secretos & Variables locales o fichero \texttt{.env} & Evita alma
 Managed Identity & Credenciales manuales entre servicios & Permite acceso a Key Vault sin secretos intermedios. \\
 PowerShell + Azure CLI & Pipeline remoto obligatorio & Hace el despliegue reproducible, auditable y demostrable desde el entorno local. \\
 Clasificador ligero & Modelo IA externo complejo & Mantiene el alcance viable y permite explicar las reglas en defensa. \\
+Logic App HTTP & Llamadas manuales o integración externa ad hoc & Automatiza la recepción de solicitudes externas y demuestra orquestación cloud. \\
+Application Insights & Revisión manual exclusiva de logs & Permite evidenciar observabilidad y seguimiento técnico del servicio desplegado. \\
 \end{tabularx}
 \caption{Decisiones principales de arquitectura}
 \label{tabla:decisiones_arquitectura}
@@ -84,7 +88,15 @@ El flujo principal del sistema es:
     \item \textbf{Terraform}: documenta Resource Group, App Service, Storage y Key Vault como infraestructura declarativa.
     \item \textbf{Bicep}: plantillas alternativas para reproducir la infraestructura.
     \item \textbf{Script PowerShell}: configura recursos existentes y publica la aplicación en Azure App Service.
+    \item \textbf{Logic App}: expone un trigger HTTP que transforma una solicitud externa en una llamada controlada a \texttt{POST /solicitudes}.
+    \item \textbf{Application Insights}: recoge telemetría del App Service para apoyar la supervisión del prototipo.
 \end{itemize}
+
+\section{Automatización con Logic App}
+
+La Logic App añadida al prototipo actúa como punto de entrada para sistemas externos que necesiten generar solicitudes sin utilizar directamente el portal web. El flujo recibe una petición HTTP con los campos principales de la solicitud, invoca la API desplegada en App Service mediante \texttt{POST /solicitudes} y devuelve al llamante la respuesta generada por la propia API. De esta forma, la lógica de validación, clasificación automática y persistencia se mantiene centralizada en el backend.
+
+Esta decisión permite defender un caso de automatización empresarial realista: un formulario externo, una herramienta de soporte o un proceso corporativo podrían enviar solicitudes al flujo HTTP y delegar en la plataforma cloud la clasificación, priorización y registro de la petición.
 
 Las figuras \ref{fig:azure-app-service}, \ref{fig:azure-key-vault}, \ref{fig:azure-managed-identity} y \ref{fig:azure-storage} muestran evidencias de los principales servicios utilizados.
 
@@ -142,4 +154,4 @@ created\_at & fecha & Fecha de creación de la solicitud. \\
 
 \section{Calidad y observabilidad}
 
-La calidad se comprueba mediante pruebas automáticas y análisis manual en SonarCloud. El panel de SonarCloud se aporta como evidencia de mantenibilidad, fiabilidad, seguridad y duplicidad del código. La observabilidad técnica se apoya en el endpoint \texttt{/health}, en los logs de App Service y en las métricas disponibles desde Azure Monitor \cite{azure_monitor}.
+La calidad se comprueba mediante pruebas automáticas y análisis manual en SonarCloud. El panel de SonarCloud se aporta como evidencia de mantenibilidad, fiabilidad, seguridad y duplicidad del código. La observabilidad técnica se apoya en el endpoint \texttt{/health}, en los logs de App Service y en las métricas disponibles desde Application Insights y Azure Monitor \cite{azure_monitor}.

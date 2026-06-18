@@ -176,9 +176,9 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 | `docs/calidad/` | Resultado y explicacion de SonarCloud. | Evidencia calidad interna del codigo. |
 | `docs/decisiones/` | Decisiones tecnicas justificadas. | Ayuda a defender alternativas y elecciones realizadas. |
 | `docs/despliegue/` | Guias de despliegue y guion de demostracion. | Facilita reproducir y explicar el despliegue. |
-| `docs/diagramas/` | Diagramas textuales Mermaid. | Complementa visualmente arquitectura, flujo y despliegue. |
+| `docs/diagramas/` | Guía de diagramas finales y diagramas Mermaid de apoyo. | Define los PNG que se incorporan a memoria y anexos. |
 | `docs/entrega/` | Checklist y base del PDF de enlaces. | Organiza los entregables finales de UBUVirtual. |
-| `docs/evidencias/` | Capturas finales de Azure, portal, API, Zube, SonarCloud y GitHub. | Recoge pruebas visuales del producto y del proceso. |
+| `docs/evidencias/` | Capturas finales de Azure, portal, API, Logic App, Monitor, Zube, SonarCloud y GitHub. | Recoge pruebas visuales del producto y del proceso. |
 | `docs/sprints/` | Capturas y resumen de sprints en Zube. | Evidencia la planificacion agil y el seguimiento. |
 | `anexos/` | Indice auxiliar de anexos tecnicos. | Orienta hacia los anexos oficiales generados en `memoria/anexos.pdf`. |
 
@@ -189,7 +189,7 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 - Codigo fuente en `src/`.
 - Pruebas en `tests/`.
 - Evidencias y documentacion en `docs/`.
-- Diagramas textuales en `docs/diagramas/diagramas.md`.
+- Guía de diagramas y diagramas textuales en `docs/diagramas/diagramas.md`.
 - Capturas finales explicadas en `docs/evidencias/README.md`.
 - Base del PDF de enlaces en `docs/entrega/enlaces-tfg.md`.
 - Licencia MIT en `LICENSE`.

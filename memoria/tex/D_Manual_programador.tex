@@ -13,6 +13,7 @@ Este anexo describe la estructura técnica del repositorio y los pasos para ejec
     \item \texttt{src/config.py}: configuración por variables de entorno.
     \item \texttt{src/requirements.txt}: dependencias Python.
     \item \texttt{tests/test\_api.py}: pruebas unitarias.
+    \item \texttt{logicapp/}: definición del flujo de automatización HTTP.
     \item \texttt{infra/terraform/}: infraestructura como código.
     \item \texttt{scripts/}: despliegue y verificación en Azure.
     \item \texttt{memoria/tex/}: memoria y anexos en LaTeX.
@@ -46,6 +47,7 @@ La API quedará disponible en \texttt{http://localhost:5000}.
     \item Ejecutar \texttt{scripts/deploy-azure.ps1} desde la raíz del repositorio.
     \item Comprobar \texttt{/health} y abrir el portal web desplegado.
     \item Ejecutar \texttt{scripts/verify-azure.ps1} para verificar endpoints principales.
+    \item Ejecutar \texttt{scripts/deploy-logicapp.ps1} para publicar el flujo HTTP de automatización cuando se desee probar la integración externa.
 \end{enumerate}
 
 \section{Pruebas del sistema}
@@ -70,6 +72,7 @@ Portal web & Verificar acceso a la interfaz de usuario. & HTML del portal cargad
 Métricas & Comprobar agregación de solicitudes. & Totales por estado, prioridad y tipo. \\
 Clasificación de seguridad & Validar detección de incidencias críticas. & Categoría seguridad y prioridad alta. \\
 Verificación Azure & Probar despliegue real con script. & Health check, creación, listado y métricas correctas. \\
+Logic App & Validar automatización externa de solicitudes. & Trigger HTTP invoca \texttt{POST /solicitudes} y devuelve una solicitud creada. \\
 SonarCloud & Revisar calidad externa del código. & Quality Gate aprobado y duplicación controlada. \\
 \end{tabularx}
 \caption{Pruebas realizadas sobre el prototipo}
