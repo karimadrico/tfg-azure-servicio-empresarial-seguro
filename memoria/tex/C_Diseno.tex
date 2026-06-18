@@ -107,6 +107,50 @@ La figura \ref{fig:gobernanza-cloud-azure} sintetiza la gobernanza aplicada al p
 \caption{Gobernanza cloud aplicada al prototipo Azure. Fuente: elaboración propia.}
 \label{fig:gobernanza-cloud-azure}
 \end{figure}
+
+\subsection{Matriz de roles}
+
+La tabla \ref{tabla:roles_operativos} diferencia los actores que intervienen en la solución y limita sus responsabilidades siguiendo el principio de mínimo privilegio.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Rol} & \textbf{Responsabilidad} & \textbf{Acceso previsto} \\
+\hline
+Usuario interno & Registrar solicitudes operativas TI. & Portal web y creación de solicitudes. \\
+Sistema externo & Automatizar la entrada de solicitudes. & Trigger HTTP de Logic App, sin acceso directo a Storage ni Key Vault. \\
+Equipo TI & Revisar solicitudes, métricas y prioridades. & Endpoints protegidos de consulta y paneles de evidencias. \\
+Administrador cloud & Mantener despliegue, configuración y secretos. & Azure App Service, Key Vault, Storage, Logic App y Monitor. \\
+Tribunal & Evaluar funcionamiento, documentación y calidad. & Portal, repositorio, SonarCloud, Zube y evidencias documentadas. \\
+\end{tabularx}
+\caption{Matriz de roles operativos del prototipo}
+\label{tabla:roles_operativos}
+\end{table}
+
+\subsection{Políticas técnicas aplicadas}
+
+A partir de las recomendaciones de seguridad y operación cloud, se han definido políticas ligeras aplicables al prototipo. No se plantean como Azure Policy corporativas obligatorias, sino como criterios técnicos verificados durante el desarrollo y la documentación.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Código} & \textbf{Criterio} & \textbf{Evidencia en el proyecto} \\
+\hline
+POL-01 & Recursos agrupados por proyecto y entorno. & Resource Group \texttt{rg-tfg-cloudautomation-dev}. \\
+POL-02 & Uso de región europea para el despliegue. & Recursos desplegados en \texttt{Sweden Central}. \\
+POL-03 & Secretos fuera del código fuente. & API key almacenada en Azure Key Vault. \\
+POL-04 & Acceso a secretos mediante identidad administrada. & Managed Identity habilitada en App Service. \\
+POL-05 & Almacenamiento privado de datos. & Contenedor Blob privado para solicitudes. \\
+POL-06 & Comunicaciones públicas mediante HTTPS. & App Service y endpoints expuestos sobre HTTPS. \\
+POL-07 & Observabilidad mínima del servicio. & Application Insights, Azure Monitor, \texttt{/health} y \texttt{/metricas}. \\
+POL-08 & Calidad de código revisada externamente. & Quality Gate de SonarCloud aprobado. \\
+POL-09 & Planificación observable. & Sprints y tablero Kanban en Zube. \\
+\end{tabularx}
+\caption{Políticas técnicas aplicadas al prototipo}
+\label{tabla:politicas_tecnicas}
+\end{table}
 \section{Diseño procedimental}
 
 El flujo principal del sistema es:
@@ -240,6 +284,7 @@ created\_at & fecha & Fecha de creación de la solicitud. \\
 \section{Calidad y observabilidad}
 
 La calidad se comprueba mediante pruebas automáticas y análisis manual en SonarCloud. El panel de SonarCloud se aporta como evidencia de mantenibilidad, fiabilidad, seguridad y duplicidad del código. La observabilidad técnica se apoya en el endpoint \texttt{/health}, en los logs de App Service y en las métricas disponibles desde Application Insights y Azure Monitor \cite{azure_monitor}.
+
 
 
 
