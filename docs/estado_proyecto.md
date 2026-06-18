@@ -1,53 +1,52 @@
 # Estado Actual del Proyecto
 
-Última actualización: 8 de junio de 2026
+Última actualización: 18 de junio de 2026
 
-Porcentaje completado: ~85%
+Porcentaje completado: ~90%
 
-## 1. Resumen Ejecutivo
+## Resumen Ejecutivo
 
-El proyecto dispone de una solución funcional implementada: API Flask con gestión de incidencias, clasificación automática, persistencia en Azure Storage, gestión de secretos con Key Vault, infraestructura Terraform consolidada, CI/CD con GitHub Actions, Logic App de automatización y documentación actualizada en memoria y anexos.
+El proyecto dispone de una solución funcional desplegada en Microsoft Azure: API Flask con gestión de solicitudes TI, portal web, clasificación automática, persistencia en Azure Blob Storage, gestión de secretos con Key Vault, Managed Identity y despliegue reproducible mediante PowerShell y Azure CLI.
 
-Pendiente para entrega final: despliegue verificado en Azure, video demostración y compilación final de memoria/anexos PDF.
+Quedan como tareas finales la grabación de los dos vídeos obligatorios, la generación del PDF final de enlaces y la creación de la release final del repositorio.
 
-## 2. Estado por Componentes
+## Estado por Componentes
 
 ### Completados
 
 - API Flask (`src/app.py`): endpoints operativos con validación y autenticación Bearer.
-- Clasificador automático (`src/classifier.py`): prioridad y categoría por análisis de palabras clave.
+- Portal web (`src/static/index.html`): formulario de solicitud y experiencia de demostración.
+- Clasificador automático (`src/classifier.py`): prioridad, tipo, categoría y recomendación.
 - Persistencia (`src/storage.py`): modo local y Azure Blob Storage.
+- Seguridad: Key Vault, Managed Identity y token Bearer.
+- Despliegue Azure: `scripts/deploy-azure.ps1` y verificación con `scripts/verify-azure.ps1`.
 - Pruebas unitarias (`tests/test_api.py`).
-- Terraform consolidado (`infra/terraform/`): App Service, Storage, Key Vault, Managed Identity.
-- CI/CD GitHub Actions: tests + Terraform + despliegue de `src/`.
-- Logic App: flujo HTTP → API documentado en `logicapp/`.
-- Memoria y anexos LaTeX actualizados (capítulos 5, B, C, D, E).
-- Documentación técnica (`docs/`, `README.md`).
+- Planificación: cinco sprints en Zube con enlace en README y anexos.
+- Calidad: SonarCloud manual con Quality Gate aprobado.
+- Memoria y anexos en LaTeX/PDF.
 
-### En progreso
+### Pendientes de entrega
 
-- Despliegue final en Azure (requiere credenciales `AZURE_CREDENTIALS` en GitHub).
-- Importación de Logic App en portal Azure.
-- Video demostración y presentación personal.
+- Grabar vídeo de presentación del TFG con cámara y audio.
+- Grabar vídeo de demostración funcional del producto.
+- Crear PDF final de enlaces para UBUVirtual.
+- Crear release final en GitHub.
+- Guardar capturas finales: Azure Portal, Zube, SonarCloud y aplicación desplegada.
 
-### Planificado
-
-- Application Insights para monitorización avanzada.
-- Interfaz web de usuario.
-- Modelo ML para clasificación (mejora futura).
-
-## 3. Checklist de Evaluación (Tribunal)
+## Checklist de Evaluación
 
 | Criterio | Estado |
 |----------|--------|
-| Planificación (25%) | Plan, sprints, Zube, commits — ~90% |
-| Análisis, diseño e implementación (40%) | API funcional, Terraform, pruebas, despliegue — ~85% |
-| Presentación y defensa (35%) | Memoria en progreso, videos pendientes — ~60% |
+| Planificación y seguimiento | Cumplido: Zube, sprints, commits y documentación |
+| Análisis, diseño e implementación | Cumplido: API, portal, Azure, seguridad, pruebas y despliegue |
+| Producto software evaluable | Cumplido: portal y API desplegados en Azure App Service |
+| Calidad de código | Cumplido: SonarCloud enlazado y documentado |
+| Defensa | Pendiente: vídeos y presentación oral |
 
-## 4. Próximos pasos inmediatos
+## URLs clave
 
-1. Configurar secretos en GitHub y ejecutar pipeline de despliegue.
-2. Probar API en `https://app-tfg-incidencias-dev.azurewebsites.net`.
-3. Importar y probar Logic App.
-4. Grabar video demostración (5-10 min).
-5. Compilar `memoria.tex` y `anexos.tex` a PDF final.
+- Portal: https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/portal
+- API: https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net
+- Zube: https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban
+- SonarCloud: https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro
+

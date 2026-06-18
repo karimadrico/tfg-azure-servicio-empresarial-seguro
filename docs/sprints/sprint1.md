@@ -13,7 +13,7 @@ Propiedad: Karima Drafli Rico
 - Definir el proceso empresarial a automatizar.
 - Configurar infraestructura básica en Azure.
 - Estructurar el repositorio según los estándares de la Universidad.
-- Establecer un pipeline CI/CD inicial.
+- Establecer una primera estrategia de validación y despliegue.
 - Diseñar la arquitectura general del sistema.
 - Configurar monitorización y calidad de código.
 
@@ -79,14 +79,14 @@ Puntos: 5
 ### HU-04: Configurar CI/CD básico
 Estado: En progreso (integración con Azure pendiente en Sprint 2)
 
-Descripción: Establecer un pipeline básico en GitHub Actions para validar el código.
+Descripción: Establecer un flujo básico de validación para el código.
 
 Tareas realizadas:
 - Crear workflow de validación básica.
 - Configurar linting Python con `flake8`.
 - Configurar pruebas Python con `pytest`.
 
-Resultado: `.github/workflows/` contiene el pipeline de validación inicial.
+Resultado: se documenta una primera estrategia de validación, sustituida posteriormente por pruebas locales y despliegue con scripts.
 
 Puntos: 8
 
@@ -118,7 +118,7 @@ Descripción: Integrar SonarQube para el análisis de calidad del código.
 Tareas realizadas:
 - Crear cuenta en SonarCloud.
 - Configurar el proyecto `tfg-azure-servicio-empresarial-seguro`.
-- Integrar SonarCloud con GitHub Actions.
+- Integrar SonarCloud como herramienta externa de calidad.
 - Establecer gates de calidad.
 - Documentar la configuración en `docs/calidad/`.
 
@@ -174,7 +174,7 @@ Commits relevantes:
 Commits relevantes:
 - 04 Mar: “docs: arquitectura del sistema”.
 - 05 Mar: “docs: decisiones técnicas”.
-- 07 Mar: “ci: configurar GitHub Actions básico”.
+- 07 Mar: “configurar validación inicial del proyecto”.
 - 09 Mar: “docs: especificación API”.
 
 ---
@@ -218,7 +218,7 @@ Historias planeadas:
 - HU-07: Crear Azure Key Vault y gestionar secretos.
 - HU-08: Integrar Key Vault con App Service.
 - HU-09: Crear la API Python inicial.
-- HU-10: Configurar CI/CD con GitHub Actions hacia Azure.
+- HU-10: Configurar despliegue reproducible hacia Azure.
 - HU-11: Implementar el sistema de incidencias con persistencia.
 - HU-12: Integrar la clasificación automática básica.
 
@@ -239,7 +239,7 @@ Generados:
 - `docs/api/api.md` — especificación API preliminar.
 - `docs/analisis/problema-empresarial.md` — análisis del caso.
 - `docs/diagramas/arquitectura.png` — diagrama de arquitectura.
-- `.github/workflows/ci.yml` — pipeline de validación.
+- Validación inicial del código y documentación de despliegue.
 
 Pendientes para Sprint 2:
 - `docs/seguridad/keyvault.md` — documentación de Key Vault.

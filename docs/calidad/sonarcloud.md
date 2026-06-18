@@ -1,6 +1,6 @@
 # SonarCloud / SonarQube Cloud
 
-El proyecto utiliza SonarCloud como herramienta de revision de calidad interna del codigo. El analisis se realiza desde la interfaz web de SonarCloud conectada al repositorio de GitHub, no mediante workflow de GitHub Actions.
+El proyecto utiliza SonarCloud como herramienta de revision de calidad interna del codigo. El analisis se realiza desde la interfaz web de SonarCloud conectada al repositorio de GitHub.
 
 ## Enlace del proyecto
 
@@ -30,4 +30,3 @@ Para UBUVirtual y defensa conviene guardar:
 ## Interpretacion
 
 SonarCloud aporta una medicion externa de mantenibilidad, fiabilidad, seguridad y duplicidad. En la defensa puede indicarse que el proyecto supera la puerta de calidad y que los problemas abiertos se han usado como referencia para priorizar mejoras posteriores, especialmente en seguridad y cobertura de pruebas.
-

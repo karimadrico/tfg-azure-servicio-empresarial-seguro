@@ -1,27 +1,26 @@
-# Infraestructura Terraform
+# Infraestructura como código
 
-## Recursos provisionados
+El repositorio mantiene definiciones Terraform en `infra/terraform/` y plantillas Bicep en `infra/bicep/` para documentar la infraestructura Azure del proyecto.
 
-| Recurso | Nombre | Descripción |
-|---------|--------|-------------|
-| Resource Group | `rg-tfg-cloudautomation-dev` | Contenedor de recursos |
-| App Service Plan | `asp-tfg-cloudautomation` | Plan Linux B1 |
-| Web App | `app-tfg-incidencias-dev` | API Flask con Managed Identity |
-| Storage Account | `tfgstorage001` | Persistencia de incidencias |
-| Blob Container | `incidencias` | Contenedor privado |
-| Key Vault | `kv-tfg-enterprise` | Secreto `api-key` |
+## Recursos descritos
 
-## Despliegue
+| Recurso | Uso |
+|---------|-----|
+| Resource Group | Contenedor lógico de la solución |
+| App Service Plan | Plan Linux para la aplicación |
+| Web App | API Flask y portal web |
+| Storage Account | Persistencia de solicitudes |
+| Blob Container | Contenedor privado `incidencias` |
+| Key Vault | Secreto `api-key` |
+| Managed Identity | Acceso seguro de App Service a Key Vault |
 
-```bash
-cd infra/terraform
-terraform init
-terraform plan -var="api_key=<tu-clave>"
-terraform apply -var="api_key=<tu-clave>"
+## Uso recomendado
+
+Terraform y Bicep se conservan como documentación reproducible y punto de partida para recrear la infraestructura. El despliegue operativo final del TFG se realiza con:
+
+```powershell
+.\scripts\deploy-azure.ps1
 ```
 
-## Outputs
+Ese script configura además aspectos de ejecución que son necesarios para la demo: variables de entorno, secreto en Key Vault, permisos de Managed Identity y publicación ZIP de la carpeta `src/`.
 
-- `webapp_url`: URL pública de la API
-- `key_vault_uri`: URI del Key Vault
-- `storage_account_name`: nombre del Storage Account

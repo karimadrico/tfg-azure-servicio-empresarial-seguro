@@ -1,63 +1,17 @@
-# API de Gestión de Incidencias
+# Endpoints principales
 
-La aplicación expone una API REST desarrollada en Python utilizando Flask.
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/` | Información del servicio |
+| GET | `/portal` | Portal web |
+| GET | `/health` | Comprobación de salud |
+| POST | `/solicitudes` | Crear solicitud |
+| GET | `/solicitudes` | Listar solicitudes |
+| GET | `/metricas` | Métricas agregadas |
 
-## Endpoints disponibles
+Los endpoints `GET /solicitudes` y `GET /metricas` requieren:
 
-### GET /
+```http
+Authorization: Bearer <token>
+```
 
-Devuelve información básica del servicio.
-
-Respuesta:
-
-{
-  "mensaje": "API TFG Servicio Empresarial Seguro"
-}
-
----
-
-### GET /incidencias
-
-Devuelve todas las incidencias registradas en el sistema.
-
-Respuesta:
-
-[
-  {
-    "titulo": "Error login",
-    "descripcion": "No puedo acceder al sistema"
-  }
-]
-
----
-
-### POST /incidencias
-
-Permite registrar una nueva incidencia.
-
-Ejemplo de petición:
-
-POST /incidencias
-
-{
-  "titulo": "Servidor caído",
-  "descripcion": "El servidor principal no responde"
-}
-
-Respuesta:
-
-{
-  "mensaje": "Incidencia creada"
-}
-
----
-
-### GET /metricas
-
-Devuelve métricas básicas del sistema.
-
-Respuesta:
-
-{
-  "total_incidencias": 3
-}

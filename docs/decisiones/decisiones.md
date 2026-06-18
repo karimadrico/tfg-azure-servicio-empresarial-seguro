@@ -157,27 +157,28 @@ Se utiliza Zube.io para la gestión de tareas.
 
 ---
 
-## 7. Decisión: CI/CD con GitHub Actions
+## 7. Decisión: Despliegue reproducible con Azure CLI y PowerShell
 
 ### Contexto
-Era necesario un pipeline de despliegue seguro y automatizado hacia Azure.
+Era necesario un despliegue seguro y repetible hacia Azure. Para la entrega se priorizó un mecanismo local, auditable y verificable.
 
 ### Alternativas evaluadas
 - **Azure DevOps Pipelines**: separado del repositorio y más complejo.
-- **GitHub Actions**: integración nativa con el repo.
+- **Automatización remota del repositorio**: integración cómoda, pero no fue el camino operativo final.
+- **PowerShell + Azure CLI**: reproducible desde el equipo de desarrollo y fácil de demostrar.
 
 ### Justificación
-1. **Unidad**: todo el proceso en el mismo repositorio.
-2. **Automatización**: despliegue continuo con cada push.
-3. **Seguridad**: gestión de secretos sin exposición directa.
-4. **Experiencia**: refleja prácticas DevOps actuales.
+1. **Reproducibilidad**: el script ejecuta siempre los mismos pasos.
+2. **Seguridad**: integra Key Vault y Managed Identity.
+3. **Transparencia**: cada comando puede revisarse y explicarse en defensa.
+4. **Viabilidad**: no depende de servicios externos de ejecución.
 
 ### Decisión final
-GitHub Actions para la automatización de CI/CD.
+PowerShell y Azure CLI para el despliegue operativo final.
 
 ### Impacto en el proyecto
-- Despliegue continuo y reproducible.
-- Mejora de la calidad y control de versiones.
+- Despliegue reproducible y demostrable.
+- Configuración explícita de App Service, Storage, Key Vault y Managed Identity.
 
 ---
 
@@ -239,7 +240,7 @@ Clasificación automática mediante reglas y patrones básicos.
 - **Caso de uso**: Gestión de incidencias, por su realismo y escalabilidad; proporciona una solución práctica.
 - **Metodología**: Scrum, para entregas periódicas y validación continua; permite una planificación clara.
 - **Tareas**: Zube.io, por su integración con GitHub; mejora la visibilidad del progreso.
-- **CI/CD**: GitHub Actions, por su integración nativa; habilita despliegue automático.
+- **Despliegue**: PowerShell + Azure CLI, por reproducibilidad y control directo del entorno.
 - **Documentación**: LaTeX + Markdown, por formalidad y agilidad; asegura documentación sólida.
 - **IA**: Clasificación automática simple, por viabilidad y valor; constituye una base para evolución.
 

@@ -2,7 +2,7 @@
 
 ## Proceso empresarial
 
-Automatización de **solicitudes internas de TI** en una empresa:
+Automatización de solicitudes internas de TI:
 
 | Tipo | Ejemplo |
 |------|---------|
@@ -12,56 +12,47 @@ Automatización de **solicitudes internas de TI** en una empresa:
 | Configuración | Cambio de parámetros |
 | Incidencia | Fallo operativo |
 
-## Patrón arquitectónico
-
-Replica el patrón de orquestación corporativa (solicitud → validación → automatización → notificación) sin depender de Jenkins, ADO ni suscripciones corporativas.
+## Flujo arquitectónico
 
 ```text
-Empleado / Portal Web
+Empleado / Tribunal
         |
         v
-+------------------+
-|   Logic App      |  Trigger HTTP
-+------------------+
+Portal web en App Service
         |
         v
-+------------------+
-|   API Flask      |  Clasificación IA + recomendación
-+------------------+
+API Flask
         |
-   +----+----+
-   |         |
-   v         v
-Storage   Key Vault
-(Blob)    (api-key)
+        +--> Clasificador ligero
+        |
+        +--> Blob Storage
+        |
+        +--> Key Vault mediante Managed Identity
 ```
 
-## Componente de IA
+## Componente de IA ligera
 
-Clasificador ligero en `src/classifier.py`:
+El clasificador de `src/classifier.py`:
 
-- Detecta **tipo de solicitud**
-- Asigna **prioridad** (baja/media/alta)
-- Clasifica **categoría** (seguridad/infraestructura/soporte)
-- Genera **recomendación operativa**
+- detecta tipo de solicitud;
+- asigna prioridad;
+- clasifica categoría;
+- genera recomendación operativa;
+- devuelve un nivel de confianza.
 
-No requiere Azure OpenAI (coste/cuota estudiante). Cumple el objetivo TFG de "componente básico de IA como valor añadido".
+No requiere Azure OpenAI, por lo que se ajusta mejor al alcance académico y al presupuesto Azure for Students.
 
 ## Seguridad
 
-- Token Bearer en Key Vault
-- Managed Identity en App Service
-- Blob Storage privado
-- Lecturas protegidas con autenticación
+- Token Bearer para operaciones protegidas.
+- Token almacenado en Azure Key Vault.
+- Acceso desde App Service mediante Managed Identity.
+- Blob Storage privado.
+- Variables sensibles fuera del código fuente.
 
 ## Despliegue
 
-- **Terraform:** `infra/terraform/`
-- **Bicep:** `infra/bicep/`
-- **Script:** `scripts/deploy-azure.ps1`
+- Script operativo: `scripts/deploy-azure.ps1`.
+- Verificación: `scripts/verify-azure.ps1`.
+- Infraestructura documentada: `infra/terraform/` e `infra/bicep/`.
 
-## URLs de demostración
-
-- API: https://app-tfg-incidencias-dev.azurewebsites.net
-- Portal: https://app-tfg-incidencias-dev.azurewebsites.net/portal
-- Health: https://app-tfg-incidencias-dev.azurewebsites.net/health

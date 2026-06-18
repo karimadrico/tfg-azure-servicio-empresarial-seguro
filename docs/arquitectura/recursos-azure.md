@@ -1,24 +1,22 @@
 # Recursos Azure del proyecto
 
-**Suscripción:** Azure for Students (Universidad de Burgos)  
-**Subscription ID:** `a79fdf71-ae1e-4475-bebd-4a60a662e0ee`  
-**Tenant ID:** `2aa3b0b5-a782-4f38-a898-e483b20e8d61`  
-**Resource Group:** `rg-tfg-cloudautomation-dev`
+**Suscripción:** Azure for Students  
+**Resource Group:** `rg-tfg-cloudautomation-dev`  
+**Región principal:** Sweden Central
 
 ## Recursos desplegados
 
-| Tipo | Nombre | Región |
-|------|--------|--------|
-| App Service | `app-tfg-incidencias-dev` | Sweden Central |
-| App Service Plan | `ASP-rgtfgcloudautomationdev-b089` | Sweden Central |
-| Storage Account | `sttfgincidenciasdev` | Sweden Central |
-| Key Vault | `kv-tfg-incidencias-dev` | Sweden Central |
-| Logic App | `logic-tfg-provisionador-dev` | Sweden Central |
+| Tipo | Nombre | Región | Uso |
+|------|--------|--------|-----|
+| App Service | `app-tfg-incidencias-dev` | Sweden Central | API Flask y portal web |
+| App Service Plan | `ASP-rgtfgcloudautomationdev-b089` | Sweden Central | Plan de hospedaje |
+| Storage Account | `sttfgincidenciasdev` | Sweden Central | Persistencia Blob de solicitudes |
+| Key Vault | `kv-tfg-incidencias-dev` | Sweden Central | Secreto `api-key` |
+| Managed Identity | Identidad del App Service | Sweden Central | Acceso seguro a Key Vault |
 
-## URL de la API
+## URLs
 
-https://app-tfg-incidencias-dev.azurewebsites.net
+- API: https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net
+- Portal: https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/portal
+- Health: https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/health
 
-## Repositorio
-
-https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro
