@@ -111,7 +111,7 @@ def _build_recommendation(
     actions = {
         ("acceso", "seguridad"): "Revisar identidad en Azure AD y aplicar principio de mínimo privilegio.",
         ("acceso", "soporte"): "Validar solicitud con el responsable del área y conceder acceso temporal.",
-        ("entorno", "infraestructura"): "Provisionar entorno mediante pipeline CI/CD y registrar en inventario cloud.",
+        ("entorno", "infraestructura"): "Provisionar entorno mediante script de despliegue y registrar en inventario cloud.",
         ("aplicacion", "infraestructura"): "Desplegar aplicación en App Service y validar conectividad.",
         ("configuracion", "soporte"): "Aplicar cambio controlado y documentar en el registro de configuración.",
         ("incidencia", "infraestructura"): "Escalar al equipo de operaciones cloud y monitorizar disponibilidad.",

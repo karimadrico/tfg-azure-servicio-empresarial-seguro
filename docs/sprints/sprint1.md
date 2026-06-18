@@ -76,15 +76,15 @@ Puntos: 5
 
 ---
 
-### HU-04: Configurar CI/CD básico
-Estado: En progreso (integración con Azure pendiente en Sprint 2)
+### HU-04: Configurar validación básica
+Estado: Completado parcialmente
 
 Descripción: Establecer un flujo básico de validación para el código.
 
 Tareas realizadas:
-- Crear workflow de validación básica.
-- Configurar linting Python con `flake8`.
-- Configurar pruebas Python con `pytest`.
+- Definir estrategia de validación del código.
+- Preparar estructura de pruebas Python.
+- Documentar la evolución posterior hacia despliegue reproducible con scripts.
 
 Resultado: se documenta una primera estrategia de validación, sustituida posteriormente por pruebas locales y despliegue con scripts.
 
@@ -191,10 +191,10 @@ Descripción: La propuesta del caso de uso se percibía como genérica.
 Solución: Enfocar el proyecto en “Gestión de Incidencias Empresariales”.
 Impacto: positivo, el proyecto se volvió más concreto.
 
-Problema 3: Incidencia personal en la semana del 10-17 de marzo.
-Descripción: pérdida de mascota y afectación emocional.
+Problema 3: Replanificación de disponibilidad.
+Descripción: se detectó una desviación temporal respecto al calendario inicial.
 Solución: ajustar el ritmo de trabajo y usar una semana de amortiguación.
-Impacto: se requiere acelerar Sprint 2 para mantener el cronograma.
+Impacto: se reorganizó Sprint 2 para mantener el cronograma del proyecto.
 
 ---
 
@@ -226,7 +226,7 @@ Entregables esperados:
 - API REST desplegada en Azure con URL pública.
 - Endpoints funcionales para crear y consultar incidencias.
 - Gestión segura de secretos con Key Vault.
-- Pipeline de despliegue automático.
+- Despliegue reproducible mediante scripts.
 - Documentación de progreso actualizada.
 
 ---
@@ -243,7 +243,7 @@ Generados:
 
 Pendientes para Sprint 2:
 - `docs/seguridad/keyvault.md` — documentación de Key Vault.
-- `docs/deployment/github-actions.md` — guía de CI/CD.
+- `docs/despliegue/guia-completa.md` — guía de despliegue reproducible.
 - `docs/tests/test-plan.md` — plan de pruebas.
 
 ---

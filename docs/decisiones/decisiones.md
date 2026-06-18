@@ -121,10 +121,12 @@ Se requería una planificación estructurada con entregas periódicas.
 4. **Visibilidad**: seguimiento de tareas y resultados.
 
 ### Decisión final
-Scrum con sprints de 2 semanas.
-- Sprint 1: 25 Feb - 10 Mar (preparación base).
-- Sprint 2: 11 Mar - 24 Mar (implementación de módulos).
-- Sprint 3: 25 Mar - 14 Abr (integración y despliegue).
+Scrum adaptado con cinco sprints registrados en Zube.
+- Sprint 1: 25 Feb - 10 Mar (preparación y base).
+- Sprint 2: 11 Mar - 24 Mar (implementación de módulos y dashboard).
+- Sprint 3: 25 Mar - 21 Abr (incidencias y despliegue).
+- Sprint 4: 22 Abr - 21 May (consolidación y documentación técnica).
+- Sprint 5: 22 May - 08 Jul (finalización y defensa).
 
 ### Impacto en el proyecto
 - Planificación clara y con entregables definidos.
@@ -246,8 +248,10 @@ Clasificación automática mediante reglas y patrones básicos.
 
 ---
 
-## Próximas Decisiones Planeadas
+## Decisiones cerradas para la entrega
 
-1. **Sprint 2**: Persistencia en Azure Storage (Blob Storage vs SQL).
-2. **Sprint 3**: Monitorización en Application Insights vs logs locales.
-3. **Post-TFG**: Evaluar Azure Cognitive Services para NLP avanzado.
+1. **Persistencia**: Azure Blob Storage para solicitudes en formato JSON, con modo local para pruebas.
+2. **Observabilidad**: endpoint `/health`, logs de App Service y revisión básica en Azure Portal.
+3. **Calidad**: SonarCloud conectado al repositorio y documentado como evidencia externa.
+4. **Despliegue final**: PowerShell + Azure CLI como mecanismo operativo validado.
+5. **Evolución posterior**: Azure OpenAI, Azure AD, Application Insights, Cosmos DB o Azure SQL quedan como líneas futuras, no como alcance entregado.

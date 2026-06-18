@@ -161,5 +161,6 @@ docs/              Evidencias, arquitectura, despliegue, sprints y calidad
 - Codigo fuente en `src/`.
 - Pruebas en `tests/`.
 - Evidencias y documentacion en `docs/`.
+- Diagramas textuales en `docs/diagramas/diagramas.md`.
+- Base del PDF de enlaces en `docs/entrega/enlaces-tfg.md`.
 - Licencia MIT en `LICENSE`.
-

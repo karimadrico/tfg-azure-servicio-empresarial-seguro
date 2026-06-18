@@ -13,8 +13,8 @@ Componentes principales:
 - Azure Key Vault
   - Gestión segura de secretos y credenciales
 
-- Application Insights
-  - Monitorización y telemetría de la aplicación
+- Azure Monitor y logs de App Service
+  - Revisión básica del estado operativo y registros del despliegue
 
 ## Flujo del sistema
 
@@ -22,4 +22,4 @@ Componentes principales:
 2. La API procesa la solicitud.
 3. El sistema clasifica la incidencia.
 4. La incidencia se almacena en Azure Storage.
-5. Application Insights monitoriza el funcionamiento del sistema.
+5. El endpoint `/health`, los logs de App Service y Azure Portal permiten verificar el funcionamiento del sistema.
