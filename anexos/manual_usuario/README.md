@@ -1,5 +1,5 @@
 # Manual de usuario
 
-El manual de usuario entregable se mantiene en `memoria/tex/E_Manual_usuario.tex`.
+El manual de usuario entregable está en `memoria/tex/E_Manual_usuario.tex` y en `memoria/anexos.pdf`.
 
-Incluye enlaces principales, acceso al portal, operaciones disponibles y ejemplos de uso de la API.
+Describe el acceso al portal, la creación de solicitudes, la consulta protegida mediante Bearer token, las métricas y el uso de Logic App como entrada automatizada para sistemas externos.

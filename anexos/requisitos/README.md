@@ -1,5 +1,5 @@
 # Requisitos
 
-La especificación de requisitos entregable se mantiene en `memoria/tex/B_Requisitos.tex`.
+La especificación de requisitos entregable está en `memoria/tex/B_Requisitos.tex` y en `memoria/anexos.pdf`.
 
-Incluye requisitos funcionales, requisitos no funcionales y casos de uso principales.
+Incluye requisitos funcionales, no funcionales, validación, casos de uso y el requisito de automatización externa mediante Logic App.

@@ -129,4 +129,16 @@ Las figuras \ref{fig:application-insights-overview} y \ref{fig:azure-monitor-met
 \caption{Métricas del servicio en Azure Monitor. Fuente: captura propia.}
 \label{fig:azure-monitor-metrics}
 \end{figure}
+\section{Mantenimiento operativo}
+
+El mantenimiento del prototipo se organiza alrededor de los siguientes puntos:
+
+\begin{itemize}
+    \item Revisar el endpoint \texttt{/health} tras cada despliegue.
+    \item Ejecutar \texttt{scripts/verify-azure.ps1} para comprobar portal, API, creación de solicitudes, listado y métricas.
+    \item Mantener la clave de API en Azure Key Vault, evitando valores embebidos en el repositorio.
+    \item Revisar Application Insights y Azure Monitor para detectar errores, tiempos de respuesta o ausencia de peticiones.
+    \item Revisar SonarCloud tras cambios relevantes para mantener el Quality Gate aprobado.
+    \item Documentar evidencias finales en \texttt{docs/evidencias/} antes de generar los entregables.
+\end{itemize}
 

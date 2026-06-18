@@ -1,5 +1,11 @@
 # Plan de proyecto
 
-El plan entregable se mantiene en `memoria/tex/A_Plan_proyecto.tex`.
+El plan entregable está en `memoria/tex/A_Plan_proyecto.tex` y en `memoria/anexos.pdf`.
 
-El seguimiento observable del proyecto está en Zube y las capturas se conservan en `docs/sprints/`.
+Incluye planificación por sprints, seguimiento en Zube, evidencias, costes estimados, amortización proporcional de equipo, licencias y viabilidad legal.
+
+Evidencias relacionadas:
+
+- `docs/sprints/`
+- `docs/evidencias/`
+- `memoria/img/grafico_esfuerzo_horas.png`

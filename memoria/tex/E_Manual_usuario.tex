@@ -54,6 +54,17 @@ El portal web está disponible en:
 \end{sloppypar}
 \endgroup
 
+
+\section{Uso por perfiles}
+
+El prototipo contempla varios perfiles de uso:
+
+\begin{itemize}
+    \item \textbf{Usuario interno}: utiliza el portal web para registrar solicitudes de acceso, entorno, aplicación, configuración o incidencia.
+    \item \textbf{Equipo TI}: consulta solicitudes y métricas mediante endpoints protegidos con token Bearer.
+    \item \textbf{Sistema externo}: puede generar solicitudes mediante la Logic App sin conocer los detalles internos de la API.
+    \item \textbf{Administrador cloud}: mantiene configuración, secretos, despliegue y monitorización en Azure.
+\end{itemize}
 \section{Operaciones disponibles}
 
 \subsection{Consultar estado del servicio}
@@ -98,3 +109,9 @@ Si se accede a esta URL directamente desde el navegador sin cabecera de autoriza
 GET /metricas
 Authorization: Bearer <token>
 \end{verbatim}
+\subsection{Crear solicitud mediante Logic App}
+
+La Logic App permite automatizar la entrada de solicitudes desde un sistema externo. El usuario o sistema integrador envía un JSON al trigger HTTP de la Logic App y el flujo invoca internamente \texttt{POST /solicitudes}. La respuesta final mantiene el mismo formato que la API, incluyendo identificador, prioridad, clasificación y recomendación.
+
+Esta opción está pensada para integraciones empresariales, por ejemplo formularios internos, herramientas de soporte o procesos automáticos que necesiten registrar una solicitud sin acceder manualmente al portal.
+
