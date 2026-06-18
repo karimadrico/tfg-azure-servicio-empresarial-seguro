@@ -39,6 +39,15 @@ El script realiza:
 .\scripts\verify-azure.ps1
 ```
 
+## Despliegue de Logic App
+
+```powershell
+$env:API_KEY = "<clave usada en Key Vault>"
+.\scripts\deploy-logicapp.ps1
+```
+
+Despues del despliegue, abrir `logic-tfg-solicitudes-dev` en Azure Portal, entrar en el trigger HTTP y copiar la URL de invocacion para probar el flujo.
+
 Comprobación manual:
 
 ```powershell

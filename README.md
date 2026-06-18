@@ -5,7 +5,7 @@
 
 ## Resumen
 
-Este repositorio contiene el prototipo funcional del TFG: una plataforma cloud desplegada en Microsoft Azure para registrar, clasificar y consultar solicitudes internas de TI. La solucion incluye un portal web, una API Flask, clasificacion automatica ligera, persistencia en Azure Blob Storage, gestion segura de secretos con Azure Key Vault y despliegue reproducible mediante script PowerShell y Azure CLI.
+Este repositorio contiene el prototipo funcional del TFG: una plataforma cloud desplegada en Microsoft Azure para registrar, clasificar y consultar solicitudes internas de TI. La solucion incluye un portal web, una API Flask, clasificacion automatica ligera, una Logic App de automatizacion, persistencia en Azure Blob Storage, gestion segura de secretos con Azure Key Vault y despliegue reproducible mediante script PowerShell y Azure CLI.
 
 El objetivo es demostrar una solucion completa y evaluable: analisis del problema empresarial, diseno cloud, implementacion, pruebas, despliegue real, seguimiento de tareas en Zube y control de calidad con SonarCloud.
 
@@ -37,6 +37,11 @@ API Flask: solicitudes, incidencias, metricas y health check
         +--> Azure Key Vault: secreto de autenticacion
         |
         +--> Managed Identity: acceso seguro desde App Service
+
+Sistema externo
+        |
+        v
+Logic App: trigger HTTP -> POST /solicitudes
 ```
 
 ## Recursos Azure
@@ -47,6 +52,8 @@ API Flask: solicitudes, incidencias, metricas y health check
 | App Service | `app-tfg-incidencias-dev` |
 | Storage Account | `sttfgincidenciasdev` |
 | Key Vault | `kv-tfg-incidencias-dev` |
+| Application Insights | `appi-tfg-incidencias-dev` |
+| Logic App | `logic-tfg-solicitudes-dev` |
 | Region | `Sweden Central` |
 
 ## Prueba rapida
@@ -121,6 +128,13 @@ El script `scripts/deploy-azure.ps1`:
 - configura variables de entorno del App Service;
 - publica la carpeta `src/` mediante despliegue ZIP.
 
+La Logic App de automatizacion se despliega aparte:
+
+```powershell
+$env:API_KEY = "<token-de-verificacion>"
+.\scripts\deploy-logicapp.ps1
+```
+
 ## Calidad de codigo
 
 La calidad se revisa manualmente en SonarCloud:
@@ -151,6 +165,7 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 | `src/static/` | Interfaz web del portal de solicitudes TI. | Evidencia la parte visible y demostrable de la aplicacion. |
 | `tests/` | Pruebas unitarias de API, portal, metricas y clasificador. | Permite comprobar validacion automatica del comportamiento. |
 | `scripts/` | Scripts PowerShell de despliegue y verificacion en Azure. | Documenta como se publica y valida la solucion real. |
+| `logicapp/` | Definicion del flujo HTTP hacia `POST /solicitudes`. | Evidencia la automatizacion del proceso empresarial. |
 | `infra/terraform/` | Definicion Terraform de recursos Azure. | Sirve como infraestructura declarativa documentada. |
 | `infra/bicep/` | Plantillas Bicep alternativas/documentales. | Complementa la documentacion de infraestructura Azure. |
 | `memoria/` | Memoria y anexos en LaTeX, junto con los PDF generados. | Contiene los documentos oficiales de entrega. |

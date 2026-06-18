@@ -76,6 +76,15 @@ Evidencia de `GET /metricas`, con agregados por estado, prioridad y tipo de soli
 
 Salida de `scripts/verify-azure.ps1`, que valida automáticamente `/`, `/health`, creación de solicitud, listado y métricas.
 
+## 2.1. Automatizacion con Logic App
+
+Cuando este desplegada la Logic App, anadir estas capturas a esta carpeta:
+
+- `logic-app-workflow.png`: disenador de la Logic App con trigger HTTP y accion HTTP hacia la API.
+- `logic-app-run-history.png`: historial de ejecucion correcto al enviar una solicitud.
+
+Estas evidencias sirven para defender la automatizacion cloud del proceso empresarial.
+
 ## 3. Calidad de código
 
 ![Quality Gate SonarCloud](sonarcloud-quality-gate.png)

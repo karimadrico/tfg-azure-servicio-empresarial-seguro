@@ -47,7 +47,18 @@ module appservice 'appservice.bicep' = {
   }
 }
 
+module logicapp 'logicapp.bicep' = {
+  name: 'logicappDeployment'
+  params: {
+    location: location
+    tags: tags
+    apiBaseUrl: appservice.outputs.webAppUrl
+    apiKey: apiKey
+  }
+}
+
 output webAppUrl string = appservice.outputs.webAppUrl
 output keyVaultUri string = keyvault.outputs.vaultUri
 output storageAccountName string = storage.outputs.storageAccountName
 output applicationInsightsName string = monitoring.outputs.appInsightsName
+output logicAppName string = logicapp.outputs.logicAppName

@@ -28,6 +28,14 @@ API Flask
         +--> Blob Storage
         |
         +--> Key Vault mediante Managed Identity
+
+Sistema externo
+        |
+        v
+Logic App
+        |
+        v
+POST /solicitudes
 ```
 
 ## Componente de IA ligera
@@ -41,6 +49,10 @@ El clasificador de `src/classifier.py`:
 - devuelve un nivel de confianza.
 
 No requiere Azure OpenAI, por lo que se ajusta mejor al alcance académico y al presupuesto Azure for Students.
+
+## Automatizacion con Logic App
+
+La Logic App `logic-tfg-solicitudes-dev` recibe solicitudes por HTTP y las reenvia a `POST /solicitudes`. Esta pieza permite demostrar un flujo de automatizacion empresarial sin que el sistema externo tenga que conocer los detalles internos de la API Flask.
 
 ## Seguridad
 
