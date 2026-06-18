@@ -18,6 +18,7 @@ if (-not $Python) {
 
 $env:STORAGE_MODE = "local"
 $env:FLASK_DEBUG = "1"
+$env:FLASK_RUN_HOST = "127.0.0.1"
 
 Write-Host "Usando: $Python" -ForegroundColor Cyan
 Write-Host "Portal: http://localhost:5000/portal" -ForegroundColor Green

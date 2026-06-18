@@ -11,6 +11,7 @@ fi
 
 export STORAGE_MODE=local
 export FLASK_DEBUG=1
+export FLASK_RUN_HOST=127.0.0.1
 
 "$PYTHON" -m pip install -r requirements.txt
 "$PYTHON" app.py

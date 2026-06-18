@@ -9,7 +9,10 @@ $BaseUrl = if ($env:BASE_URL) {
 else {
     "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net"
 }
-$ApiKey = if ($env:API_KEY) { $env:API_KEY } else { "tfg-api-key-ubu-2026" }
+if (-not $env:API_KEY) {
+    throw "Define la variable de entorno API_KEY antes de ejecutar la verificacion."
+}
+$ApiKey = $env:API_KEY
 $Headers = @{ Authorization = "Bearer $ApiKey" }
 
 function Test-Endpoint {
@@ -20,7 +23,7 @@ function Test-Endpoint {
         [object]$Body = $null
     )
 
-    Write-Host "-> $Name" -ForegroundColor Cyan
+    Write-Output "-> $Name"
     $params = @{
         Uri = "$BaseUrl$Path"
         Method = $Method
@@ -33,7 +36,7 @@ function Test-Endpoint {
 
     $response = Invoke-RestMethod @params
     $response | ConvertTo-Json -Depth 6
-    Write-Host ""
+    Write-Output ""
 }
 
 Write-Host "=== Verificacion API en Azure ===" -ForegroundColor Green

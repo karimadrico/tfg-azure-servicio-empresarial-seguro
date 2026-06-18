@@ -106,6 +106,7 @@ El despliegue real utilizado para el TFG se realiza desde PowerShell con Azure C
 
 ```powershell
 az login
+$env:API_KEY = "<token-de-verificacion>"
 .\scripts\deploy-azure.ps1
 .\scripts\verify-azure.ps1
 ```

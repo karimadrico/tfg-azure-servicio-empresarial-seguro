@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import re
 from datetime import datetime, timezone
 from functools import wraps
 from pathlib import Path
@@ -13,13 +12,21 @@ from classifier import VALID_TIPOS, classify_solicitud
 from config import Config
 from storage import IncidenciaStorage
 
-app = Flask(__name__, static_folder="static")
+app = Flask(__name__, static_folder="static")  # NOSONAR: API REST sin sesiones por cookie; las operaciones protegidas usan Bearer token.
 config = Config()
 storage = IncidenciaStorage(config)
 
-EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 VALID_ESTADOS = {"abierta", "en_proceso", "cerrada"}
 VALID_PRIORIDADES = {"baja", "media", "alta"}
+
+
+@app.after_request
+def add_security_headers(response: Any) -> Any:
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 def _utc_now() -> str:
@@ -36,6 +43,21 @@ def _next_id(incidencias: list[dict[str, Any]]) -> str:
             if match:
                 numbers.append(int(match.group(1)))
     return f"SOL-{max(numbers, default=0) + 1:03d}"
+
+
+def _is_valid_email(value: str) -> bool:
+    if not value or len(value) > 254 or value.count("@") != 1:
+        return False
+
+    local_part, domain = value.split("@", 1)
+    if not local_part or not domain or len(local_part) > 64:
+        return False
+    if any(char.isspace() for char in value):
+        return False
+    if "." not in domain or domain.startswith(".") or domain.endswith("."):
+        return False
+
+    return all(label and not label.startswith("-") and not label.endswith("-") for label in domain.split("."))
 
 
 def _get_api_key() -> str:
@@ -89,7 +111,7 @@ def _validate_solicitud_payload(payload: dict[str, Any]) -> tuple[dict[str, str]
         return None, "El título es obligatorio (1-200 caracteres)"
     if len(descripcion) < 10 or len(descripcion) > 2000:
         return None, "La descripción debe tener entre 10 y 2000 caracteres"
-    if not EMAIL_PATTERN.match(reportado_por):
+    if not _is_valid_email(reportado_por):
         return None, "reportado_por debe ser un email válido"
     if prioridad_manual and prioridad_manual not in VALID_PRIORIDADES:
         return None, "Prioridad inválida"

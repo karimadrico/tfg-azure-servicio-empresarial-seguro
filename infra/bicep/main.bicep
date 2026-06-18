@@ -5,7 +5,6 @@ param location string = 'swedencentral'
 @secure()
 param apiKey string
 
-var resourceGroupName = 'rg-tfg-cloudautomation-dev'
 var tags = {
   Environment: 'Development'
   Project: 'TFG'
@@ -36,7 +35,6 @@ module appservice 'appservice.bicep' = {
     tags: tags
     storageConnectionString: storage.outputs.connectionString
     keyVaultUri: keyvault.outputs.vaultUri
-    keyVaultPrincipalId: keyvault.outputs.appPrincipalId
   }
 }
 

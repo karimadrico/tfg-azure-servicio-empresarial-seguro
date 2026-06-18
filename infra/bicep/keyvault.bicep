@@ -20,7 +20,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
       name: 'standard'
     }
     accessPolicies: []
-    enableRbacAuthorization: false
+    enableRbacAuthorization: true
     enabledForTemplateDeployment: true
     softDeleteRetentionInDays: 7
   }
@@ -35,4 +35,3 @@ resource apiKeySecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
 }
 
 output vaultUri string = keyVault.properties.vaultUri
-output appPrincipalId string = ''

@@ -5,6 +5,10 @@ resource "azurerm_storage_account" "storage" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
   min_tls_version          = "TLS1_2"
+
+  identity {
+    type = "SystemAssigned"
+  }
 }
 
 resource "azurerm_storage_container" "incidencias" {

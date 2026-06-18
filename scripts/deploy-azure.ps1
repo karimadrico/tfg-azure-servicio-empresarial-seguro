@@ -8,7 +8,10 @@ $ResourceGroup = "rg-tfg-cloudautomation-dev"
 $WebAppName = "app-tfg-incidencias-dev"
 $StorageAccount = "sttfgincidenciasdev"
 $KeyVaultName = "kv-tfg-incidencias-dev"
-$ApiKey = if ($env:API_KEY) { $env:API_KEY } else { "tfg-api-key-ubu-2026" }
+if (-not $env:API_KEY) {
+    throw "Define la variable de entorno API_KEY antes de desplegar."
+}
+$ApiKey = $env:API_KEY
 
 function Resolve-AzCli {
     $paths = @(
@@ -94,7 +97,7 @@ function Invoke-AzInteractive {
 
     & $AzCli @AzArgs
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "El comando interactivo devolvio codigo $LASTEXITCODE. Se verificara la sesion igualmente..." -ForegroundColor Yellow
+        Write-Warning "El comando interactivo devolvio codigo $LASTEXITCODE. Se verificara la sesion igualmente..."
     }
 }
 
@@ -211,7 +214,7 @@ Invoke-Az @(
     "webapp", "config", "set",
     "--name", $WebAppName,
     "--resource-group", $ResourceGroup,
-    "--startup-file", "gunicorn --bind=0.0.0.0:8000 --workers=2 app:app"
+    "--startup-file", "gunicorn --bind=0.0.0.0:8000 --workers=2 app:app" # NOSONAR: requerido por Azure App Service/Gunicorn.
 ) | Out-Null
 
 Write-Host "[6/6] Publicando codigo de src/..."
