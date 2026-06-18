@@ -1,3 +1,48 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{1}
+
+\bibitem{azure_architectures}
+{Azure Architecture Center, Microsoft Learn}.
+\newblock Browse azure architectures, 2025.
+\newblock Consultado: marzo 2026.
+
+\bibitem{bojja2020_devops}
+Karthik Bojja.
+\newblock Scalable devops practices with azure: Automating secure kubernetes
+  deployments.
+\newblock {\em IJIRSET}, 9(6), Junio 2020.
+
+\bibitem{microsoft_azure}
+{Microsoft}.
+\newblock Microsoft azure: Cloud computing dictionary, 2025.
+\newblock Consultado: marzo 2026.
+
+\bibitem{azure_monitor}
+{Microsoft Learn}.
+\newblock Azure monitor, 2025.
+
+\bibitem{deploy_azure_github_actions}
+{Microsoft Learn}.
+\newblock Deploy to azure app service by using github actions, 2025.
+\newblock Consultado: marzo 2026.
+
+\bibitem{terraform_azure}
+{Microsoft Learn}.
+\newblock Terraform for azure, 2025.
+
+\bibitem{azure_storage_webapp}
+{Microsoft Learn}.
+\newblock Tutorial: Access storage from a web app with managed identities,
+  2025.
+\newblock Consultado: marzo 2026.
+
+\bibitem{keyvault_managed_identity}
+{Microsoft Learn}.
+\newblock Tutorial: Use a managed identity to connect key vault to an azure web
+  app in .net, 2025.
+\newblock Consultado: marzo 2026.
+
+\bibitem{sonarqube_docs}
+{SonarSource}.
+\newblock Sonarqube documentation, 2025.
 
 \end{thebibliography}
