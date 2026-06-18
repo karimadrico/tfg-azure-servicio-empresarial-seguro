@@ -44,8 +44,8 @@ La figura \ref{fig:arquitectura-cloud-azure} muestra el esquema general de la so
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.85\textwidth]{arquitectura_cloud_azure.png}
-\caption{Arquitectura cloud de la solución desplegada en Azure. Fuente: elaboración propia.}
+\includegraphics[width=0.9\textwidth]{arquitectura_final_azure.png}
+\caption{Arquitectura final de la solución desplegada en Azure. Fuente: elaboración propia.}
 \label{fig:arquitectura-cloud-azure}
 \end{figure}
 
@@ -72,6 +72,15 @@ El flujo principal del sistema es:
     \item Verificación del despliegue mediante endpoint \texttt{/health}, portal web y pruebas HTTP.
 \end{enumerate}
 
+La figura \ref{fig:flujo-solicitud-ti} representa el flujo funcional seguido por una solicitud desde su entrada hasta la persistencia y la respuesta al usuario o sistema externo.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{flujo_solicitud_ti.png}
+\caption{Flujo de creación y clasificación de una solicitud TI. Fuente: elaboración propia.}
+\label{fig:flujo-solicitud-ti}
+\end{figure}
+
 \subsection{Tipos de solicitud soportados}
 
 \begin{itemize}
@@ -97,6 +106,24 @@ El flujo principal del sistema es:
 La Logic App añadida al prototipo actúa como punto de entrada para sistemas externos que necesiten generar solicitudes sin utilizar directamente el portal web. El flujo recibe una petición HTTP con los campos principales de la solicitud, invoca la API desplegada en App Service mediante \texttt{POST /solicitudes} y devuelve al llamante la respuesta generada por la propia API. De esta forma, la lógica de validación, clasificación automática y persistencia se mantiene centralizada en el backend.
 
 Esta decisión permite defender un caso de automatización empresarial realista: un formulario externo, una herramienta de soporte o un proceso corporativo podrían enviar solicitudes al flujo HTTP y delegar en la plataforma cloud la clasificación, priorización y registro de la petición.
+
+La figura \ref{fig:logic-app-workflow} muestra el flujo de automatización incorporado al prototipo mediante Logic App.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{logic_app_workflow.png}
+\caption{Flujo de automatización con Azure Logic Apps. Fuente: elaboración propia.}
+\label{fig:logic-app-workflow}
+\end{figure}
+
+La figura \ref{fig:seguridad-secretos} resume el modelo de seguridad aplicado para proteger secretos y accesos.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{seguridad_secretos.png}
+\caption{Modelo de seguridad y gestión de secretos. Fuente: elaboración propia.}
+\label{fig:seguridad-secretos}
+\end{figure}
 
 Las figuras \ref{fig:azure-app-service}, \ref{fig:azure-key-vault}, \ref{fig:azure-managed-identity} y \ref{fig:azure-storage} muestran evidencias de los principales servicios utilizados.
 
@@ -155,3 +182,5 @@ created\_at & fecha & Fecha de creación de la solicitud. \\
 \section{Calidad y observabilidad}
 
 La calidad se comprueba mediante pruebas automáticas y análisis manual en SonarCloud. El panel de SonarCloud se aporta como evidencia de mantenibilidad, fiabilidad, seguridad y duplicidad del código. La observabilidad técnica se apoya en el endpoint \texttt{/health}, en los logs de App Service y en las métricas disponibles desde Application Insights y Azure Monitor \cite{azure_monitor}.
+
+

@@ -5,6 +5,10 @@ param location string = 'swedencentral'
 @secure()
 param apiKey string
 
+@description('Cadena de conexion de Azure Storage usada por App Service')
+@secure()
+param storageConnectionString string
+
 var tags = {
   Environment: 'Development'
   Project: 'TFG'
@@ -41,7 +45,7 @@ module appservice 'appservice.bicep' = {
   params: {
     location: location
     tags: tags
-    storageConnectionString: storage.outputs.connectionString
+    storageConnectionString: storageConnectionString
     keyVaultUri: keyvault.outputs.vaultUri
     applicationInsightsConnectionString: monitoring.outputs.connectionString
   }
@@ -62,3 +66,4 @@ output keyVaultUri string = keyvault.outputs.vaultUri
 output storageAccountName string = storage.outputs.storageAccountName
 output applicationInsightsName string = monitoring.outputs.appInsightsName
 output logicAppName string = logicapp.outputs.logicAppName
+

@@ -16,49 +16,17 @@ La recomendación es crearlos con diagrams.net/draw.io o con una herramienta de 
 | `logic_app_workflow.png` | Anexo C o D | Orquestación de Logic App: trigger HTTP, acción HTTP `POST /solicitudes`, respuesta al cliente y almacenamiento final vía API. |
 | `observabilidad_monitor.png` | Anexo D | Monitorización: App Service emite métricas/logs, Application Insights recoge telemetría y Azure Monitor permite revisar disponibilidad y errores. |
 
-## Prompt recomendado para ChatGPT Plus
+## Criterios de elaboración de diagramas
 
-Puedes pedir cada diagrama de forma individual. Ejemplo para el diagrama principal:
+Los diagramas finales se elaboran como documentación técnica propia del proyecto. Deben mantener un estilo homogéneo, utilizar nombres de servicios reales del despliegue y evitar cualquier dato sensible. Para su incorporación a LaTeX se exportan en formato PNG horizontal y alta resolución.
 
-```text
-Crea un diagrama profesional de arquitectura cloud para un TFG universitario titulado
-"Cloud Computing: Análisis, Diseño y Despliegue de un Servicio Empresarial Seguro en Microsoft Azure".
+Criterios comunes:
 
-Formato: diagrama limpio tipo arquitectura Azure, fondo blanco, iconos oficiales o estilo Azure, texto en español.
-
-Elementos obligatorios:
-- Usuario / Tribunal accediendo al Portal web.
-- Azure App Service alojando una API Flask y un portal web.
-- Componente interno "Clasificador ligero de solicitudes TI".
-- Azure Blob Storage guardando solicitudes en JSON.
-- Azure Key Vault guardando el secreto api-key.
-- Managed Identity desde App Service hacia Key Vault.
-- Application Insights / Azure Monitor para observabilidad.
-- Azure Logic App con trigger HTTP que llama a POST /solicitudes.
-- GitHub como repositorio de código.
-- Zube para planificación por sprints.
-- SonarCloud para calidad de código.
-
-Conexiones:
-- Usuario -> Portal -> API Flask.
-- Logic App -> API Flask POST /solicitudes.
-- API Flask -> Clasificador ligero.
-- API Flask -> Blob Storage.
-- App Service con Managed Identity -> Key Vault.
-- App Service -> Application Insights.
-- GitHub -> scripts de despliegue -> Azure.
-- GitHub -> SonarCloud.
-- Zube -> sprints/seguimiento -> GitHub.
-
-Estilo:
-- Agrupa los recursos de Azure dentro de un recuadro "Microsoft Azure".
-- Agrupa GitHub, Zube y SonarCloud fuera de Azure como servicios de soporte al proceso.
-- No incluyas tokens, claves, URLs privadas ni cadenas de conexión.
-- Exporta en PNG horizontal, alta resolución, adecuado para incluir en LaTeX.
-```
-
-Para draw.io, se puede usar el mismo texto como especificación manual y colocar los iconos desde la librería Azure.
-
+- Usar fondo claro y etiquetas en español.
+- Agrupar los recursos cloud dentro de un bloque "Microsoft Azure".
+- Separar los servicios de soporte al proceso, como GitHub, Zube y SonarCloud.
+- Representar únicamente recursos desplegados, verificados o documentados como parte del prototipo.
+- No incluir tokens, claves, cadenas de conexión ni URL de Logic App con firma.
 ## Diagrama de componentes
 
 ```mermaid
@@ -140,3 +108,4 @@ flowchart TB
     azure --> api[API REST]
     repo --> memoria[Memoria y anexos PDF]
 ```
+

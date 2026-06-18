@@ -50,6 +50,15 @@ La API quedará disponible en \texttt{http://localhost:5000}.
     \item Ejecutar \texttt{scripts/deploy-logicapp.ps1} para publicar el flujo HTTP de automatización cuando se desee probar la integración externa.
 \end{enumerate}
 
+La figura \ref{fig:despliegue-azure} resume el proceso de despliegue y verificación ejecutado sobre Azure.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{despliegue_azure.png}
+\caption{Proceso de despliegue y verificación en Azure. Fuente: elaboración propia.}
+\label{fig:despliegue-azure}
+\end{figure}
+
 \section{Pruebas del sistema}
 
 \begin{verbatim}
@@ -89,3 +98,14 @@ El proyecto utiliza SonarCloud como servicio gestionado de SonarQube:
 \end{itemize}
 
 Para completar la evidencia de calidad se debe guardar una captura del Quality Gate, una captura del resumen de métricas y la URL del panel en el documento final de enlaces.
+
+La figura \ref{fig:observabilidad-monitor} resume la estrategia de observabilidad mediante App Service, Application Insights y Azure Monitor.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{observabilidad_monitor.png}
+\caption{Observabilidad del prototipo con Azure Monitor y Application Insights. Fuente: elaboración propia.}
+\label{fig:observabilidad-monitor}
+\end{figure}
+
+

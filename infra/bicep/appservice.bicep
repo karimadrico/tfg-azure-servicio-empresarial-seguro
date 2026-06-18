@@ -8,6 +8,7 @@ param tags object
 param storageConnectionString string
 
 param keyVaultUri string
+@secure()
 param applicationInsightsConnectionString string
 
 var webAppName = 'app-tfg-incidencias-dev'
@@ -84,3 +85,4 @@ resource authSettings 'Microsoft.Web/sites/config@2023-01-01' = {
 
 output webAppUrl string = 'https://${webApp.properties.defaultHostName}'
 output principalId string = webApp.identity.principalId
+

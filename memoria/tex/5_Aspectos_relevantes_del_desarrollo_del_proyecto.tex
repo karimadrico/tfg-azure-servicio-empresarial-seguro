@@ -37,9 +37,18 @@ El flujo principal del sistema es el siguiente:
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.85\textwidth]{arquitectura_cloud_azure.png}
-\caption{Arquitectura general del prototipo desplegado en Microsoft Azure. Fuente: elaboración propia.}
+\includegraphics[width=0.9\textwidth]{arquitectura_final_azure.png}
+\caption{Arquitectura final del prototipo desplegado en Microsoft Azure. Fuente: elaboración propia.}
 \label{fig:arquitectura-general-memoria}
+\end{figure}
+
+La figura \ref{fig:infografia-arquitectura-azure} resume visualmente los servicios cloud utilizados y su relación con el proceso empresarial automatizado.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{infografia_de_arquitectura_Azure.png}
+\caption{Infografía de arquitectura cloud del prototipo. Fuente: elaboración propia.}
+\label{fig:infografia-arquitectura-azure}
 \end{figure}
 
 \section{API REST implementada}
@@ -99,3 +108,5 @@ La autenticación de la API utiliza un token Bearer almacenado en Azure Key Vaul
 \section{Validación del prototipo}
 
 Las pruebas unitarias en \texttt{tests/test\_api.py} verifican la creación de solicitudes, el listado, las métricas, el portal web y la clasificación automática. El prototipo puede ejecutarse localmente con almacenamiento en fichero JSON o desplegarse en Azure con persistencia en Blob Storage.
+
+
