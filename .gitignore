@@ -224,6 +224,7 @@ _*.txt
 *_out.txt
 *_err.txt
 src/LEER
+IMPORTANTESABER
 AzureCLI.msi
 *.nav
 *.snm

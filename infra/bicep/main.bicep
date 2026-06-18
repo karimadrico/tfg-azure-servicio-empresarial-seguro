@@ -43,4 +43,3 @@ module appservice 'appservice.bicep' = {
 output webAppUrl string = appservice.outputs.webAppUrl
 output keyVaultUri string = keyvault.outputs.vaultUri
 output storageAccountName string = storage.outputs.storageAccountName
-output logicAppDeployHint string = 'Importar logicapp/workflow.json como logic-tfg-solicitudes-dev'

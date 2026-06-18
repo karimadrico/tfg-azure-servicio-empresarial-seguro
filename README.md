@@ -1,45 +1,42 @@
-# Plataforma de Automatización de Solicitudes TI — TFG Azure
+# Plataforma de Automatizacion de Solicitudes TI - TFG Azure
 
-**Autora:** Karima Drafli Rico — Universidad de Burgos  
-**Título:** Cloud Computing: Análisis, Diseño y Despliegue de un Servicio Empresarial Seguro en Microsoft Azure
+**Autora:** Karima Drafli Rico - Universidad de Burgos  
+**Titulo:** Cloud Computing: Analisis, Diseno y Despliegue de un Servicio Empresarial Seguro en Microsoft Azure
 
-## Qué es
+## Resumen
 
-Plataforma cloud en Microsoft Azure para **automatizar solicitudes internas de TI** de una empresa:
+Este repositorio contiene el prototipo funcional del TFG: una plataforma cloud desplegada en Microsoft Azure para registrar, clasificar y consultar solicitudes internas de TI. La solucion incluye un portal web, una API Flask, clasificacion automatica ligera, persistencia en Azure Blob Storage, gestion segura de secretos con Azure Key Vault y despliegue reproducible mediante script PowerShell y Azure CLI.
 
-1. El usuario envía una solicitud (acceso, entorno, aplicación, configuración o incidencia).
-2. La **Logic App** orquesta el flujo.
-3. La **API Flask** clasifica la solicitud con un componente de **IA ligera** (reglas + análisis semántico).
-4. Se genera una **recomendación operativa** automática.
-5. Los datos se almacenan en **Blob Storage** y los secretos en **Key Vault**.
+El objetivo es demostrar una solucion completa y evaluable: analisis del problema empresarial, diseno cloud, implementacion, pruebas, despliegue real, seguimiento de tareas en Zube y control de calidad con SonarCloud.
 
-El objetivo del TFG es demostrar una solución completa y evaluable: análisis del problema, diseño cloud, implementación, pruebas, despliegue, seguimiento de tareas en Zube y control de calidad con SonarCloud.
-
-## Enlaces de evaluación
+## Enlaces de evaluacion
 
 | Recurso | Enlace |
 |---------|--------|
 | Repositorio GitHub | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro |
-| Portal desplegado | https://app-tfg-incidencias-dev.azurewebsites.net/portal |
-| API desplegada | https://app-tfg-incidencias-dev.azurewebsites.net |
-| Zube (sprints y tablero Kanban) | https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban |
-| SonarCloud (calidad de código) | https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro |
+| Portal desplegado | https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/portal |
+| API desplegada | https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net |
+| Zube (sprints y Kanban) | https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban |
+| SonarCloud (calidad de codigo) | https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro |
 
-## Arquitectura
+## Arquitectura entregada
 
 ```text
-Portal Web (App Service)
+Usuario / Tribunal
         |
         v
-Logic App (trigger HTTP)
+Portal web en Azure App Service
         |
-        +--> API Flask (clasificación IA + recomendación)
+        v
+API Flask: solicitudes, incidencias, metricas y health check
         |
-        +--> Azure Blob Storage
+        +--> Clasificador ligero de solicitudes TI
         |
-        +--> Azure Key Vault
+        +--> Azure Blob Storage: persistencia de incidencias
         |
-        +--> Notificación (email / respuesta JSON)
+        +--> Azure Key Vault: secreto de autenticacion
+        |
+        +--> Managed Identity: acceso seguro desde App Service
 ```
 
 ## Recursos Azure
@@ -50,12 +47,41 @@ Logic App (trigger HTTP)
 | App Service | `app-tfg-incidencias-dev` |
 | Storage Account | `sttfgincidenciasdev` |
 | Key Vault | `kv-tfg-incidencias-dev` |
-| Logic App | `logic-tfg-solicitudes-dev` |
+| Region | `Sweden Central` |
 
-**URL API:** https://app-tfg-incidencias-dev.azurewebsites.net  
-**Portal:** https://app-tfg-incidencias-dev.azurewebsites.net/portal
+## Prueba rapida
 
-## Ejecución local
+Comprobar estado:
+
+```powershell
+Invoke-RestMethod https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/health
+```
+
+Abrir portal:
+
+```powershell
+Start-Process https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/portal
+```
+
+Consultar solicitudes protegidas:
+
+```powershell
+Invoke-RestMethod `
+  -Uri "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/solicitudes" `
+  -Headers @{ Authorization = "Bearer tfg-api-key-ubu-2026" }
+```
+
+Crear solicitud:
+
+```powershell
+Invoke-RestMethod `
+  -Method POST `
+  -Uri "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/solicitudes" `
+  -ContentType "application/json" `
+  -Body '{"tipo_solicitud":"acceso","titulo":"Acceso VPN","descripcion":"Necesito acceso VPN al entorno cloud","reportado_por":"kdr1001@alu.ubu.es"}'
+```
+
+## Ejecucion local
 
 ```powershell
 cd src
@@ -64,15 +90,19 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Abrir http://localhost:5000/portal
+Abrir `http://localhost:5000/portal`.
 
-Para ejecutar las pruebas automáticas desde la raíz del repositorio:
+## Pruebas
+
+Desde la raiz del repositorio:
 
 ```powershell
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
-## Despliegue en Azure (PowerShell)
+## Despliegue en Azure
+
+El despliegue real utilizado para el TFG se realiza desde PowerShell con Azure CLI:
 
 ```powershell
 az login
@@ -80,61 +110,56 @@ az login
 .\scripts\verify-azure.ps1
 ```
 
-El despliegue publica la API y el portal en Azure App Service, configura el modo de almacenamiento cloud y permite validar el endpoint técnico `/health`.
+El script `scripts/deploy-azure.ps1`:
 
-## Calidad de Código
+- comprueba sesion de Azure CLI;
+- obtiene configuracion de Storage y Key Vault;
+- habilita Managed Identity en App Service;
+- concede acceso de App Service a Key Vault;
+- guarda la clave de API como secreto;
+- configura variables de entorno del App Service;
+- publica la carpeta `src/` mediante despliegue ZIP.
 
-El repositorio incluye análisis de calidad con SonarCloud:
+## Calidad de codigo
 
-- Panel del proyecto: https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro
+La calidad se revisa manualmente en SonarCloud:
 
-- Configuración: `sonar-project.properties`
-- Workflow: `.github/workflows/sonarcloud.yml`
-- Guía: `docs/calidad/sonarcloud.md`
+- Panel: https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro
+- Puerta de calidad: aprobada.
+- Duplicacion: 0,0%.
+- Evidencia recomendada para entrega: captura del Quality Gate y resumen de metricas.
 
-El workflow se ejecuta con cada push a `main` y realiza:
+No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se gestiona desde la interfaz web de SonarCloud.
 
-1. Instalación de dependencias Python.
-2. Ejecución de pruebas unitarias.
-3. Escaneo de calidad con SonarCloud.
+## Endpoints principales
 
-Para que el análisis funcione en GitHub Actions debe existir el secreto `SONAR_TOKEN` en `Settings -> Secrets and variables -> Actions`.
-
-## Endpoints
-
-| Método | Ruta | Descripción |
+| Metodo | Ruta | Descripcion |
 |--------|------|-------------|
+| GET | `/` | Informacion basica del servicio |
 | GET | `/portal` | Portal web empresarial |
-| GET | `/health` | Salud del sistema |
-| POST | `/solicitudes` | Crear solicitud TI (público) |
-| GET | `/solicitudes` | Listar solicitudes (auth) |
-| GET | `/metricas` | Métricas agregadas (auth) |
-
-## Repositorio y gestión
-
-- **GitHub:** https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro
-- **Zube (sprints):** https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban
-- **SonarCloud (calidad):** https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro
-- **Tribunal:** invitar usuario `ubutfgm`
-
-## Entregables TFG
-
-- `memoria/memoria.pdf`: memoria principal.
-- `memoria/anexos.pdf`: anexos técnicos.
-- `src/`: código fuente de la aplicación Flask y portal web.
-- `tests/`: pruebas automáticas.
-- `infra/terraform/` y `infra/bicep/`: infraestructura como código.
-- `logicapp/`: definición del flujo de automatización.
-- `docs/`: documentación de arquitectura, despliegue, decisiones, sprints y calidad.
+| GET | `/health` | Estado tecnico del sistema |
+| POST | `/solicitudes` | Crear solicitud TI |
+| GET | `/solicitudes` | Listar solicitudes, protegido con Bearer token |
+| GET | `/metricas` | Metricas agregadas, protegido con Bearer token |
 
 ## Estructura
 
 ```text
-src/              API Flask + portal web
-logicapp/         Logic App workflow.json
-infra/terraform/  Infraestructura (Terraform)
-infra/bicep/      Infraestructura alternativa (Bicep)
-tests/            Pruebas unitarias
-memoria/          Memoria LaTeX
-docs/             Documentación
+src/               API Flask, clasificador, almacenamiento y portal web
+tests/             Pruebas unitarias
+scripts/           Despliegue y verificacion en Azure
+infra/terraform/   Infraestructura como codigo documentada
+infra/bicep/       Plantillas Bicep alternativas/documentales
+memoria/           Memoria y anexos LaTeX/PDF
+docs/              Evidencias, arquitectura, despliegue, sprints y calidad
 ```
+
+## Entregables TFG
+
+- `memoria/memoria.pdf`: memoria principal.
+- `memoria/anexos.pdf`: anexos tecnicos.
+- Codigo fuente en `src/`.
+- Pruebas en `tests/`.
+- Evidencias y documentacion en `docs/`.
+- Licencia MIT en `LICENSE`.
+

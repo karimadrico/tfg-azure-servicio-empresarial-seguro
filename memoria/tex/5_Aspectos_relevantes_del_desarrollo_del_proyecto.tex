@@ -8,8 +8,8 @@ El proyecto se ha organizado en cinco sprints siguiendo una metodología ágil.
     \item Sprint 1: Análisis del problema empresarial, definición de requisitos y arquitectura inicial.
     \item Sprint 2: Provisionamiento de infraestructura Azure y configuración de Terraform.
     \item Sprint 3: Desarrollo de la API Flask, portal web y persistencia en Azure Storage.
-    \item Sprint 4: Seguridad con Key Vault, Managed Identity y automatización con Logic App.
-    \item Sprint 5: Pruebas, CI/CD, documentación y validación del prototipo.
+    \item Sprint 4: Seguridad con Key Vault, Managed Identity, portal web y despliegue en Azure.
+    \item Sprint 5: Pruebas, calidad SonarCloud, documentación y validación del prototipo.
 \end{itemize}
 
 \section{Arquitectura del sistema}
@@ -20,14 +20,13 @@ La arquitectura implementada sigue un modelo de servicios gestionados en Microso
     \item \textbf{Azure App Service}: hospeda la API Flask y el portal web empresarial en Python 3.11.
     \item \textbf{Azure Storage}: persiste las solicitudes operativas TI en un contenedor Blob privado.
     \item \textbf{Azure Key Vault}: almacena el token de autenticación de la API.
-    \item \textbf{Azure Logic App}: orquesta el flujo automatizado de solicitudes mediante un trigger HTTP.
-    \item \textbf{GitHub Actions}: ejecuta pruebas, validación Terraform y despliegue continuo.
+    \item \textbf{Scripts de despliegue}: automatizan la configuración y publicación en Azure mediante Azure CLI.
 \end{itemize}
 
 El flujo principal del sistema es el siguiente:
 
 \begin{enumerate}
-    \item Un empleado envía una solicitud operativa TI desde el portal web o mediante la Logic App.
+    \item Un empleado envía una solicitud operativa TI desde el portal web o mediante la API REST.
     \item Azure App Service procesa la petición con Gunicorn.
     \item La API valida los datos y clasifica automáticamente la solicitud.
     \item El sistema genera una recomendación operativa para el equipo de TI.
@@ -55,19 +54,17 @@ Al crear una solicitud, el módulo \texttt{classifier.py} analiza el título y l
 
 Se ha incorporado un clasificador ligero basado en análisis semántico de palabras clave y reglas de negocio. Este componente cumple el objetivo del TFG de aportar análisis automático de información operativa sin depender de infraestructuras corporativas complejas. El clasificador evalúa términos relacionados con seguridad, infraestructura y soporte para determinar la categoría, prioridad y recomendación de cada solicitud operativa TI.
 
-\section{Integración continua y despliegue}
+\section{Automatización del despliegue}
 
-Se ha implementado un pipeline en GitHub Actions (\texttt{.github/workflows/deploy.yml}) que:
+Se ha implementado un proceso de despliegue reproducible mediante \texttt{scripts/deploy-azure.ps1}. Este script:
 
 \begin{enumerate}
-    \item Ejecuta pruebas unitarias de la API.
-    \item Valida y aplica la infraestructura con Terraform.
-    \item Despliega el código Python en Azure App Service.
+    \item Comprueba la sesión de Azure CLI.
+    \item Obtiene la configuración de Azure Storage y Key Vault.
+    \item Habilita Managed Identity en Azure App Service.
+    \item Concede a la aplicación permisos sobre el secreto almacenado en Key Vault.
+    \item Configura variables de entorno y publica el código Python en Azure App Service.
 \end{enumerate}
-
-\section{Automatización con Logic App}
-
-La Logic App \texttt{logic-tfg-solicitudes-dev} recibe solicitudes operativas TI mediante un trigger HTTP, las reenvía a la API para su clasificación y construye una notificación operativa. Este componente demuestra la automatización de procesos empresariales sin intervención manual directa sobre la API.
 
 \section{Seguridad y gestión de secretos}
 

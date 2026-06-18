@@ -14,8 +14,7 @@ Los principales componentes son:
     \item Azure App Service (API Flask y portal web).
     \item Azure Storage (persistencia de solicitudes).
     \item Azure Key Vault (gestión de secretos).
-    \item Azure Logic App (orquestación del flujo).
-    \item GitHub Actions (integración y despliegue continuo).
+    \item Script PowerShell con Azure CLI para despliegue reproducible.
 \end{itemize}
 
 \section{Diseño procedimental}
@@ -23,13 +22,13 @@ Los principales componentes son:
 El flujo principal del sistema es:
 
 \begin{enumerate}
-    \item Recepción de solicitudes operativas TI por portal web, API REST o Logic App.
+    \item Recepción de solicitudes operativas TI por portal web o API REST.
     \item Validación de campos obligatorios.
     \item Clasificación automática mediante componente de IA ligera.
     \item Generación de recomendaciones de actuación operativa.
     \item Persistencia de solicitudes en Blob Storage o fichero local.
     \item Respuesta JSON con identificador, prioridad, tipo, recomendación y confianza.
-    \item Automatización del flujo mediante Logic App y notificación al equipo TI.
+    \item Verificación del despliegue mediante endpoint \texttt{/health}, portal web y pruebas HTTP.
 \end{enumerate}
 
 \subsection{Tipos de solicitud soportados}
@@ -45,10 +44,9 @@ El flujo principal del sistema es:
 \section{Integración cloud}
 
 \begin{itemize}
-    \item \textbf{Terraform}: provisiona Resource Group, App Service, Storage y Key Vault.
+    \item \textbf{Terraform}: documenta Resource Group, App Service, Storage y Key Vault como infraestructura declarativa.
     \item \textbf{Bicep}: plantillas alternativas para reproducir la infraestructura.
-    \item \textbf{GitHub Actions}: prueba, valida y despliega la solución.
-    \item \textbf{Logic App}: automatiza el procesamiento de solicitudes desde un trigger HTTP.
+    \item \textbf{Script PowerShell}: configura recursos existentes y publica la aplicación en Azure App Service.
 \end{itemize}
 
 \section{Diseño de datos}
@@ -77,4 +75,4 @@ created\_at & fecha & Fecha de creación de la solicitud. \\
 
 \section{Calidad y observabilidad}
 
-La calidad se comprueba mediante pruebas automáticas y un flujo de análisis preparado con SonarCloud. En el momento de cerrar este anexo, SonarCloud está configurado en el repositorio mediante \texttt{sonar-project.properties} y el workflow \texttt{SonarCloud Quality Analysis}, pero debe ejecutarse antes de la entrega para obtener la URL y la captura final del panel de calidad. La observabilidad técnica se apoya en el endpoint \texttt{/health}, en los logs de App Service y en las métricas disponibles desde Azure Monitor \cite{azure_monitor}.
+La calidad se comprueba mediante pruebas automáticas y análisis manual en SonarCloud. El panel de SonarCloud se aporta como evidencia de mantenibilidad, fiabilidad, seguridad y duplicidad del código. La observabilidad técnica se apoya en el endpoint \texttt{/health}, en los logs de App Service y en las métricas disponibles desde Azure Monitor \cite{azure_monitor}.

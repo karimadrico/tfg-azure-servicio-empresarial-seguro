@@ -38,11 +38,11 @@ La planificación se ha dividido en cinco iteraciones, superando el mínimo de t
 \begin{tabularx}{\textwidth}{l X X}
 \textbf{Sprint} & \textbf{Objetivo} & \textbf{Resultado} \\
 \hline
-Sprint 1 & Definición del problema, requisitos iniciales y arquitectura base. & Repositorio, documentación inicial y backlog en Zube. \\
-Sprint 2 & Infraestructura Azure y persistencia cloud. & Terraform, Storage Account, Key Vault y App Service definidos. \\
-Sprint 3 & Implementación de API Flask y pruebas. & Endpoints de solicitudes, métricas, clasificación y pruebas unitarias. \\
-Sprint 4 & Despliegue, portal web y automatización. & Portal funcional en App Service, Logic App y scripts de despliegue. \\
-Sprint 5 & Cierre documental, calidad y entrega. & Memoria, anexos, bibliografía, SonarCloud preparado y evidencias de despliegue. \\
+Sprint 1 (25/02/2026--10/03/2026) & Preparación y base. & Repositorio, documentación inicial, backlog y primeras decisiones de arquitectura. \\
+Sprint 2 (11/03/2026--24/03/2026) & Implementación de módulos y dashboard. & Clasificación ligera, portal inicial, persistencia y primeras pruebas unitarias. \\
+Sprint 3 (25/03/2026--21/04/2026) & Incidencias y despliegue. & API de solicitudes, validación, seguridad básica y despliegue en Azure. \\
+Sprint 4 (22/04/2026--21/05/2026) & Consolidación y documentación técnica. & App Service, Storage, Key Vault, Managed Identity, evidencias y anexos. \\
+Sprint 5 (22/05/2026--08/07/2026) & Finalización y defensa. & Memoria, anexos, calidad SonarCloud, vídeos y entregables finales. \\
 \end{tabularx}
 \caption{Resumen de iteraciones del proyecto}
 \end{table}
@@ -51,7 +51,7 @@ Sprint 5 & Cierre documental, calidad y entrega. & Memoria, anexos, bibliografí
 
 \subsection{Viabilidad económica}
 
-El proyecto se ha desarrollado utilizando principalmente herramientas disponibles en versiones gratuitas, de código abierto o académicas, como GitHub, Zube y Microsoft Azure for Students. SonarCloud se ha preparado como herramienta de análisis de calidad, pero su ejecución queda documentada como una comprobación específica previa a la entrega final.
+El proyecto se ha desarrollado utilizando principalmente herramientas disponibles en versiones gratuitas, de código abierto o académicas, como GitHub, Zube y Microsoft Azure for Students. SonarCloud se utiliza como herramienta de análisis de calidad del código y su panel se aporta como evidencia de revisión externa.
 
 La mayor parte del coste corresponde al esfuerzo de desarrollo. Para estimar el coste de personal se ha considerado una dedicación aproximada de 300 horas y un coste de referencia de 18 euros/hora para un perfil junior de desarrollo cloud. Sobre este coste se añade una estimación del 32\% de costes empresariales asociados a Seguridad Social y otras aportaciones obligatorias. Esta cifra no representa una factura real, sino una estimación académica del valor del trabajo realizado.
 
@@ -92,11 +92,11 @@ Flask & BSD-3-Clause & API REST y portal web \\
 Gunicorn & MIT & Servidor WSGI en App Service \\
 Azure SDK for Python & MIT & Integración con Storage y Key Vault \\
 Terraform & Business Source License & Infraestructura como código \\
-GitHub Actions & Servicio GitHub & Integración continua y despliegue \\
-SonarCloud & Servicio SonarSource & Análisis de calidad preparado para la entrega \\
-Microsoft Azure & Servicio cloud & App Service, Storage, Key Vault y Logic App \\
+Azure CLI & Licencia Microsoft & Automatización del despliegue desde PowerShell \\
+SonarCloud & Servicio SonarSource & Análisis de calidad del código \\
+Microsoft Azure & Servicio cloud & App Service, Storage, Key Vault y Managed Identity \\
 \end{tabularx}
 \caption{Licencias y servicios utilizados}
 \end{table}
 
-Las licencias empleadas son compatibles con un proyecto académico y permiten la distribución del código fuente del prototipo. El repositorio incluye un archivo \texttt{LICENSE} con licencia MIT para el código propio desarrollado durante el TFG. Las credenciales y secretos no se almacenan en el repositorio, sino en variables de entorno, GitHub Secrets y Azure Key Vault.
+Las licencias empleadas son compatibles con un proyecto académico y permiten la distribución del código fuente del prototipo. El repositorio incluye un archivo \texttt{LICENSE} con licencia MIT para el código propio desarrollado durante el TFG. Las credenciales y secretos no se almacenan en el repositorio, sino en variables de entorno y Azure Key Vault.

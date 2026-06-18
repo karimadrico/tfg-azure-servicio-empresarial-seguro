@@ -20,7 +20,7 @@ Se han realizado commits frecuentes para mantener trazabilidad completa del desa
 
 \section{Plataforma cloud}
 
-La infraestructura cloud se basa en Microsoft Azure y en servicios gestionados documentados por Microsoft para aplicaciones web, almacenamiento, monitorización y gestión de secretos \cite{azure_storage_webapp,keyvault_managed_identity,azure_monitor}.
+La infraestructura cloud se basa en Microsoft Azure y en servicios gestionados documentados por Microsoft para aplicaciones web, almacenamiento, monitorización y gestión de secretos \cite{azure_appservice_python_quickstart,azure_blob_python,azure_appservice_keyvault_refs,azure_monitor}.
 
 Los servicios principales utilizados son:
 
@@ -31,23 +31,24 @@ Los servicios principales utilizados son:
     \item Azure Monitor.
 \end{itemize}
 
-\section{Integración continua}
+\section{Automatización del despliegue}
 
-Se ha configurado un pipeline CI/CD utilizando GitHub Actions, siguiendo el enfoque de despliegue automatizado de aplicaciones en Azure App Service \cite{deploy_azure_github_actions}.
+El despliegue se automatiza mediante el script \texttt{scripts/deploy-azure.ps1}, que utiliza Azure CLI para configurar App Service, Storage, Key Vault, Managed Identity y publicación ZIP de la aplicación. Esta decisión permite reproducir el despliegue desde un equipo local y documentar de forma explícita cada paso técnico aplicado sobre Azure.
 
-Este sistema automatiza:
+El script automatiza:
 
 \begin{itemize}
-    \item Validación del código.
-    \item Preparación del despliegue.
-    \item Automatización de tareas.
+    \item Comprobación de sesión en Azure.
+    \item Configuración de secretos y variables de entorno.
+    \item Asignación de identidad administrada.
+    \item Publicación de la carpeta \texttt{src/} en Azure App Service.
 \end{itemize}
 
 \section{Calidad del código}
 
-La calidad del código se ha preparado para analizarse mediante SonarQube/SonarCloud integrado con GitHub Actions \cite{sonarqube_docs}.
+La calidad del código se analiza mediante SonarQube/SonarCloud \cite{sonarqube_docs}.
 
-En este proyecto se configura SonarCloud como servicio gestionado compatible con repositorios GitHub. Su uso permite obtener métricas objetivas de mantenibilidad, fiabilidad y seguridad sin desplegar un servidor SonarQube propio. El análisis está preparado para ejecutarse desde el pipeline de integración continua y complementar a las pruebas unitarias.
+En este proyecto se utiliza SonarCloud como servicio gestionado compatible con repositorios GitHub. Su uso permite obtener métricas objetivas de mantenibilidad, fiabilidad, seguridad y duplicidad sin desplegar un servidor SonarQube propio. El análisis se realiza desde el panel web de SonarCloud y complementa a las pruebas unitarias.
 
 Esta herramienta permite detectar:
 
@@ -59,12 +60,12 @@ Esta herramienta permite detectar:
     \item Deuda técnica y problemas de mantenibilidad.
 \end{itemize}
 
-Los resultados del análisis deberán emplearse como evidencia de calidad del código y como apoyo para priorizar mejoras antes de la entrega final.
+Los resultados del análisis se emplean como evidencia de calidad del código y como apoyo para priorizar mejoras antes de la entrega final.
 
 \section{Terraform}
 
 Terraform es una herramienta Infrastructure as Code (IaC)
 utilizada para automatizar el aprovisionamiento de recursos cloud.
 
-En el proyecto se emplea para definir recursos Azure de forma declarativa,
-permitiendo despliegues reproducibles, controlados y versionados mediante Git \cite{terraform_azure}.
+En el proyecto se conserva como definición declarativa de infraestructura Azure,
+permitiendo documentar recursos reproducibles, controlados y versionados mediante Git \cite{terraform_azure}. El despliegue operativo final se ha realizado con el script PowerShell incluido en el repositorio.

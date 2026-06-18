@@ -2,7 +2,7 @@
 
 \section{Introducción}
 
-Este anexo describe la estructura técnica del repositorio y los pasos para ejecutar, probar y desplegar la solución, apoyándose en despliegue continuo con GitHub Actions y servicios gestionados de Azure \cite{github_actions,azure_keyvault,azure_appservice_keyvault_refs}.
+Este anexo describe la estructura técnica del repositorio y los pasos para ejecutar, probar y desplegar la solución, apoyándose en scripts reproducibles con Azure CLI y servicios gestionados de Azure \cite{azure_keyvault,azure_appservice_keyvault_refs}.
 
 \section{Estructura de directorios}
 
@@ -14,8 +14,7 @@ Este anexo describe la estructura técnica del repositorio y los pasos para ejec
     \item \texttt{src/requirements.txt}: dependencias Python.
     \item \texttt{tests/test\_api.py}: pruebas unitarias.
     \item \texttt{infra/terraform/}: infraestructura como código.
-    \item \texttt{logicapp/}: definición de Logic App.
-    \item \texttt{.github/workflows/}: CI/CD con GitHub Actions.
+    \item \texttt{scripts/}: despliegue y verificación en Azure.
     \item \texttt{memoria/tex/}: memoria y anexos en LaTeX.
 \end{itemize}
 
@@ -42,10 +41,10 @@ La API quedará disponible en \texttt{http://localhost:5000}.
 \section{Despliegue en Azure}
 
 \begin{enumerate}
-    \item Configurar el secreto \texttt{AZURE\_CREDENTIALS} en GitHub.
-    \item Ejecutar \texttt{terraform apply} en \texttt{infra/terraform}.
-    \item Desplegar la carpeta \texttt{src} en App Service mediante GitHub Actions o mediante el script \texttt{scripts/deploy-azure.ps1}.
-    \item Importar la Logic App desde \texttt{logicapp/logicapp-workflow.json}.
+    \item Iniciar sesión con \texttt{az login}.
+    \item Ejecutar \texttt{scripts/deploy-azure.ps1} desde la raíz del repositorio.
+    \item Comprobar \texttt{/health} y abrir el portal web desplegado.
+    \item Ejecutar \texttt{scripts/verify-azure.ps1} para verificar endpoints principales.
 \end{enumerate}
 
 \section{Pruebas del sistema}
@@ -58,12 +57,11 @@ Las pruebas verifican endpoints, creación de incidencias, métricas y clasifica
 
 \section{Análisis de calidad}
 
-El repositorio incluye la configuración necesaria para ejecutar SonarCloud como servicio gestionado de SonarQube:
+El proyecto utiliza SonarCloud como servicio gestionado de SonarQube:
 
 \begin{itemize}
-    \item \texttt{sonar-project.properties}: define clave de proyecto, organización, fuentes y tests.
-    \item \texttt{.github/workflows/sonarcloud.yml}: instala dependencias, ejecuta pruebas y lanza el análisis.
-    \item \texttt{docs/calidad/sonarcloud.md}: documenta la puesta en marcha y las evidencias que deben guardarse.
+    \item Panel del proyecto: \url{https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro}.
+    \item \texttt{docs/calidad/sonarcloud.md}: documenta el resultado observado y las evidencias que deben guardarse.
 \end{itemize}
 
-Para completar la evidencia de calidad se debe crear el secreto \texttt{SONAR\_TOKEN} en GitHub Actions y ejecutar el workflow \texttt{SonarCloud Quality Analysis}. La URL del panel de calidad y una captura del Quality Gate deben incorporarse al documento final de enlaces o a la documentación de evidencias.
+Para completar la evidencia de calidad se debe guardar una captura del Quality Gate, una captura del resumen de métricas y la URL del panel en el documento final de enlaces.
