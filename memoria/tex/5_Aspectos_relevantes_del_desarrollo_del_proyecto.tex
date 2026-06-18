@@ -20,19 +20,21 @@ La arquitectura implementada sigue un modelo de servicios gestionados en Microso
     \item \textbf{Azure App Service}: hospeda la API Flask y el portal web empresarial en Python 3.11.
     \item \textbf{Azure Storage}: persiste las solicitudes operativas TI en un contenedor Blob privado.
     \item \textbf{Azure Key Vault}: almacena el token de autenticación de la API.
+    \item \textbf{Azure Logic Apps}: automatiza la entrada de solicitudes externas mediante un trigger HTTP.
+    \item \textbf{Application Insights y Azure Monitor}: permiten revisar telemetría, métricas y comportamiento operativo del servicio desplegado.
     \item \textbf{Scripts de despliegue}: automatizan la configuración y publicación en Azure mediante Azure CLI.
 \end{itemize}
 
 El flujo principal del sistema es el siguiente:
 
 \begin{enumerate}
-    \item Un empleado envía una solicitud operativa TI desde el portal web o mediante la API REST.
+    \item Un empleado envía una solicitud operativa TI desde el portal web, mediante la API REST o a través de la Logic App.
     \item Azure App Service procesa la petición con Gunicorn.
     \item La API valida los datos y clasifica automáticamente la solicitud.
     \item El sistema genera una recomendación operativa para el equipo de TI.
     \item Los datos se almacenan en Azure Blob Storage.
     \item Los secretos se obtienen desde Azure Key Vault mediante Managed Identity.
-    \item El endpoint de métricas expone el estado agregado del sistema.
+    \item El endpoint de métricas y Application Insights permiten observar el estado agregado del sistema.
 \end{enumerate}
 
 \begin{figure}[h]
@@ -46,7 +48,7 @@ La figura \ref{fig:infografia-arquitectura-azure} resume visualmente los servici
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{infografia_de_arquitectura_Azure.png}
+\includegraphics[width=0.9\textwidth]{infografia_de_arquitectura_Azure_v2.png}
 \caption{Infografía de arquitectura cloud del prototipo. Fuente: elaboración propia.}
 \label{fig:infografia-arquitectura-azure}
 \end{figure}
@@ -101,6 +103,12 @@ Se ha implementado un proceso de despliegue reproducible mediante \texttt{script
     \item Configura variables de entorno y publica el código Python en Azure App Service.
 \end{enumerate}
 
+
+\section{Automatización empresarial con Logic App}
+
+La Logic App actúa como capa de orquestación para integrar la plataforma con otros sistemas de la empresa. En el prototipo, un sistema externo puede enviar una petición HTTP a la Logic App y esta invoca de forma controlada el endpoint \texttt{POST /solicitudes} de la API desplegada en App Service. La API conserva la responsabilidad de validar datos, clasificar la solicitud, generar la recomendación y persistir el registro en Azure Blob Storage.
+
+Este flujo resulta útil para un escenario empresarial realista: un formulario corporativo, una herramienta de soporte, un buzón automatizado o un sistema de atención interna podrían crear solicitudes sin acceder manualmente al portal. La Logic App no sustituye al equipo de TI ni al backend, sino que automatiza la entrada de trabajo y permite que el equipo técnico consulte, priorice y supervise las solicitudes desde la plataforma.
 \section{Seguridad y gestión de secretos}
 
 La autenticación de la API utiliza un token Bearer almacenado en Azure Key Vault. La App Service accede al secreto mediante Managed Identity, evitando credenciales embebidas en el código fuente. El almacenamiento de solicitudes reside en un contenedor Blob con acceso privado.
@@ -108,5 +116,4 @@ La autenticación de la API utiliza un token Bearer almacenado en Azure Key Vaul
 \section{Validación del prototipo}
 
 Las pruebas unitarias en \texttt{tests/test\_api.py} verifican la creación de solicitudes, el listado, las métricas, el portal web y la clasificación automática. El prototipo puede ejecutarse localmente con almacenamiento en fichero JSON o desplegarse en Azure con persistencia en Blob Storage.
-
 

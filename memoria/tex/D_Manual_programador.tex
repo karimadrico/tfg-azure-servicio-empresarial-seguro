@@ -97,8 +97,15 @@ El proyecto utiliza SonarCloud como servicio gestionado de SonarQube:
     \item \texttt{docs/calidad/sonarcloud.md}: documenta el resultado observado y las evidencias que deben guardarse.
 \end{itemize}
 
-Para completar la evidencia de calidad se debe guardar una captura del Quality Gate, una captura del resumen de métricas y la URL del panel en el documento final de enlaces.
+Como evidencia de calidad se conserva una captura del Quality Gate final y el resumen de métricas en SonarCloud. La URL del panel se incluye en el documento final de enlaces.
 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../docs/evidencias/sonarcloud-quality-gate-final-18junio.png}
+\caption{Quality Gate final de SonarCloud tras las correcciones de calidad. Fuente: captura propia.}
+\label{fig:sonarcloud-quality-gate-final}
+\end{figure}
 La figura \ref{fig:observabilidad-monitor} resume la estrategia de observabilidad mediante App Service, Application Insights y Azure Monitor.
 
 \begin{figure}[h]
@@ -107,5 +114,19 @@ La figura \ref{fig:observabilidad-monitor} resume la estrategia de observabilida
 \caption{Observabilidad del prototipo con Azure Monitor y Application Insights. Fuente: elaboración propia.}
 \label{fig:observabilidad-monitor}
 \end{figure}
+Las figuras \ref{fig:application-insights-overview} y \ref{fig:azure-monitor-metrics} muestran evidencias del recurso de Application Insights y de las métricas disponibles para supervisar el servicio desplegado.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../docs/evidencias/application-insights-overview.png}
+\caption{Vista general de Application Insights asociado al prototipo. Fuente: captura propia.}
+\label{fig:application-insights-overview}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../docs/evidencias/azure-monitor-metrics.png}
+\caption{Métricas del servicio en Azure Monitor. Fuente: captura propia.}
+\label{fig:azure-monitor-metrics}
+\end{figure}
 

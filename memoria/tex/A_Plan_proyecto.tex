@@ -104,27 +104,29 @@ El proyecto se ha desarrollado utilizando principalmente herramientas disponible
 
 La mayor parte del coste corresponde al esfuerzo de desarrollo. Para estimar el coste de personal se ha considerado una dedicación aproximada de 300 horas y un coste de referencia de 18 euros/hora para un perfil junior de desarrollo cloud. Sobre este coste se añade una estimación del 32\% de costes empresariales asociados a Seguridad Social y otras aportaciones obligatorias. Esta cifra no representa una factura real, sino una estimación académica del valor del trabajo realizado.
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
-\small
-\begin{tabularx}{\textwidth}{X r r r}
-\textbf{Concepto} & \textbf{Cantidad} & \textbf{Coste unitario} & \textbf{Coste estimado} \\
+\scriptsize
+\begin{tabular}{p{0.37\textwidth} p{0.15\textwidth} p{0.24\textwidth} r}
+\textbf{Concepto} & \textbf{Cantidad} & \textbf{Coste unitario} & \textbf{Coste} \\
 \hline
 Análisis y planificación & 45 h & 18 EUR/h & 810 EUR \\
 Diseño de arquitectura & 45 h & 18 EUR/h & 810 EUR \\
 Implementación backend y portal & 90 h & 18 EUR/h & 1.620 EUR \\
 Infraestructura Azure y despliegue & 60 h & 18 EUR/h & 1.080 EUR \\
 Pruebas, documentación y memoria & 60 h & 18 EUR/h & 1.080 EUR \\
-Costes empresariales de personal & 32\% & 5.400 EUR & 1.728 EUR \\
-Servicios Azure for Students & 1 suscripción & 0 EUR & 0 EUR \\
-GitHub y Zube & 1 cuenta académica & 0 EUR & 0 EUR \\
+Costes empresariales de personal & 32\% & Sobre 5.400 EUR & 1.728 EUR \\
+Servicios Azure for Students & 1 suscripción & Crédito académico & 0 EUR \\
+App Service, Storage, Key Vault, Logic App y Monitor & Entorno dev & Incluido en crédito académico & 0 EUR \\
+Amortización proporcional de equipo personal & 5 meses & Estimación académica & 120 EUR \\
+GitHub y Zube & 1 cuenta & Uso académico & 0 EUR \\
 \hline
-\textbf{Total estimado} & \textbf{300 h} & & \textbf{7.128 EUR} \\
-\end{tabularx}
+\textbf{Total estimado} & \textbf{300 h} & & \textbf{7.248 EUR} \\
+\end{tabular}
 \caption{Estimación económica del proyecto}
 \end{table}
 
-En un entorno empresarial real también deberían considerarse costes de operación continuada, soporte, monitorización, almacenamiento y transferencia de datos. En este TFG se han mantenido los recursos dentro de un entorno de desarrollo de bajo consumo, por lo que el coste de infraestructura se ha reducido al mínimo. El equipo informático y el software de escritorio no se imputan por su coste completo, ya que conservan valor tras el proyecto y pueden reutilizarse en otros trabajos; en una contabilidad empresarial se imputaría únicamente su amortización proporcional al periodo de uso.
+En un entorno empresarial real también deberían considerarse costes de operación continuada, soporte, monitorización, almacenamiento y transferencia de datos. En este TFG se han mantenido los recursos dentro de un entorno de desarrollo de bajo consumo, por lo que el coste de infraestructura se ha reducido al mínimo. El equipo informático y el software de escritorio no se imputan por su coste completo, ya que conservan valor tras el proyecto y pueden reutilizarse en otros trabajos. Para responder al criterio de prorrateo indicado en las FAQ, se incorpora una estimación académica de amortización proporcional del equipo durante el periodo de realización del TFG, en lugar de cargar el coste total del hardware al proyecto.
 
 \subsection{Viabilidad legal}
 
@@ -143,11 +145,13 @@ Azure SDK for Python & MIT & Integración con Storage y Key Vault \\
 Terraform & Business Source License & Infraestructura como código \\
 Azure CLI & Licencia Microsoft & Automatización del despliegue desde PowerShell \\
 SonarCloud & Servicio SonarSource & Análisis de calidad del código \\
-Microsoft Azure & Servicio cloud & App Service, Storage, Key Vault y Managed Identity \\
+Microsoft Azure & Servicio cloud & App Service, Storage, Key Vault, Managed Identity, Logic Apps y Application Insights \\
 \end{tabularx}
 \caption{Licencias y servicios utilizados}
 \end{table}
 
 Las licencias empleadas son compatibles con un proyecto académico y permiten la distribución del código fuente del prototipo. El repositorio incluye un archivo \texttt{LICENSE} con licencia MIT para el código propio desarrollado durante el TFG. Las credenciales y secretos no se almacenan en el repositorio, sino en variables de entorno y Azure Key Vault.
+
+
 
 

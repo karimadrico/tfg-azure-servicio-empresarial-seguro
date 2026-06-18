@@ -105,7 +105,7 @@ La figura \ref{fig:flujo-solicitud-ti} representa el flujo funcional seguido por
 
 La Logic App añadida al prototipo actúa como punto de entrada para sistemas externos que necesiten generar solicitudes sin utilizar directamente el portal web. El flujo recibe una petición HTTP con los campos principales de la solicitud, invoca la API desplegada en App Service mediante \texttt{POST /solicitudes} y devuelve al llamante la respuesta generada por la propia API. De esta forma, la lógica de validación, clasificación automática y persistencia se mantiene centralizada en el backend.
 
-Esta decisión permite defender un caso de automatización empresarial realista: un formulario externo, una herramienta de soporte o un proceso corporativo podrían enviar solicitudes al flujo HTTP y delegar en la plataforma cloud la clasificación, priorización y registro de la petición.
+Esta decisión permite defender un caso de automatización empresarial realista: un formulario externo, una herramienta de soporte, un buzón corporativo o un proceso interno podrían enviar solicitudes al flujo HTTP y delegar en la plataforma cloud la clasificación, priorización y registro de la petición. En una empresa, la Logic App sería mantenida por el equipo de TI o de plataforma cloud, mientras que los usuarios internos consumirían el portal o los formularios integrados. La gestión operativa seguiría centralizada en la API y en las vistas de consulta, evitando duplicar reglas de negocio en cada canal de entrada.
 
 La figura \ref{fig:logic-app-workflow} muestra el flujo de automatización incorporado al prototipo mediante Logic App.
 
@@ -116,6 +116,15 @@ La figura \ref{fig:logic-app-workflow} muestra el flujo de automatización incor
 \label{fig:logic-app-workflow}
 \end{figure}
 
+
+La figura \ref{fig:logic-app-created-request} evidencia una ejecución correcta de la Logic App en la que se crea una solicitud real en la API del prototipo.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../docs/evidencias/logic-app-created-request.png}
+\caption{Solicitud creada mediante Azure Logic Apps. Fuente: captura propia.}
+\label{fig:logic-app-created-request}
+\end{figure}
 La figura \ref{fig:seguridad-secretos} resume el modelo de seguridad aplicado para proteger secretos y accesos.
 
 \begin{figure}[h]
@@ -182,5 +191,6 @@ created\_at & fecha & Fecha de creación de la solicitud. \\
 \section{Calidad y observabilidad}
 
 La calidad se comprueba mediante pruebas automáticas y análisis manual en SonarCloud. El panel de SonarCloud se aporta como evidencia de mantenibilidad, fiabilidad, seguridad y duplicidad del código. La observabilidad técnica se apoya en el endpoint \texttt{/health}, en los logs de App Service y en las métricas disponibles desde Application Insights y Azure Monitor \cite{azure_monitor}.
+
 
 

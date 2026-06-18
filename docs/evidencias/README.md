@@ -93,7 +93,7 @@ Estas evidencias sirven para defender la automatizacion cloud del proceso empres
 
 Application Insights y Azure Monitor permiten justificar que el prototipo no solo se despliega, sino que tambien puede supervisarse durante su ejecucion.
 
-Capturas recomendadas para completar la evidencia visual:
+Evidencias incorporadas para completar la observabilidad:
 
 - `application-insights-overview.png`: vista general del recurso `appi-tfg-incidencias-dev`.
 - `azure-monitor-metrics.png`: metricas del App Service o de Application Insights, por ejemplo peticiones, errores o tiempo de respuesta.
@@ -104,9 +104,9 @@ Capturas recomendadas para completar la evidencia visual:
 
 Captura del Quality Gate aprobado en SonarCloud. Es la evidencia principal para el criterio de calidad interna.
 
-Cuando el ultimo analisis quede limpio, guardar tambien:
+Evidencia final incorporada:
 
-- `sonarcloud-quality-gate-final.png`: Quality Gate final tras corregir los avisos de SonarCloud y revisar los Security Hotspots necesarios.
+- `sonarcloud-quality-gate-final-18junio.png`: Quality Gate final tras corregir los avisos de SonarCloud y revisar los Security Hotspots necesarios.
 
 ![Issues SonarCloud](sonarcloud-issues.png)
 
@@ -149,4 +149,5 @@ Captura complementaria de la aplicación web en Azure.
 ![Portal Home adicional](url-portal-home.png)
 
 Captura adicional del portal público usado para la demostración.
+
 

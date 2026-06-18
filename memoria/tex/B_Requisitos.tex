@@ -21,6 +21,7 @@ Los requisitos funcionales recogen las capacidades visibles del sistema para usu
     \item RF-04 Gestionar almacenamiento cloud.
     \item RF-05 Gestionar secretos mediante Azure Key Vault.
     \item RF-06 Clasificar solicitudes automáticamente.
+    \item RF-07 Automatizar la entrada de solicitudes mediante Logic App.
 \end{itemize}
 
 Los requisitos no funcionales recogen propiedades transversales necesarias para que el sistema sea evaluable, seguro y mantenible:
@@ -32,6 +33,7 @@ Los requisitos no funcionales recogen propiedades transversales necesarias para 
     \item RNF-02 Escalabilidad.
     \item RNF-03 Disponibilidad.
     \item RNF-04 Trazabilidad.
+    \item RNF-05 Observabilidad.
 \end{itemize}
 
 La tabla \ref{tabla:requisitos_prioridad_validacion} amplía el catálogo de requisitos indicando prioridad y mecanismo de validación.
@@ -48,10 +50,12 @@ RF-03 & Funcional & Media & Prueba de \texttt{GET /metricas}. \\
 RF-04 & Funcional & Alta & Comprobación de persistencia en Blob Storage y modo local. \\
 RF-05 & Funcional & Alta & Capturas de Key Vault, secreto e identidad administrada. \\
 RF-06 & Funcional & Media & Pruebas unitarias del clasificador y respuesta de creación de solicitud. \\
+RF-07 & Funcional & Media & Evidencia de Logic App con trigger HTTP y solicitud creada. \\
 RNF-01 & No funcional & Alta & Revisión de autenticación, secretos fuera del código y SonarCloud. \\
 RNF-02 & No funcional & Media & Uso de App Service y Blob Storage como servicios gestionados. \\
 RNF-03 & No funcional & Media & Endpoint \texttt{/health} y script \texttt{verify-azure.ps1}. \\
 RNF-04 & No funcional & Alta & Identificador, estado, prioridad, tipo, fecha y recomendación por solicitud. \\
+RNF-05 & No funcional & Media & Capturas de Application Insights, Azure Monitor y endpoint de métricas. \\
 \end{tabularx}
 \caption{Requisitos con prioridad y validación}
 \label{tabla:requisitos_prioridad_validacion}
@@ -77,6 +81,9 @@ El token de autenticación debe almacenarse en Key Vault y recuperarse mediante 
 \subsection{RF-06 Clasificación automática}
 El sistema debe clasificar automáticamente prioridad, categoría y tipo de cada solicitud, generando además una recomendación operativa.
 
+\subsection{RF-07 Automatización de entrada mediante Logic App}
+El sistema debe permitir que un sistema externo cree solicitudes mediante una Logic App con trigger HTTP, manteniendo la validación, clasificación y persistencia centralizadas en la API.
+
 \subsection{RNF-01 Seguridad}
 Autenticación Bearer, almacenamiento privado y gestión de secretos centralizada.
 
@@ -88,6 +95,9 @@ Endpoint de salud \texttt{/health} y despliegue automatizado.
 
 \subsection{RNF-04 Trazabilidad}
 Registro de fecha de creación, estado, prioridad, tipo, clasificación y recomendación de cada solicitud.
+
+\subsection{RNF-05 Observabilidad}
+El sistema debe aportar evidencias de monitorización mediante métricas de la API, Application Insights y Azure Monitor, de forma que pueda analizarse el comportamiento del prototipo desplegado.
 
 \section{Casos de uso}
 
@@ -105,6 +115,10 @@ CU-03 Consultar solicitudes & Equipo TI & Lista solicitudes y filtra por estado,
 CU-04 Consultar métricas & Equipo TI & Revisa métricas agregadas para seguimiento operativo. \\
 CU-05 Validar despliegue & Administrador cloud & Comprueba el estado de la aplicación mediante \texttt{/health} y pruebas HTTP. \\
 CU-06 Gestionar secretos & Administrador cloud & Mantiene tokens y configuración sensible en Azure Key Vault. \\
+CU-07 Automatizar solicitud externa & Sistema externo / Equipo TI & Envía una solicitud mediante Logic App para integrarla con el flujo de gestión. \\
 \end{tabularx}
 \caption{Casos de uso principales}
 \end{table}
+
+
+
