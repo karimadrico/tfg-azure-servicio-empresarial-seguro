@@ -3,7 +3,12 @@
 
 $ErrorActionPreference = "Stop"
 
-$BaseUrl = "https://app-tfg-incidencias-dev.azurewebsites.net"
+$BaseUrl = if ($env:BASE_URL) {
+    $env:BASE_URL.TrimEnd("/")
+}
+else {
+    "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net"
+}
 $ApiKey = if ($env:API_KEY) { $env:API_KEY } else { "tfg-api-key-ubu-2026" }
 $Headers = @{ Authorization = "Bearer $ApiKey" }
 
