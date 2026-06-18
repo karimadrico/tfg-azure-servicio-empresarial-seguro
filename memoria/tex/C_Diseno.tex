@@ -17,6 +17,24 @@ Los principales componentes son:
     \item Script PowerShell con Azure CLI para despliegue reproducible.
 \end{itemize}
 
+La figura \ref{fig:arquitectura-cloud-azure} muestra el esquema general de la solución, centrado en App Service, Blob Storage y Key Vault.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{arquitectura_cloud_azure.png}
+\caption{Arquitectura cloud de la solución desplegada en Azure. Fuente: elaboración propia.}
+\label{fig:arquitectura-cloud-azure}
+\end{figure}
+
+La figura \ref{fig:azure-resource-group} recoge una evidencia del grupo de recursos utilizado durante el despliegue del prototipo.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../docs/arquitectura/resourcegroup.png}
+\caption{Grupo de recursos del proyecto en Azure Portal. Fuente: captura propia.}
+\label{fig:azure-resource-group}
+\end{figure}
+
 \section{Diseño procedimental}
 
 El flujo principal del sistema es:
@@ -48,6 +66,36 @@ El flujo principal del sistema es:
     \item \textbf{Bicep}: plantillas alternativas para reproducir la infraestructura.
     \item \textbf{Script PowerShell}: configura recursos existentes y publica la aplicación en Azure App Service.
 \end{itemize}
+
+Las figuras \ref{fig:azure-app-service}, \ref{fig:azure-key-vault}, \ref{fig:azure-managed-identity} y \ref{fig:azure-storage} muestran evidencias de los principales servicios utilizados.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../docs/arquitectura/app-service.png}
+\caption{Azure App Service utilizado para alojar la API Flask y el portal web. Fuente: captura propia.}
+\label{fig:azure-app-service}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../docs/arquitectura/key-vault.png}
+\caption{Azure Key Vault utilizado para almacenar el secreto de autenticación. Fuente: captura propia.}
+\label{fig:azure-key-vault}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../docs/arquitectura/app-service-identity.png}
+\caption{Identidad administrada habilitada en Azure App Service. Fuente: captura propia.}
+\label{fig:azure-managed-identity}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../docs/arquitectura/storage-account.png}
+\caption{Storage Account utilizado para persistir solicitudes en Blob Storage. Fuente: captura propia.}
+\label{fig:azure-storage}
+\end{figure}
 
 \section{Diseño de datos}
 

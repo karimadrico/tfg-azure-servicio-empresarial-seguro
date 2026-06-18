@@ -2,7 +2,7 @@
 
 \section{Cloud Computing}
 
-El cloud computing es un modelo tecnológico que permite acceder a recursos informáticos bajo demanda utilizando Internet. Este modelo elimina la necesidad de mantener infraestructuras físicas propias y permite escalar recursos dinámicamente \cite{microsoft_azure}.
+El cloud computing es un modelo tecnológico que permite acceder a recursos informáticos bajo demanda utilizando Internet. Este modelo reduce la necesidad de mantener infraestructuras físicas propias, permite escalar recursos dinámicamente y facilita que las organizaciones consuman capacidad de cómputo, almacenamiento, red y servicios gestionados según sus necesidades reales \cite{microsoft_azure}.
 
 Entre las principales ventajas del cloud computing destacan:
 
@@ -14,19 +14,67 @@ Entre las principales ventajas del cloud computing destacan:
     \item Facilidad de mantenimiento.
 \end{itemize}
 
+Estas ventajas son especialmente relevantes en proyectos de alcance empresarial, ya que permiten pasar de una infraestructura rígida a un modelo más flexible, automatizable y orientado a servicios. En el caso de este TFG, el uso de la nube permite desplegar un prototipo accesible para el tribunal sin distribuir máquinas virtuales ni depender de una instalación local compleja.
+
+\subsection{Modelos de servicio}
+
+Los servicios cloud suelen clasificarse en distintos modelos según el nivel de responsabilidad que asume el proveedor y el nivel de control que conserva el usuario. La tabla \ref{tabla:modelos_servicio_cloud} resume los modelos principales.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Modelo} & \textbf{Responsabilidad principal del proveedor} & \textbf{Ejemplo en Azure} \\
+\hline
+IaaS & Infraestructura básica: máquinas virtuales, red, discos y recursos de cómputo. & Azure Virtual Machines \\
+PaaS & Plataforma gestionada para ejecutar aplicaciones sin administrar servidores. & Azure App Service \\
+SaaS & Aplicación completa consumida como servicio por el usuario final. & Microsoft 365 \\
+\end{tabularx}
+\caption{Modelos principales de servicio cloud}
+\label{tabla:modelos_servicio_cloud}
+\end{table}
+
+La solución desarrollada se apoya principalmente en un enfoque PaaS. Azure App Service permite ejecutar una API Flask y un portal web sin administrar directamente el sistema operativo, el balanceo interno ni la infraestructura física subyacente \cite{azure_app_service_overview}.
+
+\subsection{Modelos de despliegue}
+
+Además de los modelos de servicio, la nube puede organizarse mediante diferentes modelos de despliegue: nube pública, privada, híbrida o multicloud. Este proyecto utiliza nube pública, ya que los recursos se despliegan en Microsoft Azure y se consumen desde una suscripción Azure for Students. Para un prototipo académico, este enfoque permite validar una arquitectura real con costes controlados y acceso remoto.
+
 \section{Microsoft Azure}
 
-Microsoft Azure es la plataforma cloud de Microsoft orientada al desarrollo, despliegue y administración de aplicaciones empresariales \cite{azure_architectures}.
+Microsoft Azure es la plataforma cloud de Microsoft orientada al desarrollo, despliegue y administración de aplicaciones empresariales \cite{azure_architectures}. Microsoft describe Azure como una plataforma para crear, desplegar y gestionar soluciones en la nube, con servicios de cómputo, datos, inteligencia artificial, seguridad y operaciones \cite{azure_what_is}.
 
 Los principales servicios utilizados en este proyecto son:
 
 \begin{itemize}
     \item Azure App Service.
-    \item Azure Storage.
+    \item Azure Blob Storage.
     \item Azure Key Vault.
+    \item Managed Identity.
     \item Azure Monitor.
-    \item Application Insights.
 \end{itemize}
+
+\subsection{Servicios Azure utilizados}
+
+La tabla \ref{tabla:servicios_azure_tfg} relaciona los servicios Azure seleccionados con la responsabilidad concreta que cumplen dentro del prototipo.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Servicio} & \textbf{Uso en el TFG} & \textbf{Justificación} \\
+\hline
+App Service & Aloja la API Flask y el portal web. & Servicio PaaS adecuado para aplicaciones web y APIs REST. \\
+Blob Storage & Guarda las solicitudes en formato JSON. & Almacenamiento sencillo, económico y apropiado para datos semiestructurados. \\
+Key Vault & Almacena el token de autenticación. & Evita credenciales embebidas en código fuente. \\
+Managed Identity & Permite que App Service acceda a Key Vault. & Reduce la gestión manual de secretos y claves. \\
+Azure Monitor & Apoya la revisión de estado y logs. & Facilita observabilidad básica del despliegue. \\
+\end{tabularx}
+\caption{Servicios Azure utilizados en la solución}
+\label{tabla:servicios_azure_tfg}
+\end{table}
+
+Azure Blob Storage está orientado al almacenamiento de objetos y datos no estructurados, y permite acceder a los objetos mediante HTTP/HTTPS o bibliotecas cliente, incluidas bibliotecas para Python \cite{azure_blob_overview}. Azure Key Vault centraliza secretos, claves y certificados, reduciendo la probabilidad de exponer información sensible en el código \cite{azure_keyvault_overview}. Las identidades administradas permiten que un recurso de Azure obtenga una identidad propia para acceder a otros servicios sin almacenar credenciales en la aplicación \cite{azure_managed_identities}.
 
 \section{Arquitectura basada en servicios}
 
@@ -41,6 +89,8 @@ Este enfoque facilita:
     \item Seguridad.
 \end{itemize}
 
+La arquitectura del proyecto sigue esta idea: el portal web se encarga de la interacción con el usuario, la API Flask concentra la lógica de negocio, el clasificador aplica reglas de análisis automático, Blob Storage conserva las solicitudes y Key Vault protege el secreto usado por los endpoints protegidos. Esta separación facilita explicar el sistema, probarlo por partes y evolucionarlo en futuras versiones.
+
 \section{API REST}
 
 Una API REST permite la comunicación entre sistemas mediante peticiones HTTP.
@@ -53,7 +103,13 @@ En este proyecto se utilizan diferentes endpoints para:
     \item Obtener métricas.
 \end{itemize}
 
-\section{DevOps}
+\section{Seguridad y buenas prácticas cloud}
+
+La seguridad es un aspecto transversal en soluciones cloud. En este TFG se han aplicado tres decisiones principales: uso de HTTPS en el despliegue, separación de secretos mediante Key Vault y autenticación Bearer para las operaciones de consulta. Estas medidas no convierten el prototipo en una solución corporativa completa, pero sí demuestran buenas prácticas básicas de diseño seguro.
+
+Además, el diseño se ha alineado con principios del Azure Well-Architected Framework, que propone pilares como seguridad, fiabilidad, eficiencia de rendimiento, optimización de costes y excelencia operativa \cite{azure_well_architected_framework}. En el contexto del proyecto, estos principios se reflejan en el uso de servicios gestionados, despliegue reproducible, recursos de bajo coste y documentación de evidencias.
+
+\section{DevOps y automatización}
 
 DevOps es una metodología orientada a integrar desarrollo y operaciones con el objetivo de automatizar procesos y mejorar la calidad del software \cite{bojja2020_devops}.
 
@@ -65,3 +121,5 @@ Entre las prácticas utilizadas destacan:
     \item Control de versiones.
     \item Automatización de procesos.
 \end{itemize}
+
+En la versión final del prototipo, la automatización se materializa mediante scripts de despliegue y verificación. Esta aproximación permite reproducir el despliegue sin depender de un entorno corporativo complejo y facilita mostrar al tribunal qué acciones se han ejecutado sobre Azure.

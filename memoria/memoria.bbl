@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{azure_architectures}
 {Azure Architecture Center, Microsoft Learn}.
@@ -16,6 +16,11 @@ Karthik Bojja.
 \newblock Microsoft azure: Cloud computing dictionary, 2025.
 \newblock Consultado: marzo 2026.
 
+\bibitem{azure_what_is}
+{Microsoft Azure}.
+\newblock What is azure?, 2026.
+\newblock Documentación oficial de Microsoft Azure, consultado junio 2026.
+
 \bibitem{azure_monitor}
 {Microsoft Learn}.
 \newblock Azure monitor, 2025.
@@ -23,6 +28,21 @@ Karthik Bojja.
 \bibitem{terraform_azure}
 {Microsoft Learn}.
 \newblock Terraform for azure, 2025.
+
+\bibitem{azure_keyvault_overview}
+{Microsoft Learn}.
+\newblock About azure key vault, 2026.
+\newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
+
+\bibitem{azure_app_service_overview}
+{Microsoft Learn}.
+\newblock Azure app service overview, 2026.
+\newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
+
+\bibitem{azure_well_architected_framework}
+{Microsoft Learn}.
+\newblock Azure well-architected framework, 2026.
+\newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
 
 \bibitem{azure_blob_python}
 {Microsoft Learn}.
@@ -38,6 +58,16 @@ Karthik Bojja.
 {Microsoft Learn}.
 \newblock Tutorial: Python app service using key vault and managed identity,
   2026.
+\newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
+
+\bibitem{azure_managed_identities}
+{Microsoft Learn}.
+\newblock What are managed identities for azure resources?, 2026.
+\newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
+
+\bibitem{azure_blob_overview}
+{Microsoft Learn}.
+\newblock What is azure blob storage?, 2026.
 \newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
 
 \bibitem{sonarqube_docs}
