@@ -46,7 +46,7 @@ Descripción: Obtener acceso a Azure con créditos educativos y crear los recurs
 Tareas realizadas:
 - Crear suscripción Azure con email de estudiante.
 - Obtener los créditos educativos disponibles.
-- Crear el grupo de recursos `tfg-empresa-rg`.
+- Crear el grupo de recursos `rg-tfg-cloudautomation-dev`.
 - Documentar los límites y cuotas del entorno.
 - Configurar alertas de gasto.
 
