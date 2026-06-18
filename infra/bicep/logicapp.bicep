@@ -66,6 +66,14 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
               }
             }
           }
+          runtimeConfiguration: {
+            secureData: {
+              properties: [
+                'inputs'
+                'outputs'
+              ]
+            }
+          }
         }
       }
       actions: {
@@ -87,6 +95,14 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
               prioridad: '@{triggerBody()?[\'prioridad\']}'
             }
           }
+          runtimeConfiguration: {
+            secureData: {
+              properties: [
+                'inputs'
+                'outputs'
+              ]
+            }
+          }
         }
         responder_cliente: {
           type: 'Response'
@@ -100,6 +116,14 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
           inputs: {
             statusCode: '@outputs(\'crear_solicitud\')?[\'statusCode\']'
             body: '@body(\'crear_solicitud\')'
+          }
+          runtimeConfiguration: {
+            secureData: {
+              properties: [
+                'inputs'
+                'outputs'
+              ]
+            }
           }
         }
       }
@@ -117,3 +141,4 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
 }
 
 output logicAppName string = workflow.name
+

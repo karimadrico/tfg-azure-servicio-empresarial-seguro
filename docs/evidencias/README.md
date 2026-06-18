@@ -78,19 +78,22 @@ Salida de `scripts/verify-azure.ps1`, que valida automáticamente `/`, `/health`
 
 ## 2.1. Automatizacion con Logic App
 
-La Logic App `logic-tfg-solicitudes-dev` automatiza la entrada de solicitudes externas mediante un trigger HTTP y una llamada a la API desplegada en App Service. Para documentarla en anexos, anadir estas capturas a esta carpeta:
+La Logic App `logic-tfg-solicitudes-dev` automatiza la entrada de solicitudes externas mediante un trigger HTTP y una llamada a la API desplegada en App Service. Las evidencias conservadas en esta carpeta son:
 
-- `logic-app-workflow.png`: disenador de la Logic App con trigger HTTP y accion HTTP hacia la API.
+- `logic-app-workflow.png`: vista general del disenador con trigger HTTP, accion de creacion de solicitud y respuesta final.
+- `logic-app-workflow-solicitud.png`: detalle del paso que envia la solicitud hacia `POST /solicitudes`.
+- `logic-app-workflow-cliente.png`: detalle de la respuesta enviada al cliente que invoca el flujo.
 - `logic-app-run-history.png`: historial de ejecucion correcto al enviar una solicitud.
-- `logic-app-created-request.png`: salida de la ejecucion o solicitud creada en la API, ocultando cualquier firma `sig` o secreto.
+- `logic-app-run-history-solicitud.png`: salida de la accion que crea la solicitud, con cabeceras sensibles ocultas.
+- `logic-app-run-history-respondercliente.png`: respuesta final devuelta por la Logic App.
 
-Estas evidencias sirven para defender la automatizacion cloud del proceso empresarial.
+Estas evidencias sirven para defender la automatizacion cloud del proceso empresarial. No deben mostrar firmas `sig`, claves Bearer ni valores de secretos.
 
 ## 2.2. Observabilidad con Azure Monitor
 
 Application Insights y Azure Monitor permiten justificar que el prototipo no solo se despliega, sino que tambien puede supervisarse durante su ejecucion.
 
-Anadir estas capturas:
+Capturas recomendadas para completar la evidencia visual:
 
 - `application-insights-overview.png`: vista general del recurso `appi-tfg-incidencias-dev`.
 - `azure-monitor-metrics.png`: metricas del App Service o de Application Insights, por ejemplo peticiones, errores o tiempo de respuesta.
@@ -103,7 +106,7 @@ Captura del Quality Gate aprobado en SonarCloud. Es la evidencia principal para 
 
 Cuando el ultimo analisis quede limpio, guardar tambien:
 
-- `sonarcloud-quality-gate-clean.png`: Quality Gate final tras corregir los avisos de SonarCloud y revisar los Security Hotspots necesarios.
+- `sonarcloud-quality-gate-final.png`: Quality Gate final tras corregir los avisos de SonarCloud y revisar los Security Hotspots necesarios.
 
 ![Issues SonarCloud](sonarcloud-issues.png)
 
@@ -146,3 +149,4 @@ Captura complementaria de la aplicación web en Azure.
 ![Portal Home adicional](url-portal-home.png)
 
 Captura adicional del portal público usado para la demostración.
+

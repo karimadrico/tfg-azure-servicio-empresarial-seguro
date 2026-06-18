@@ -40,6 +40,14 @@
             }
           }
         }
+      },
+      "runtimeConfiguration": {
+        "secureData": {
+          "properties": [
+            "inputs",
+            "outputs"
+          ]
+        }
       }
     }
   },
@@ -61,6 +69,14 @@
           "reportado_por": "@{triggerBody()?['reportado_por']}",
           "prioridad": "@{triggerBody()?['prioridad']}"
         }
+      },
+      "runtimeConfiguration": {
+        "secureData": {
+          "properties": [
+            "inputs",
+            "outputs"
+          ]
+        }
       }
     },
     "responder_cliente": {
@@ -75,6 +91,14 @@
       "inputs": {
         "statusCode": "@outputs('crear_solicitud')?['statusCode']",
         "body": "@body('crear_solicitud')"
+      },
+      "runtimeConfiguration": {
+        "secureData": {
+          "properties": [
+            "inputs",
+            "outputs"
+          ]
+        }
       }
     }
   },
