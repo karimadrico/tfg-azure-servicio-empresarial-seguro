@@ -103,21 +103,90 @@ El sistema debe aportar evidencias de monitorización mediante métricas de la A
 
 El sistema se ha diseñado alrededor de los siguientes casos de uso principales:
 
-\begin{table}[h]
+La figura \ref{fig:casos-uso-general} delimita las interacciones entre los usuarios, los sistemas externos y la plataforma. El usuario interno registra solicitudes; el equipo de TI consulta y supervisa el trabajo; el administrador cloud valida el despliegue y los secretos; y los sistemas externos utilizan la Logic App como canal automatizado. La clasificación se representa dentro del sistema porque se ejecuta automáticamente después del registro.
+
+\begin{figure}[ht]
 \centering
-\small
-\begin{tabularx}{\textwidth}{l X X}
-\textbf{Caso de uso} & \textbf{Actor} & \textbf{Descripción} \\
+\begin{tikzpicture}[
+    x=0.88cm,
+    y=1cm,
+    usecase/.style={draw, ellipse, align=center, font=\scriptsize, minimum width=3.1cm, minimum height=0.75cm, fill=blue!5},
+    actorlabel/.style={align=center, font=\scriptsize},
+    every path/.style={draw, line width=0.45pt}
+]
+    \draw[rounded corners] (2,0) rectangle (12,6.3);
+    \node[font=\small\bfseries, fill=white, inner sep=2pt] at (7,6.3) {Plataforma cloud de solicitudes TI};
+
+    \node[usecase] (cu1) at (5,5.2) {CU-01\\Registrar solicitud};
+    \node[usecase] (cu2) at (9,5.2) {CU-02\\Clasificar solicitud};
+    \node[usecase] (cu3) at (5,3.7) {CU-03\\Consultar solicitudes};
+    \node[usecase] (cu4) at (9,3.7) {CU-04\\Consultar métricas};
+    \node[usecase] (cu7) at (5,2.2) {CU-07\\Automatizar entrada};
+    \node[usecase] (cu5) at (9,2.2) {CU-05\\Validar despliegue};
+    \node[usecase] (cu6) at (7,0.75) {CU-06\\Gestionar secretos};
+
+    \coordinate (usuario) at (0.7,4.9);
+    \draw (usuario) circle (0.16);
+    \draw (0.7,4.74)--(0.7,4.15) (0.35,4.5)--(1.05,4.5) (0.7,4.15)--(0.4,3.75) (0.7,4.15)--(1,3.75);
+    \node[actorlabel] at (0.7,3.35) {Usuario\\interno};
+
+    \coordinate (externo) at (0.7,2.2);
+    \draw (externo) circle (0.16);
+    \draw (0.7,2.04)--(0.7,1.45) (0.35,1.8)--(1.05,1.8) (0.7,1.45)--(0.4,1.05) (0.7,1.45)--(1,1.05);
+    \node[actorlabel] at (0.7,0.65) {Sistema\\externo};
+
+    \coordinate (equipo) at (13.3,4.9);
+    \draw (equipo) circle (0.16);
+    \draw (13.3,4.74)--(13.3,4.15) (12.95,4.5)--(13.65,4.5) (13.3,4.15)--(13,3.75) (13.3,4.15)--(13.6,3.75);
+    \node[actorlabel] at (13.3,3.35) {Equipo TI};
+
+    \coordinate (admin) at (13.3,2.2);
+    \draw (admin) circle (0.16);
+    \draw (13.3,2.04)--(13.3,1.45) (12.95,1.8)--(13.65,1.8) (13.3,1.45)--(13,1.05) (13.3,1.45)--(13.6,1.05);
+    \node[actorlabel] at (13.3,0.65) {Administrador\\cloud};
+
+    \draw (1.05,4.5)--(cu1.west);
+    \draw (1.05,1.8)--(cu7.west);
+    \draw[dashed,->] (cu1)--node[above, font=\scriptsize]{incluye}(cu2);
+    \draw[dashed,->] (cu7)--(cu1);
+    \draw (12.95,4.5)--(cu3.east);
+    \draw (12.95,4.5)--(cu4.east);
+    \draw (12.95,1.8)--(cu5.east);
+    \draw (12.95,1.8)--(cu6.east);
+\end{tikzpicture}
+\caption{Diagrama UML general de casos de uso. Fuente: elaboración propia.}
+\label{fig:casos-uso-general}
+\end{figure}
+
+Las tablas \ref{tabla:casos-uso-operacion} y \ref{tabla:casos-uso-administracion} detallan las condiciones y resultados esperados de cada interacción.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{l p{2.4cm} X X}
+\textbf{Caso} & \textbf{Actor / precondición} & \textbf{Flujo principal} & \textbf{Resultado} \\
 \hline
-CU-01 Registrar solicitud & Usuario interno & Envía una solicitud desde el portal o mediante API REST. \\
-CU-02 Clasificar solicitud & Sistema & Asigna tipo, prioridad, categoría y recomendación operativa. \\
-CU-03 Consultar solicitudes & Equipo TI & Lista solicitudes y filtra por estado, tipo o prioridad. \\
-CU-04 Consultar métricas & Equipo TI & Revisa métricas agregadas para seguimiento operativo. \\
-CU-05 Validar despliegue & Administrador cloud & Comprueba el estado de la aplicación mediante \texttt{/health} y pruebas HTTP. \\
-CU-06 Gestionar secretos & Administrador cloud & Mantiene tokens y configuración sensible en Azure Key Vault. \\
-CU-07 Automatizar solicitud externa & Sistema externo / Equipo TI & Envía una solicitud mediante Logic App para integrarla con el flujo de gestión. \\
+CU-01 Registrar & Usuario interno; portal o API disponible. & Introduce tipo, título, descripción y correo; la API valida los datos. & Solicitud persistida con identificador \texttt{SOL-XXX}. \\
+CU-02 Clasificar & Sistema; solicitud válida. & Evalúa reglas de tipo, categoría y prioridad y genera una recomendación. & Clasificación trazable incluida en la respuesta. \\
+CU-03 Consultar & Equipo TI; token Bearer válido. & Solicita el listado y aplica filtros o paginación. & Lista protegida de solicitudes coincidentes. \\
+CU-04 Métricas & Equipo TI; token Bearer válido. & Consulta agregados por estado, prioridad y tipo. & Resumen operativo con marca temporal. \\
 \end{tabularx}
-\caption{Casos de uso principales}
+\caption{Casos de uso de operación y consulta}
+\label{tabla:casos-uso-operacion}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{l p{2.4cm} X X}
+\textbf{Caso} & \textbf{Actor / precondición} & \textbf{Flujo principal} & \textbf{Resultado} \\
+\hline
+CU-05 Validar & Administrador cloud; despliegue publicado. & Ejecuta \texttt{/health} y el script de verificación sobre los endpoints. & Evidencia del estado y del modo de almacenamiento. \\
+CU-06 Secretos & Administrador cloud; acceso autorizado a Azure. & Crea o rota el secreto en Key Vault y mantiene la identidad administrada. & Secreto fuera del código y acceso controlado. \\
+CU-07 Automatizar & Sistema externo; URL y credencial configuradas. & Envía JSON al trigger; Logic App invoca \texttt{POST /solicitudes}. & Solicitud registrada mediante el mismo flujo central. \\
+\end{tabularx}
+\caption{Casos de uso de administración y automatización}
+\label{tabla:casos-uso-administracion}
 \end{table}
 
 
