@@ -106,7 +106,7 @@ Captura del Quality Gate aprobado en SonarCloud. Es la evidencia principal para 
 
 Evidencia final incorporada:
 
-- `sonarcloud-quality-gate-final-18junio.png`: Quality Gate final tras corregir los avisos de SonarCloud y revisar los Security Hotspots necesarios.
+- `sonarcloud-quality-gate-final-20junio.png`: estado más reciente, con Quality Gate aprobado, seguridad A, cero issues de seguridad y ocho issues no bloqueantes de mantenibilidad.
 
 ![Issues SonarCloud](sonarcloud-issues.png)
 

@@ -77,57 +77,66 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
         }
       }
       actions: {
-        crear_solicitud: {
-          type: 'Http'
-          runAfter: {}
-          inputs: {
-            method: 'POST'
-            uri: '@{concat(parameters(\'apiBaseUrl\'), \'/solicitudes\')}'
-            headers: {
-              'Content-Type': 'application/json'
-              Authorization: '@{concat(\'Bearer \', parameters(\'apiKey\'))}'
+        intentar_crear_solicitud: {
+          type: 'Scope'
+          actions: {
+            crear_solicitud: {
+              type: 'Http'
+              inputs: {
+                method: 'POST'
+                uri: '@{concat(parameters(\'apiBaseUrl\'), \'/solicitudes\')}'
+                headers: {
+                  'Content-Type': 'application/json'
+                  Authorization: '@{concat(\'Bearer \', parameters(\'apiKey\'))}'
+                }
+                body: {
+                  tipo_solicitud: '@{coalesce(triggerBody()?[\'tipo_solicitud\'], \'incidencia\')}'
+                  titulo: '@{triggerBody()?[\'titulo\']}'
+                  descripcion: '@{triggerBody()?[\'descripcion\']}'
+                  reportado_por: '@{triggerBody()?[\'reportado_por\']}'
+                  prioridad: '@{triggerBody()?[\'prioridad\']}'
+                }
+              }
+              runtimeConfiguration: {
+                secureData: {
+                  properties: [
+                    'inputs'
+                    'outputs'
+                  ]
+                }
+              }
             }
-            body: {
-              tipo_solicitud: '@{coalesce(triggerBody()?[\'tipo_solicitud\'], \'incidencia\')}'
-              titulo: '@{triggerBody()?[\'titulo\']}'
-              descripcion: '@{triggerBody()?[\'descripcion\']}'
-              reportado_por: '@{triggerBody()?[\'reportado_por\']}'
-              prioridad: '@{triggerBody()?[\'prioridad\']}'
-            }
-          }
-          runtimeConfiguration: {
-            secureData: {
-              properties: [
-                'inputs'
-                'outputs'
-              ]
+            responder_cliente: {
+              type: 'Response'
+              runAfter: {
+                crear_solicitud: [
+                  'Succeeded'
+                ]
+              }
+              inputs: {
+                statusCode: '@outputs(\'crear_solicitud\')?[\'statusCode\']'
+                body: '@body(\'crear_solicitud\')'
+              }
             }
           }
         }
-        responder_cliente: {
+        responder_error: {
           type: 'Response'
           runAfter: {
-            crear_solicitud: [
-              'Succeeded'
+            intentar_crear_solicitud: [
               'Failed'
               'TimedOut'
             ]
           }
           inputs: {
-            statusCode: '@outputs(\'crear_solicitud\')?[\'statusCode\']'
-            body: '@body(\'crear_solicitud\')'
-          }
-          runtimeConfiguration: {
-            secureData: {
-              properties: [
-                'inputs'
-                'outputs'
-              ]
+            statusCode: 502
+            body: {
+              error: 'No se pudo registrar la solicitud en la API.'
+              detalle: '@result(\'intentar_crear_solicitud\')'
             }
           }
         }
       }
-      outputs: {}
     }
     parameters: {
       apiBaseUrl: {

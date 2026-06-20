@@ -9,7 +9,6 @@ var storageAccountName = 'sttfgincidenciasdev'
 resource storage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: storageAccountName
   location: location
-  tags: tags
   kind: 'StorageV2'
   sku: {
     name: 'Standard_LRS'
@@ -34,6 +33,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
       }
     }
   }
+  tags: tags
 }
 
 resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {

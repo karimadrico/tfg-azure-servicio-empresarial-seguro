@@ -88,7 +88,7 @@ La figura \ref{fig:despliegue-azure} resume el proceso de despliegue y verificac
 python -m unittest discover -s tests -p "test_*.py"
 \end{verbatim}
 
-Las pruebas verifican endpoints, creación de incidencias, métricas y clasificación automática.
+La batería contiene siete pruebas que verifican endpoints, creación y consulta de solicitudes, portal, métricas y clasificación automática. El clasificador se valida además con cuatro entradas representativas de seguridad, infraestructura, soporte y categoría general.
 
 La tabla \ref{tabla:pruebas_realizadas} resume las pruebas principales aplicadas durante la validación del prototipo.
 
@@ -103,6 +103,7 @@ Creación de solicitud & Validar entrada, clasificación y persistencia. & Respu
 Portal web & Verificar acceso a la interfaz de usuario. & HTML del portal cargado correctamente. \\
 Métricas & Comprobar agregación de solicitudes. & Totales por estado, prioridad y tipo. \\
 Clasificación de seguridad & Validar detección de incidencias críticas. & Categoría seguridad y prioridad alta. \\
+Escenarios de reglas & Ejecutar cuatro entradas con coincidencias y valores de respaldo. & Tipo, categoría y prioridad coinciden con las reglas documentadas. \\
 Verificación Azure & Probar despliegue real con script. & Health check, creación, listado y métricas correctas. \\
 Logic App & Validar automatización externa de solicitudes. & Trigger HTTP invoca \texttt{POST /solicitudes} y devuelve una solicitud creada. \\
 SonarCloud & Revisar calidad externa del código. & Quality Gate aprobado y duplicación controlada. \\
@@ -120,13 +121,13 @@ El proyecto utiliza SonarCloud como servicio gestionado de SonarQube:
     \item \texttt{docs/calidad/sonarcloud.md}: documenta el resultado observado y las evidencias que deben guardarse.
 \end{itemize}
 
-Como evidencia de calidad se conserva una captura del Quality Gate final y el resumen de métricas en SonarCloud. La URL del panel se incluye en el documento final de enlaces.
+Como evidencia se conserva una captura del análisis del 20 de junio. El Quality Gate está aprobado y la seguridad obtiene calificación A, sin issues de seguridad ni hotspots pendientes. El panel mantiene ocho issues no bloqueantes de mantenibilidad y dos warnings de configuración de versiones, corregidos en `sonar-project.properties` para el siguiente análisis.
 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{../docs/evidencias/sonarcloud-quality-gate-final-18junio.png}
-\caption{Quality Gate final de SonarCloud tras las correcciones de calidad. Fuente: captura propia.}
+\includegraphics[width=0.9\textwidth]{../docs/evidencias/sonarcloud-quality-gate-final-20junio.png}
+\caption{Estado de SonarCloud el 20 de junio: Quality Gate aprobado y seguridad A. Fuente: captura propia.}
 \label{fig:sonarcloud-quality-gate-final}
 \end{figure}
 La figura \ref{fig:observabilidad-monitor} resume la estrategia de observabilidad mediante App Service, Application Insights y Azure Monitor.
