@@ -10,5 +10,3 @@ Los anexos oficiales del TFG se generan desde `memoria/anexos.tex` y se entregan
 | Manual del programador | `memoria/tex/D_Manual_programador.tex` | `scripts/`, `infra/`, `logicapp/`, `tests/` |
 | Manual de usuario | `memoria/tex/E_Manual_usuario.tex` | Portal desplegado y capturas en `docs/evidencias/` |
 | Sostenibilidad | `memoria/tex/F_ODS.tex` | Bibliografía y justificación en memoria |
-
-La documentación válida para entrega es el PDF generado. Los README de esta carpeta solo orientan y evitan que las carpetas auxiliares parezcan vacías.

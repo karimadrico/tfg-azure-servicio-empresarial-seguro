@@ -10,7 +10,7 @@ Este documento sirve como base para generar el PDF final de enlaces solicitado e
 | Vídeo de presentación | Pendiente de grabar y publicar |
 | Vídeo de demostración funcional | Pendiente de grabar y publicar |
 
-## Enlaces opcionales aportados
+## Enlaces aportados
 
 | Recurso | URL |
 |---------|-----|
@@ -20,7 +20,3 @@ Este documento sirve como base para generar el PDF final de enlaces solicitado e
 | Zube | https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban |
 | SonarCloud | https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro |
 | Release publicada | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.0.0 |
-
-## Nota para la entrega
-
-Cuando los dos vídeos estén publicados, sustituir los textos pendientes por sus URL definitivas y exportar este contenido a PDF para subirlo a UBUVirtual. Antes de la entrega también se debe publicar una release definitiva que incluya el último commit de `main`.
