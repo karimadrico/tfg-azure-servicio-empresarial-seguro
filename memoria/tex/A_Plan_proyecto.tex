@@ -6,7 +6,7 @@ Este anexo describe la planificación del proyecto, el seguimiento realizado con
 
 \section{Planificación temporal}
 
-El desarrollo del proyecto se ha organizado siguiendo un enfoque incremental basado en sprints. El seguimiento se ha realizado en Zube, utilizando historias de usuario, tareas técnicas y cambios asociados a commits del repositorio. El tablero del proyecto se encuentra en:
+El proyecto se organizó de forma incremental. Zube conserva las historias, las fechas y los cambios de alcance; GitHub conserva los cambios de código y documentación asociados. El tablero puede consultarse en:
 
 \begin{center}
 \url{https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban}
@@ -49,7 +49,7 @@ Sprint 5 (22/05/2026--08/07/2026) & Finalización y defensa. & Memoria, anexos, 
 
 \subsection{Seguimiento en Zube}
 
-Zube se ha utilizado como tablero Kanban para registrar historias de usuario, tareas técnicas y evolución por sprint. La tabla \ref{tabla:seguimiento_zube} resume el estado observable del seguimiento realizado.
+La tabla \ref{tabla:seguimiento_zube} resume el estado que puede comprobarse en Zube. Las fechas previstas y reales no siempre coinciden; esa diferencia se mantiene porque forma parte del seguimiento, en lugar de ajustar el historial después de terminar el trabajo.
 
 \begin{table}[h]
 \centering
@@ -58,7 +58,7 @@ Zube se ha utilizado como tablero Kanban para registrar historias de usuario, ta
 \textbf{Sprint} & \textbf{Inicio} & \textbf{Cierre/estado} & \textbf{Evidencia de seguimiento} \\
 \hline
 Sprint 1 & 25/02/2026 & Cerrado 15/03/2026 & 6 tarjetas cerradas; preparación, repositorio, arquitectura inicial y SonarCloud previsto. \\
-Sprint 2 & 11/03/2026 & Cerrado 17/04/2026 & 6 tarjetas cerradas; módulos, dashboard, IA ligera y pruebas unitarias iniciales. \\
+Sprint 2 & 11/03/2026 & Cerrado 17/04/2026 & 6 tarjetas cerradas; módulos, dashboard, clasificación por reglas y pruebas unitarias iniciales. \\
 Sprint 3 & 25/03/2026 & Cerrado 20/05/2026 & Integración de incidencias, seguridad, despliegue y validación de endpoints. \\
 Sprint 4 & 22/04/2026 & Cerrado 22/05/2026 & 5 tarjetas cerradas; consolidación técnica, Azure, documentación y evidencias. \\
 Sprint 5 & 22/05/2026 & Abierto hasta 08/07/2026 & Tareas finales de memoria, anexos, vídeos, calidad, release y entrega UBUVirtual. \\
@@ -68,6 +68,24 @@ Sprint 5 & 22/05/2026 & Abierto hasta 08/07/2026 & Tareas finales de memoria, an
 \end{table}
 
 Las capturas asociadas al seguimiento se conservan en la carpeta \texttt{docs/sprints/}. El Sprint 5 permanece abierto porque agrupa tareas finales de defensa y entrega oficial que se cierran una vez generados los vídeos, el PDF de enlaces y la release final.
+
+\subsection{Replanificación observada en Zube}
+
+El historial del Sprint 3 registra la retirada de tres tarjetas el 17 de abril. Esta operación no eliminó las historias, sino que dejó de asociarlas al sprint durante una revisión de alcance. La tabla \ref{tabla:replanificacion-zube} explica su tratamiento final. Se conserva este historial porque evidencia adaptación del plan frente a las decisiones técnicas tomadas durante el proyecto.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Historia} & \textbf{Cambio en Zube} & \textbf{Resultado final} \\
+\hline
+HU-13 Persistencia & Retirada del Sprint 3. & Replanificada e implementada mediante Azure Blob Storage. \\
+HU-15 CI/CD completo & Retirada del Sprint 3. & Descartada; se eligió despliegue reproducible con PowerShell y Azure CLI. \\
+HU-16 Clasificación & Retirada del Sprint 3. & Replanificada e implementada mediante reglas deterministas y pruebas automáticas. \\
+\end{tabularx}
+\caption{Replanificación de tarjetas retiradas del Sprint 3}
+\label{tabla:replanificacion-zube}
+\end{table}
 
 \subsection{Evidencias por sprint}
 
@@ -148,7 +166,7 @@ En un entorno empresarial real también deberían considerarse costes de operaci
 
 \subsection{Viabilidad legal}
 
-Durante el desarrollo del proyecto se han utilizado herramientas de software bajo licencias abiertas o gratuitas para uso académico. Además, no se han utilizado datos personales reales, por lo que no se han generado problemas relacionados con la protección de datos.
+Las herramientas utilizadas tienen licencias abiertas o modalidades gratuitas para uso académico. La validación empleó nombres y correos ficticios, sin cargar datos personales reales. Una puesta en producción exigiría definir conservación, acceso y tratamiento de la información antes de aceptar solicitudes de empleados.
 
 \begin{table}[h]
 \centering
