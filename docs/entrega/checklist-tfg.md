@@ -31,7 +31,7 @@
 | Sostenibilidad 600-800 palabras | Cumplido | Anexo F. |
 | Bibliografía citada en texto | Cumplido | Bibliografía incluida en memoria y anexos. |
 | Calidad con SonarQube/SonarCloud | Cumplido | Panel SonarCloud enlazado y documentado. |
-| Releases | Pendiente | Crear release final `v1.0.0`. |
+| Releases | En revisión | Existe `v1.0.0`, pero apunta a un commit anterior a las últimas mejoras documentales. Publicar una release definitiva al cerrar los vídeos y enlaces. |
 
 ## Acciones pendientes antes de entregar
 
@@ -40,6 +40,6 @@
 3. Comprobar `/portal` y `/health`; para consulta protegida definir antes `API_KEY`.
 4. Grabar vídeo de presentación con cámara y audio.
 5. Grabar vídeo de demostración funcional con portal, API y Azure Portal.
-6. Revisar que la release final de GitHub apunta al commit de entrega.
+6. Publicar una release definitiva que apunte al commit final de entrega. La release `v1.0.0` existente no contiene los últimos commits de documentación.
 7. Subir memoria, anexos, código y PDF de enlaces a UBUVirtual.
 

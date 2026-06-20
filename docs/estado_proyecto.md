@@ -1,14 +1,14 @@
 # Estado Actual del Proyecto
 
-Última actualización: 18 de junio de 2026
+Última actualización: 20 de junio de 2026
 
-Porcentaje completado: ~95%
+Porcentaje completado: ~92%
 
 ## Resumen Ejecutivo
 
 El proyecto dispone de una solución funcional desplegada en Microsoft Azure: API Flask con gestión de solicitudes TI, portal web, clasificación automática, Logic App para automatización externa, persistencia en Azure Blob Storage, gestión de secretos con Key Vault, Managed Identity, Application Insights/Azure Monitor y despliegue reproducible mediante PowerShell y Azure CLI.
 
-Quedan como tareas finales la grabación de los dos vídeos obligatorios, la generación del PDF final de enlaces y la creación de la release final del repositorio.
+Quedan como tareas finales la grabación de los dos vídeos obligatorios, la preparación visual de la presentación, la generación del PDF final de enlaces y la publicación de una release que incluya el último commit de entrega.
 
 ## Estado por Componentes
 
@@ -31,7 +31,8 @@ Quedan como tareas finales la grabación de los dos vídeos obligatorios, la gen
 - Grabar vídeo de presentación del TFG con cámara y audio.
 - Grabar vídeo de demostración funcional del producto.
 - Crear PDF final de enlaces para UBUVirtual.
-- Crear release final en GitHub.
+- Preparar las diapositivas o soporte visual del vídeo de presentación y de la defensa.
+- Publicar una release definitiva en GitHub. La release `v1.0.0` existe, pero su etiqueta es anterior a las últimas mejoras.
 - Revisar que las URLs de vídeos se sustituyen en `docs/entrega/enlaces-tfg.md`.
 
 ## Checklist de Evaluación
@@ -50,4 +51,5 @@ Quedan como tareas finales la grabación de los dos vídeos obligatorios, la gen
 - API: https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net
 - Zube: https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban
 - SonarCloud: https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro
+- Release v1.0.0: https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.0.0
 
