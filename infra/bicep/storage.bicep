@@ -13,10 +13,10 @@ resource storage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
     name: 'Standard_LRS'
   }
   kind: 'StorageV2'
-  tags: tags
   identity: {
     type: 'SystemAssigned'
   }
+  tags: tags
   properties: {
     minimumTlsVersion: 'TLS1_2'
     supportsHttpsTrafficOnly: true

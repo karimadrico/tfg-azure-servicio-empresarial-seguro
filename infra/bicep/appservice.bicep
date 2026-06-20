@@ -33,10 +33,10 @@ resource webApp 'Microsoft.Web/sites@2023-01-01' = { // NOSONAR
   name: webAppName
   location: location
   kind: 'app,linux'
-  tags: tags
   identity: {
     type: 'SystemAssigned'
   }
+  tags: tags
   properties: {
     serverFarmId: plan.id
     httpsOnly: true
