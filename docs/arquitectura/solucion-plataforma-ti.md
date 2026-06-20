@@ -38,7 +38,7 @@ Logic App
 POST /solicitudes
 ```
 
-## Componente de IA ligera
+## Clasificación automática basada en reglas
 
 El clasificador de `src/classifier.py`:
 
@@ -48,7 +48,7 @@ El clasificador de `src/classifier.py`:
 - genera recomendación operativa;
 - devuelve un nivel de confianza.
 
-No requiere Azure OpenAI, por lo que se ajusta mejor al alcance académico y al presupuesto Azure for Students.
+No requiere un servicio de lenguaje externo ni un conjunto de entrenamiento. Las decisiones pueden seguirse en el código y repetirse en las pruebas.
 
 ## Automatizacion con Logic App
 

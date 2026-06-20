@@ -32,7 +32,7 @@ Blob Storage para persistencia & Base de datos relacional & El prototipo requier
 Key Vault para secretos & Variables locales o fichero \texttt{.env} & Evita almacenar credenciales en el repositorio y mejora seguridad. \\
 Managed Identity & Credenciales manuales entre servicios & Permite acceso a Key Vault sin secretos intermedios. \\
 PowerShell + Azure CLI & Pipeline remoto obligatorio & Hace el despliegue reproducible, auditable y demostrable desde el entorno local. \\
-Clasificador ligero & Modelo IA externo complejo & Mantiene el alcance viable y permite explicar las reglas en defensa. \\
+Clasificador basado en reglas & Servicio de lenguaje externo & Permite explicar cada decisión y no requiere datos históricos etiquetados. \\
 Logic App HTTP & Llamadas manuales o integración externa ad hoc & Automatiza la recepción de solicitudes externas y demuestra orquestación cloud. \\
 Application Insights & Revisión manual exclusiva de logs & Permite evidenciar observabilidad y seguimiento técnico del servicio desplegado. \\
 \end{tabularx}
@@ -130,7 +130,7 @@ Tribunal & Evaluar funcionamiento, documentación y calidad. & Portal, repositor
 
 \subsection{Políticas técnicas aplicadas}
 
-A partir de las recomendaciones de seguridad y operación cloud, se han definido políticas ligeras aplicables al prototipo. No se plantean como Azure Policy corporativas obligatorias, sino como criterios técnicos verificados durante el desarrollo y la documentación.
+Las políticas de la tabla siguiente son criterios comprobados en el prototipo, no recursos de Azure Policy aplicados a una organización. Esta diferencia evita presentar como control automático lo que en realidad se verificó mediante configuración, scripts y evidencias.
 
 \begin{table}[h]
 \centering
@@ -158,7 +158,7 @@ El flujo principal del sistema es:
 \begin{enumerate}
     \item Recepción de solicitudes operativas TI por portal web o API REST.
     \item Validación de campos obligatorios.
-    \item Clasificación automática mediante componente de IA ligera.
+    \item Clasificación automática mediante reglas de negocio.
     \item Generación de recomendaciones de actuación operativa.
     \item Persistencia de solicitudes en Blob Storage o fichero local.
     \item Respuesta JSON con identificador, prioridad, tipo, recomendación y confianza.
@@ -196,7 +196,7 @@ La figura \ref{fig:flujo-solicitud-ti} representa el flujo funcional seguido por
 
 \section{Automatización con Logic App}
 
-La Logic App añadida al prototipo actúa como punto de entrada para sistemas externos que necesiten generar solicitudes sin utilizar directamente el portal web. El flujo recibe una petición HTTP con los campos principales de la solicitud, invoca la API desplegada en App Service mediante \texttt{POST /solicitudes} y devuelve al llamante la respuesta generada por la propia API. De esta forma, la lógica de validación, clasificación automática y persistencia se mantiene centralizada en el backend.
+La Logic App actúa como punto de entrada para sistemas externos que no utilizan el portal. Recibe una petición HTTP, llama a \texttt{POST /solicitudes} en App Service y devuelve la respuesta de la API. La validación, las reglas y la persistencia siguen en el backend; el flujo solo orquesta la entrada y no duplica lógica de negocio.
 
 Esta decisión permite defender un caso de automatización empresarial realista: un formulario externo, una herramienta de soporte, un buzón corporativo o un proceso interno podrían enviar solicitudes al flujo HTTP y delegar en la plataforma cloud la clasificación, priorización y registro de la petición. En una empresa, la Logic App sería mantenida por el equipo de TI o de plataforma cloud, mientras que los usuarios internos consumirían el portal o los formularios integrados. La gestión operativa seguiría centralizada en la API y en las vistas de consulta, evitando duplicar reglas de negocio en cada canal de entrada.
 

@@ -2,7 +2,7 @@
 
 \section{Ciclo de vida del proyecto}
 
-El proyecto se ha organizado en cinco sprints siguiendo una metodología ágil.
+Los cinco sprints muestran cómo cambió el producto desde la propuesta inicial hasta el despliegue validado.
 
 \begin{itemize}
     \item Sprint 1: Análisis del problema empresarial, definición de requisitos y arquitectura inicial.
@@ -91,7 +91,7 @@ Al crear una solicitud, el módulo \texttt{classifier.py} analiza el título y l
 
 \section{Componente de análisis automático basado en reglas}
 
-Se ha incorporado un clasificador ligero basado en palabras clave y reglas de negocio. Se trata de un sistema determinista de inteligencia artificial simbólica, no de un modelo de aprendizaje automático entrenado. Esta precisión es relevante: sus decisiones son trazables, repetibles y adecuadas para demostrar análisis automático sin requerir conjuntos de datos históricos ni servicios externos.
+El clasificador de \texttt{src/classifier.py} utiliza palabras clave y reglas de negocio. Es un mecanismo determinista cercano a la inteligencia artificial simbólica, no un modelo entrenado. La distinción evita atribuirle capacidades que no tiene: el resultado puede explicarse siguiendo las puntuaciones, pero el sistema no aprende de nuevas solicitudes.
 
 Las reglas se evalúan en un orden definido. Una prioridad o un tipo válidos indicados explícitamente por el usuario prevalecen sobre la inferencia. En ausencia de esos valores, se calculan puntuaciones por coincidencia de términos; la categoría con mayor puntuación se selecciona y, si no hay coincidencias, se utiliza la categoría general. Cuando dos categorías empatan, se aplica el orden estable seguridad, infraestructura y soporte. El sistema produce una única clasificación y recomendación, por lo que no genera alertas paralelas ni ejecuta dos acciones incompatibles.
 
@@ -134,7 +134,7 @@ Consulta sobre calendario de vacaciones & Incidencia & General & Baja \\
 
 \section{Automatización del despliegue}
 
-Se ha implementado un proceso de despliegue reproducible mediante \texttt{scripts/deploy-azure.ps1}. Este script:
+El despliegue reproducible se concentra en \texttt{scripts/deploy-azure.ps1}. El script:
 
 \begin{enumerate}
     \item Comprueba la sesión de Azure CLI.

@@ -1,37 +1,32 @@
 \capitulo{6}{Trabajos relacionados}
 
-Actualmente existen numerosas soluciones empresariales orientadas a la gestión de incidencias, solicitudes internas y servicios cloud.
+Para situar el alcance del prototipo se tomaron como referencia dos grupos de soluciones. El primero incluye plataformas de gestión de servicios y soporte, como ServiceNow, Jira Service Management y Zendesk. El segundo reúne trabajos académicos centrados en arquitectura cloud y automatización del despliegue; entre ellos, Sanclemente Vilda estudia una arquitectura de referencia para microservicios mediante prácticas DevOps y GitOps \cite{sanclemente2024_tfg}.
 
-Herramientas como Jira Service Management, ServiceNow o Zendesk ofrecen funcionalidades avanzadas para la gestión de incidencias empresariales.
-
-Sin embargo, estas plataformas suelen implicar costes elevados y arquitecturas complejas.
-
-En el ámbito académico también existen diferentes trabajos relacionados con arquitecturas cloud desplegadas en plataformas como Microsoft Azure o Amazon Web Services.
-
-El presente proyecto se diferencia por combinar:
+La comparación no pretende evaluar experimentalmente los productos comerciales ni afirmar que el prototipo pueda sustituirlos. Sirve para identificar qué parte del problema se aborda en el TFG:
 
 \begin{itemize}
-    \item Arquitectura cloud.
-    \item Seguridad empresarial.
-    \item Automatización DevOps.
-    \item Gestión de incidencias.
-    \item Integración continua.
+    \item recepción y consulta de solicitudes TI;
+    \item clasificación explicable mediante reglas;
+    \item despliegue real sobre servicios Azure;
+    \item protección de secretos y acceso entre servicios;
+    \item trazabilidad mediante pruebas, sprints y evidencias.
 \end{itemize}
 
-Además, el sistema desarrollado busca mantener una arquitectura sencilla y fácilmente escalable.
+Se dejó fuera, de forma deliberada, la gestión completa de acuerdos de servicio, inventario, facturación, flujos de aprobación y directorio corporativo.
 
 \begin{table}[h]
 \centering
 \small
 \begin{tabularx}{\textwidth}{l X X X}
-\textbf{Solución} & \textbf{Enfoque} & \textbf{Ventajas} & \textbf{Limitaciones} \\
+\textbf{Solución} & \textbf{Ámbito principal} & \textbf{Relación con el TFG} & \textbf{Diferencia de alcance} \\
 \hline
-ServiceNow & ITSM empresarial & Muy completo y configurable & Coste y complejidad altos \\
-Jira Service Management & Gestión de tickets & Integración con desarrollo ágil & Requiere configuración avanzada \\
-Zendesk & Soporte y atención & Interfaz madura y rápida adopción & Menor control sobre infraestructura \\
-Proyecto desarrollado & Solicitudes TI en Azure & Código propio, cloud e IaC & Alcance académico y prototipo \\
+ServiceNow & Gestión de servicios empresariales & Comparte el tratamiento estructurado de solicitudes. & El TFG no cubre el catálogo ITSM completo. \\
+Jira Service Management & Solicitudes y trabajo de equipos técnicos & Comparte el seguimiento de peticiones y estados. & El TFG se centra en construir y desplegar la arquitectura. \\
+Zendesk & Atención y soporte & Comparte el canal de entrada y la organización de solicitudes. & El prototipo prioriza servicios Azure y seguridad entre componentes. \\
+Trabajo de Sanclemente Vilda & Arquitectura DevOps/GitOps para microservicios & Aporta una referencia académica sobre automatización e infraestructura. & Su objeto son microservicios y GitOps, no la gestión de solicitudes. \\
+Proyecto desarrollado & Automatización de solicitudes TI en Azure & Integra portal, API, reglas, seguridad, persistencia y observabilidad. & Es un prototipo académico con datos de prueba. \\
 \end{tabularx}
 \caption{Comparativa de trabajos y soluciones relacionadas}
 \end{table}
 
-Frente a estas herramientas, el proyecto no busca competir funcionalmente con plataformas comerciales, sino demostrar el diseño e implementación de una solución cloud segura, automatizada y verificable dentro del alcance de un Trabajo Fin de Grado.
+La aportación propia está en recorrer el ciclo completo con una solución acotada: requisitos, arquitectura, código, despliegue, seguridad, pruebas y evidencias. Esta perspectiva difiere tanto del uso de una herramienta comercial ya construida como de un trabajo centrado exclusivamente en infraestructura.

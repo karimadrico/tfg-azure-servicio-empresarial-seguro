@@ -96,7 +96,7 @@ Azure Blob Storage está orientado al almacenamiento de objetos y datos no estru
 
 \section{Arquitectura basada en servicios}
 
-Las arquitecturas basadas en servicios permiten dividir una aplicación en componentes independientes encargados de responsabilidades concretas.
+Una arquitectura basada en servicios separa responsabilidades que evolucionan y se despliegan de forma distinta. En este proyecto la separación no pretende crear microservicios: busca que la interfaz, la lógica, la persistencia y la gestión de secretos tengan límites reconocibles.
 
 Este enfoque facilita:
 
@@ -131,13 +131,13 @@ Además, el diseño se ha alineado con principios del Azure Well-Architected Fra
 
 DevOps es una metodología orientada a integrar desarrollo y operaciones con el objetivo de automatizar procesos y mejorar la calidad del software \cite{bojja2020_devops}.
 
-Entre las prácticas utilizadas destacan:
+De las prácticas asociadas a DevOps, el proyecto utiliza las siguientes:
 
 \begin{itemize}
-    \item Integración continua.
-    \item Despliegue automatizado.
-    \item Control de versiones.
-    \item Automatización de procesos.
+    \item Control de versiones y commits vinculados al seguimiento.
+    \item Despliegue repetible mediante PowerShell y Azure CLI.
+    \item Verificación automática de los endpoints publicados.
+    \item Revisión externa de calidad con SonarCloud.
 \end{itemize}
 
-En la versión final del prototipo, la automatización se materializa mediante scripts de despliegue y verificación. Esta aproximación permite reproducir el despliegue sin depender de un entorno corporativo complejo y facilita mostrar al tribunal qué acciones se han ejecutado sobre Azure.
+La versión final no mantiene un pipeline de integración continua. Los scripts de despliegue y verificación cubren la necesidad real del proyecto: repetir la publicación desde el equipo de desarrollo y dejar visibles las órdenes ejecutadas sobre Azure. Esta diferencia respecto al plan inicial se documenta en el seguimiento de sprints.

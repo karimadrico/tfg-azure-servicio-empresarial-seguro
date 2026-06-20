@@ -14,7 +14,7 @@ Esto provoca varios problemas:
 Desarrollar una solución cloud basada en Microsoft Azure que permita:
 
 - Registrar incidencias empresariales
-- Clasificarlas automáticamente mediante inteligencia artificial
+- Clasificarlas automáticamente mediante reglas explicables
 - Almacenarlas de forma segura
 - Monitorizar el sistema
 - Proporcionar métricas sobre el servicio

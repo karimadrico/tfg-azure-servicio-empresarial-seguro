@@ -1,16 +1,12 @@
 \capitulo{7}{Conclusiones y Líneas de trabajo futuras}
 
-El desarrollo de este Trabajo Fin de Grado ha permitido aplicar conocimientos relacionados con ingeniería del software, arquitecturas cloud, seguridad informática y automatización de procesos.
+El resultado del TFG es un flujo funcional y desplegado, no solo un diseño de arquitectura. Una solicitud puede entrar desde el portal o desde la Logic App, pasa por la misma validación y clasificación, se conserva en Blob Storage y queda disponible para las consultas protegidas y las métricas. El script de verificación recorre estas operaciones sobre la URL pública de Azure.
 
-Uno de los principales resultados obtenidos ha sido el diseño e implementación de una plataforma empresarial segura utilizando Microsoft Azure para la gestión y automatización de solicitudes operativas TI.
+Las decisiones más útiles surgieron al reducir el alcance. Flask encajó mejor que un framework completo porque la API tiene pocas rutas y no necesita un modelo relacional. Por la misma razón se eligió Blob Storage frente a SQLite o Azure SQL. El pipeline de GitHub Actions previsto al principio se descartó a favor de scripts PowerShell y Azure CLI que podían ejecutarse, revisar y demostrar desde el entorno disponible.
 
-La solución desarrollada demuestra cómo es posible construir aplicaciones empresariales modernas utilizando servicios cloud gestionados y herramientas DevOps.
+La parte de seguridad también dejó una conclusión concreta: trasladar una clave a Key Vault no basta si la aplicación necesita otra credencial para leerla. La identidad administrada resuelve esa relación entre App Service y Key Vault sin añadir secretos al repositorio. SonarCloud ayudó a revisar configuraciones de infraestructura y a distinguir entre vulnerabilidades reales, decisiones intencionadas y aspectos pendientes de una solución de producción.
 
-La solución implementada demuestra cómo los servicios cloud gestionados permiten automatizar procesos empresariales reduciendo la intervención manual y mejorando la trazabilidad de las operaciones.
-
-Durante el proyecto se han utilizado tecnologías empleadas en entornos empresariales reales: Python, Flask, Terraform como documentación de infraestructura, Azure App Service, Azure Blob Storage, Azure Key Vault, Managed Identity, Azure Logic Apps, Application Insights, Azure Monitor, Azure CLI y SonarCloud.
-
-Además, el proyecto ha permitido profundizar en aspectos relacionados con:
+El trabajo permitió practicar de forma conjunta los siguientes ámbitos:
 
 \begin{itemize}
     \item Seguridad cloud.
@@ -21,12 +17,12 @@ Además, el proyecto ha permitido profundizar en aspectos relacionados con:
     \item Clasificación automática de información operativa.
 \end{itemize}
 
-El prototipo desarrollado valida los objetivos del TFG: automatización de un proceso empresarial (gestión de solicitudes operativas TI), seguridad mediante Key Vault y Managed Identity, despliegue automatizado mediante script reproducible, observabilidad básica con Application Insights y Azure Monitor, e incorporación de un componente de análisis automático para clasificación y recomendación operativa.
+El prototipo cumple los objetivos planteados, aunque mantiene límites claros. La autenticación Bearer protege consultas técnicas, pero no sustituye la identidad individual de usuarios; Blob Storage sirve para el volumen de prueba, pero no ofrece las consultas de una base de datos; y el clasificador es explicable y repetible, pero no aprende de casos anteriores. Estas limitaciones orientan las líneas de continuación.
 
 Como líneas futuras se plantean:
 
 \begin{itemize}
-    \item Integrar Azure OpenAI para enriquecer la clasificación y las recomendaciones.
+    \item Evaluar un servicio de lenguaje solo cuando exista un conjunto de solicitudes etiquetadas con el que comparar su precisión frente a las reglas actuales.
     \item Incorporar autenticación de usuarios con Azure AD.
     \item Crear dashboards avanzados de monitorización y alertas operativas.
     \item Ampliar el portal web con seguimiento de solicitudes para usuarios no técnicos.

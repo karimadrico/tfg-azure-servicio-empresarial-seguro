@@ -2,9 +2,9 @@
 
 \section{Metodología de desarrollo}
 
-El proyecto se ha desarrollado siguiendo principios de metodologías ágiles utilizando iteraciones organizadas en sprints.
+El trabajo se repartió en cinco sprints. Cada iteración agrupó un resultado reconocible: preparación, API y seguridad inicial, despliegue, consolidación técnica y cierre de la entrega.
 
-Para la gestión de tareas se ha utilizado Zube.io, permitiendo organizar historias de usuario, tareas técnicas y seguimiento del progreso.
+Zube registró las historias, fechas y cambios de alcance. Su historial conserva también tres tarjetas retiradas del Sprint 3, una decisión que después se explicó como replanificación y no como trabajo oculto.
 
 \section{Lenguaje y framework backend}
 
@@ -50,9 +50,7 @@ Calidad & SonarCloud & SonarQube autohospedado & SonarCloud aporta el mismo tipo
 
 \section{Control de versiones}
 
-El control de versiones se ha realizado utilizando Git y GitHub.
-
-Se han realizado commits frecuentes para mantener trazabilidad completa del desarrollo.
+Git y GitHub conservaron el código y la documentación. Los commits separan, siempre que ha sido posible, cambios de aplicación, infraestructura y memoria para que resulte más sencillo relacionarlos con las tareas de Zube.
 
 \section{Plataforma cloud}
 
@@ -121,8 +119,6 @@ Los resultados del análisis se emplean como evidencia de calidad del código y 
 
 \section{Terraform}
 
-Terraform es una herramienta Infrastructure as Code (IaC)
-utilizada para automatizar el aprovisionamiento de recursos cloud.
+Terraform es una herramienta de infraestructura como código que describe recursos cloud de forma declarativa.
 
-En el proyecto se conserva como definición declarativa de infraestructura Azure,
-permitiendo documentar recursos reproducibles, controlados y versionados mediante Git \cite{terraform_azure}. El despliegue operativo final se ha realizado con el script PowerShell incluido en el repositorio.
+En este repositorio funciona como descripción versionada de la infraestructura Azure \cite{terraform_azure}. El despliegue que se ejecutó y validó se encuentra en el script PowerShell; por tanto, la memoria no atribuye a Terraform una automatización que no se utilizó en la publicación final.
