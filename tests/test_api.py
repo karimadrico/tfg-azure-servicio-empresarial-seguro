@@ -13,7 +13,7 @@ os.environ["STORAGE_MODE"] = "local"
 os.environ["API_KEY"] = ""
 
 import app as api_app
-from classifier import classify_incidencia
+from classifier import classify_incidencia, classify_solicitud
 
 
 class ApiTests(unittest.TestCase):
@@ -80,6 +80,7 @@ class ApiTests(unittest.TestCase):
         response = self.client.get("/portal")
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Portal de Solicitudes TI", response.data)
+        response.close()
 
     def test_metricas(self) -> None:
         self.client.post(
@@ -107,6 +108,38 @@ class ClassifierTests(unittest.TestCase):
         self.assertEqual(result.clasificacion, "seguridad")
         self.assertEqual(result.prioridad, "alta")
         self.assertTrue(result.recomendacion)
+
+    def test_business_rule_scenarios(self) -> None:
+        scenarios = (
+            (
+                "Alerta de seguridad crítica",
+                "Intrusión y acceso no autorizado detectados",
+                ("incidencia", "seguridad", "alta"),
+            ),
+            (
+                "Error y fallo de conectividad",
+                "El servidor VPN presenta error y fallo",
+                ("incidencia", "infraestructura", "media"),
+            ),
+            (
+                "Ayuda de configuración",
+                "Necesito ayuda con la configuración manual de un usuario",
+                ("configuracion", "soporte", "baja"),
+            ),
+            (
+                "Consulta de calendario",
+                "Quiero consultar el calendario de vacaciones",
+                ("incidencia", "general", "baja"),
+            ),
+        )
+
+        for titulo, descripcion, expected in scenarios:
+            with self.subTest(titulo=titulo):
+                result = classify_solicitud(titulo, descripcion)
+                self.assertEqual(
+                    (result.tipo_solicitud, result.clasificacion, result.prioridad),
+                    expected,
+                )
 
 
 if __name__ == "__main__":

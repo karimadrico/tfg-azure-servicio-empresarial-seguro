@@ -37,6 +37,8 @@ El flujo principal del sistema es el siguiente:
     \item El endpoint de métricas y Application Insights permiten observar el estado agregado del sistema.
 \end{enumerate}
 
+La figura \ref{fig:arquitectura-general-memoria} representa este flujo dentro de la arquitectura desplegada. Permite diferenciar los canales de entrada, la lógica ejecutada en App Service y los servicios gestionados responsables de secretos, persistencia y observabilidad.
+
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.9\textwidth]{arquitectura_final_azure.png}
@@ -87,9 +89,48 @@ GET & \texttt{/metricas} & Token Bearer & Revisión de métricas agregadas del s
 
 Al crear una solicitud, el módulo \texttt{classifier.py} analiza el título y la descripción para asignar tipo de solicitud (\textit{acceso}, \textit{entorno}, \textit{aplicación}, \textit{configuración}, \textit{incidencia}), prioridad (\textit{baja}, \textit{media}, \textit{alta}), categoría (\textit{seguridad}, \textit{infraestructura}, \textit{soporte}, \textit{general}) y una recomendación operativa, devolviendo un valor de confianza asociado.
 
-\section{Componente de inteligencia artificial}
+\section{Componente de análisis automático basado en reglas}
 
-Se ha incorporado un clasificador ligero basado en análisis semántico de palabras clave y reglas de negocio. Este componente cumple el objetivo del TFG de aportar análisis automático de información operativa sin depender de infraestructuras corporativas complejas. El clasificador evalúa términos relacionados con seguridad, infraestructura y soporte para determinar la categoría, prioridad y recomendación de cada solicitud operativa TI.
+Se ha incorporado un clasificador ligero basado en palabras clave y reglas de negocio. Se trata de un sistema determinista de inteligencia artificial simbólica, no de un modelo de aprendizaje automático entrenado. Esta precisión es relevante: sus decisiones son trazables, repetibles y adecuadas para demostrar análisis automático sin requerir conjuntos de datos históricos ni servicios externos.
+
+Las reglas se evalúan en un orden definido. Una prioridad o un tipo válidos indicados explícitamente por el usuario prevalecen sobre la inferencia. En ausencia de esos valores, se calculan puntuaciones por coincidencia de términos; la categoría con mayor puntuación se selecciona y, si no hay coincidencias, se utiliza la categoría general. Cuando dos categorías empatan, se aplica el orden estable seguridad, infraestructura y soporte. El sistema produce una única clasificación y recomendación, por lo que no genera alertas paralelas ni ejecuta dos acciones incompatibles.
+
+La tabla \ref{tabla:reglas_clasificador} resume las reglas implementadas en \texttt{src/classifier.py}.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Regla} & \textbf{Condición} & \textbf{Resultado} \\
+\hline
+R-01 & Prioridad manual incluida en baja, media o alta. & Se conserva la prioridad indicada con confianza máxima. \\
+R-02 & Dos o más términos críticos, o caída acompañada de un término crítico. & Prioridad alta y atención recomendada en menos de cuatro horas. \\
+R-03 & Un término crítico o dos términos de impacto medio. & Prioridad media y resolución en la siguiente ventana operativa. \\
+R-04 & No se cumple una regla de prioridad anterior. & Prioridad baja y planificación en el backlog. \\
+R-05 & Tipo manual válido o mayor puntuación de palabras del tipo. & Tipo de solicitud explícito o inferido; incidencia como valor de respaldo. \\
+R-06 & Mayor puntuación entre seguridad, infraestructura y soporte. & Categoría única; general si todas las puntuaciones son cero. \\
+R-07 & Combinación de tipo, categoría y prioridad. & Recomendación específica y plazo operativo asociado. \\
+\end{tabularx}
+\caption{Reglas de negocio del clasificador automático}
+\label{tabla:reglas_clasificador}
+\end{table}
+
+Para validar el comportamiento con entradas distintas, se definieron los escenarios de la tabla \ref{tabla:escenarios_clasificador}. Estos casos se ejecutan automáticamente en la batería de pruebas.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\textwidth}{X l l l}
+\textbf{Ejemplo de entrada} & \textbf{Tipo} & \textbf{Categoría} & \textbf{Prioridad} \\
+\hline
+Intrusión y acceso no autorizado críticos & Incidencia & Seguridad & Alta \\
+Error y fallo en servidor VPN & Incidencia & Infraestructura & Media \\
+Ayuda para configuración manual de usuario & Configuración & Soporte & Baja \\
+Consulta sobre calendario de vacaciones & Incidencia & General & Baja \\
+\end{tabularx}
+\caption{Escenarios de validación de las reglas de clasificación}
+\label{tabla:escenarios_clasificador}
+\end{table}
 
 \section{Automatización del despliegue}
 
