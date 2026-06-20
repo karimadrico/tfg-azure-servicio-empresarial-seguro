@@ -11,6 +11,11 @@ Karthik Bojja.
   deployments.
 \newblock {\em IJIRSET}, 9(6), Junio 2020.
 
+\bibitem{django_overview}
+{Django Software Foundation}.
+\newblock Django at a glance, 2026.
+\newblock Documentación oficial, consultado junio 2026.
+
 \bibitem{microsoft_azure}
 {Microsoft}.
 \newblock Microsoft azure: Cloud computing dictionary, 2025.
@@ -70,8 +75,18 @@ Karthik Bojja.
 \newblock What is azure blob storage?, 2026.
 \newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
 
+\bibitem{flask_documentation}
+{Pallets Projects}.
+\newblock Flask documentation, 2026.
+\newblock Documentación oficial, consultado junio 2026.
+
 \bibitem{sonarqube_docs}
 {SonarSource}.
 \newblock Sonarqube documentation, 2025.
+
+\bibitem{sqlite_when_to_use}
+{SQLite Project}.
+\newblock Appropriate uses for sqlite, 2026.
+\newblock Documentación oficial, consultado junio 2026.
 
 \end{thebibliography}

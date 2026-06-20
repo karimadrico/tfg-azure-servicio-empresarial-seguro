@@ -10,7 +10,43 @@ Para la gestión de tareas se ha utilizado Zube.io, permitiendo organizar histor
 
 La aplicación backend se ha desarrollado utilizando Python junto con el framework Flask.
 
-Flask permite construir APIs REST ligeras y fáciles de mantener.
+Flask permite construir APIs REST ligeras y fáciles de mantener. Su núcleo reducido deja explícitas las decisiones sobre rutas, validación, almacenamiento y autenticación, lo que resulta adecuado para un prototipo centrado en servicios cloud y no en las funciones de un framework web completo \cite{flask_documentation}.
+
+\subsection{Justificación frente a otras alternativas}
+
+La selección tecnológica se realizó atendiendo al alcance, al tipo de carga y a la facilidad para demostrar cada objetivo del TFG. La tabla \ref{tabla:comparacion_alternativas} recoge las principales alternativas consideradas; no establece que una herramienta sea universalmente superior, sino cuál encaja mejor con este prototipo.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{p{2.6cm} p{2.7cm} X X}
+\textbf{Necesidad} & \textbf{Elección} & \textbf{Alternativa considerada} & \textbf{Justificación en el proyecto} \\
+\hline
+API y portal web & Flask & Django & Django aporta ORM, administración y una estructura extensa, útiles en aplicaciones con dominio relacional complejo. Flask reduce componentes no utilizados y permite concentrar el prototipo en API, reglas de negocio e integración con Azure \cite{django_overview}. \\
+Persistencia cloud & Azure Blob Storage con JSON & SQLite o Azure SQL & Los registros son documentos sencillos, el volumen del prototipo es reducido y no se requieren relaciones ni transacciones entre tablas. Blob Storage se integra con el objetivo cloud y evita mantener un motor de base de datos. SQLite habría sido válido para ejecución local, pero menos representativo del despliegue distribuido \cite{sqlite_when_to_use,azure_blob_overview}. \\
+Alojamiento & Azure App Service & Máquina virtual o contenedor administrado manualmente & App Service abstrae sistema operativo, publicación y disponibilidad básica. Una máquina virtual ofrecería más control, pero añadiría mantenimiento ajeno al proceso empresarial estudiado. \\
+Automatización & Azure Logic Apps & Integración directa de cada sistema con la API & Logic Apps desacopla los sistemas externos del backend y hace visible la orquestación. La API conserva validación, clasificación y persistencia para evitar duplicar reglas. \\
+Secretos & Azure Key Vault con Managed Identity & Variables o secretos almacenados manualmente & Key Vault centraliza el secreto y Managed Identity evita credenciales de acceso entre servicios dentro del código. \\
+\end{tabularx}
+\caption{Comparación de alternativas para aplicación, datos y servicios cloud}
+\label{tabla:comparacion_alternativas}
+\end{table}
+
+La tabla \ref{tabla:comparacion_operacion} completa el análisis con las herramientas que sostienen el despliegue, la planificación y la calidad.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\textwidth}{p{2.6cm} p{2.7cm} X X}
+\textbf{Necesidad} & \textbf{Elección} & \textbf{Alternativa considerada} & \textbf{Justificación en el proyecto} \\
+\hline
+Despliegue & PowerShell y Azure CLI & Pipeline CI/CD completo & El script es reproducible, auditable y suficiente para un único entorno académico. Un pipeline sería apropiado con varios equipos y promociones entre entornos, pero aumentaría el alcance sin mejorar el caso funcional validado. \\
+Planificación & Zube & Azure Boards, Jira o GitHub Projects & Zube ya estaba integrado con GitHub y permitió conservar tablero, historias y cinco sprints visibles. Cambiar de gestor al final habría fragmentado la trazabilidad histórica. \\
+Calidad & SonarCloud & SonarQube autohospedado & SonarCloud aporta el mismo tipo de métricas sin administrar servidor, base de datos ni actualizaciones de una instancia propia. \\
+\end{tabularx}
+\caption{Comparación de alternativas para operación y seguimiento}
+\label{tabla:comparacion_operacion}
+\end{table}
 
 \section{Control de versiones}
 
