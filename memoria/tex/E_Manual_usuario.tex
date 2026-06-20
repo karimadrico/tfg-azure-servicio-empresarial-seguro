@@ -31,7 +31,7 @@ El usuario necesita:
 \begin{itemize}
     \item Cliente HTTP (navegador, Postman o curl).
     \item Conexión a Internet.
-    \item Token de autenticación Bearer (excepto en entorno local sin clave configurada).
+    \item Token de autenticación Bearer únicamente para consultar solicitudes y métricas protegidas. El portal y la creación de solicitudes no requieren que el usuario introduzca el token.
 \end{itemize}
 
 \section{Acceso al servicio}
@@ -70,8 +70,10 @@ El prototipo contempla varios perfiles de uso:
 \subsection{Consultar estado del servicio}
 
 \begin{verbatim}
-GET /
+GET /health
 \end{verbatim}
+
+La respuesta indica si el servicio está operativo y si utiliza almacenamiento local o Azure Blob Storage. Esta operación es pública para facilitar la comprobación de disponibilidad.
 
 \subsection{Crear solicitud desde el portal}
 
@@ -92,7 +94,7 @@ Content-Type: application/json
 }
 \end{verbatim}
 
-El sistema clasificará automáticamente la solicitud y devolverá prioridad, categoría, tipo, nivel de confianza y recomendación.
+El sistema clasificará automáticamente la solicitud y devolverá prioridad, categoría, tipo, nivel de confianza y recomendación. Si se proporciona una prioridad válida de forma explícita, esta prevalece sobre la prioridad inferida por las reglas.
 
 \subsection{Consultar solicitudes}
 
