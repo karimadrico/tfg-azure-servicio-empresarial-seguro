@@ -17,15 +17,15 @@ var planName = 'asp-tfg-cloudautomation'
 resource plan 'Microsoft.Web/serverfarms@2023-01-01' = {
   name: planName
   location: location
-  kind: 'linux'
   sku: {
     name: 'B1'
     tier: 'Basic'
   }
+  kind: 'linux'
+  tags: tags
   properties: {
     reserved: true
   }
-  tags: tags
 }
 
 // La autenticacion funcional se implementa en la API con Bearer token y Key Vault.
@@ -33,6 +33,7 @@ resource webApp 'Microsoft.Web/sites@2023-01-01' = { // NOSONAR
   name: webAppName
   location: location
   kind: 'app,linux'
+  tags: tags
   identity: {
     type: 'SystemAssigned'
   }
@@ -59,7 +60,6 @@ resource webApp 'Microsoft.Web/sites@2023-01-01' = { // NOSONAR
       ]
     }
   }
-  tags: tags
 }
 
 resource authSettings 'Microsoft.Web/sites/config@2023-01-01' = {

@@ -117,22 +117,59 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
                 statusCode: '@outputs(\'crear_solicitud\')?[\'statusCode\']'
                 body: '@body(\'crear_solicitud\')'
               }
+              runtimeConfiguration: {
+                secureData: {
+                  properties: [
+                    'inputs'
+                    'outputs'
+                  ]
+                }
+              }
+            }
+          }
+          runtimeConfiguration: {
+            secureData: {
+              properties: [
+                'inputs'
+                'outputs'
+              ]
             }
           }
         }
-        responder_error: {
-          type: 'Response'
+        capturar_error: {
+          type: 'Scope'
           runAfter: {
             intentar_crear_solicitud: [
               'Failed'
               'TimedOut'
             ]
           }
-          inputs: {
-            statusCode: 502
-            body: {
-              error: 'No se pudo registrar la solicitud en la API.'
-              detalle: '@result(\'intentar_crear_solicitud\')'
+          actions: {
+            responder_error: {
+              type: 'Response'
+              inputs: {
+                statusCode: 502
+                body: {
+                  error: 'No se pudo registrar la solicitud en la API.'
+                  detalle: '@result(\'intentar_crear_solicitud\')'
+                }
+              }
+              runtimeConfiguration: {
+                secureData: {
+                  properties: [
+                    'inputs'
+                    'outputs'
+                  ]
+                }
+              }
+            }
+          }
+          runtimeConfiguration: {
+            secureData: {
+              properties: [
+                'inputs'
+                'outputs'
+              ]
             }
           }
         }
