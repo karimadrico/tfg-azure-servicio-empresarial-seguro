@@ -152,6 +152,17 @@ $kvRbacEnabled = Invoke-Az @(
 )
 
 Write-Host "[3/7] Preparando Application Insights..."
+$insightsProviderState = Invoke-Az @(
+    "provider", "show",
+    "--namespace", "Microsoft.Insights",
+    "--query", "registrationState",
+    "-o", "tsv"
+)
+if ($insightsProviderState -ne "Registered") {
+    Write-Host "Registrando proveedor Microsoft.Insights en la suscripcion..."
+    Invoke-Az @("provider", "register", "--namespace", "Microsoft.Insights", "--wait") | Out-Null
+}
+
 $appInsights = ""
 try {
     $appInsights = Invoke-Az @(
