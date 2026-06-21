@@ -97,6 +97,60 @@ class ApiTests(unittest.TestCase):
         response = self.client.get("/metricas")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json()["total_solicitudes"], 1)
+        self.assertEqual(response.get_json()["sla"]["en_plazo"], 1)
+
+    def test_ticket_lifecycle_and_history(self) -> None:
+        created = self.client.post(
+            "/solicitudes",
+            json={
+                "tipo_solicitud": "acceso",
+                "titulo": "Acceso a producción",
+                "descripcion": "Necesito acceso temporal al entorno de producción",
+                "reportado_por": "tecnico@empresa.com",
+            },
+        ).get_json()
+
+        response = self.client.patch(
+            f"/solicitudes/{created['id']}",
+            json={
+                "estado": "en_proceso",
+                "prioridad": "alta",
+                "asignado_a": "equipo_seguridad",
+                "comentario": "Identidad validada con el responsable.",
+                "actor": "operador@empresa.com",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        updated = response.get_json()
+        self.assertEqual(updated["estado"], "en_proceso")
+        self.assertEqual(updated["asignado_a"], "equipo_seguridad")
+        self.assertEqual(updated["prioridad"], "alta")
+        self.assertEqual(len(updated["historial"]), 2)
+        self.assertIn("Identidad validada", updated["historial"][-1]["detalle"])
+
+        detail = self.client.get(f"/solicitudes/{created['id']}")
+        self.assertEqual(detail.status_code, 200)
+        self.assertEqual(detail.get_json()["id"], created["id"])
+
+    def test_ticket_lifecycle_rejects_invalid_update(self) -> None:
+        created = self.client.post(
+            "/solicitudes",
+            json={
+                "titulo": "Revisión de permisos",
+                "descripcion": "Revisar permisos del usuario en el portal interno",
+                "reportado_por": "soporte@empresa.com",
+            },
+        ).get_json()
+
+        response = self.client.patch(
+            f"/solicitudes/{created['id']}",
+            json={"estado": "eliminada"},
+        )
+        self.assertEqual(response.status_code, 400)
+
+        missing = self.client.get("/solicitudes/SOL-999")
+        self.assertEqual(missing.status_code, 404)
 
 
 class ClassifierTests(unittest.TestCase):

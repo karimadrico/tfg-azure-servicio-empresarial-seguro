@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 from pathlib import Path
 from typing import Any, Callable
@@ -19,6 +19,12 @@ storage = IncidenciaStorage(config)
 
 VALID_ESTADOS = {"abierta", "en_proceso", "cerrada"}
 VALID_PRIORIDADES = {"baja", "media", "alta"}
+TRANSICIONES_ESTADO = {
+    "abierta": {"en_proceso", "cerrada"},
+    "en_proceso": {"abierta", "cerrada"},
+    "cerrada": {"en_proceso"},
+}
+SLA_HORAS = {"alta": 4, "media": 24, "baja": 72}
 
 
 @app.after_request
@@ -44,6 +50,16 @@ def _next_id(incidencias: list[dict[str, Any]]) -> str:
         if separator and prefix in {"SOL", "INC"} and number.isdecimal():
             numbers.append(int(number))
     return f"SOL-{max(numbers, default=0) + 1:03d}"
+
+
+def _find_solicitud(incidencias: list[dict[str, Any]], solicitud_id: str) -> dict[str, Any] | None:
+    return next((item for item in incidencias if item.get("id") == solicitud_id), None)
+
+
+def _sla_deadline(created_at: str, prioridad: str) -> str:
+    created = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+    deadline = created + timedelta(hours=SLA_HORAS[prioridad])
+    return deadline.replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def _is_valid_email(value: str) -> bool:
@@ -138,6 +154,7 @@ def _create_solicitud_record(validated: dict[str, str]) -> dict[str, Any]:
         validated["tipo_solicitud"],
     )
 
+    created_at = _utc_now()
     nueva = {
         "id": _next_id(incidencias),
         "titulo": validated["titulo"],
@@ -151,8 +168,18 @@ def _create_solicitud_record(validated: dict[str, str]) -> dict[str, Any]:
         "recomendacion": classification.recomendacion,
         "categoria": validated["categoria"],
         "reportado_por": validated["reportado_por"],
-        "fecha_creacion": _utc_now(),
+        "fecha_creacion": created_at,
+        "fecha_actualizacion": created_at,
+        "fecha_objetivo_sla": _sla_deadline(created_at, classification.prioridad),
         "asignado_a": "equipo_cloud",
+        "historial": [
+            {
+                "fecha": created_at,
+                "accion": "creacion",
+                "actor": validated["reportado_por"],
+                "detalle": "Solicitud registrada y clasificada automáticamente.",
+            }
+        ],
     }
 
     incidencias.append(nueva)
@@ -198,6 +225,75 @@ def list_solicitudes() -> Any:
 @app.post("/solicitudes")
 def create_solicitud() -> Any:
     return create_incidencia()
+
+
+@app.get("/solicitudes/<solicitud_id>")
+@require_auth
+def get_solicitud(solicitud_id: str) -> Any:
+    solicitud = _find_solicitud(storage.load(), solicitud_id)
+    if solicitud is None:
+        return jsonify({"error": "Solicitud no encontrada"}), 404
+    return jsonify(solicitud)
+
+
+@app.patch("/solicitudes/<solicitud_id>")
+@require_auth
+def update_solicitud(solicitud_id: str) -> Any:
+    payload = request.get_json(silent=True) or {}
+    allowed_fields = {"estado", "prioridad", "asignado_a", "comentario", "actor"}
+    if not payload or any(field not in allowed_fields for field in payload):
+        return jsonify({"error": "La actualización contiene campos no permitidos"}), 400
+
+    incidencias = storage.load()
+    solicitud = _find_solicitud(incidencias, solicitud_id)
+    if solicitud is None:
+        return jsonify({"error": "Solicitud no encontrada"}), 404
+
+    estado = payload.get("estado")
+    prioridad = payload.get("prioridad")
+    asignado_a = (payload.get("asignado_a") or "").strip()
+    comentario = (payload.get("comentario") or "").strip()
+    actor = (payload.get("actor") or "equipo_ti").strip()
+
+    if estado and estado not in VALID_ESTADOS:
+        return jsonify({"error": "Estado inválido"}), 400
+    if estado and estado != solicitud["estado"] and estado not in TRANSICIONES_ESTADO[solicitud["estado"]]:
+        return jsonify({"error": f"No se puede pasar de {solicitud['estado']} a {estado}"}), 409
+    if prioridad and prioridad not in VALID_PRIORIDADES:
+        return jsonify({"error": "Prioridad inválida"}), 400
+    if "asignado_a" in payload and (not asignado_a or len(asignado_a) > 100):
+        return jsonify({"error": "asignado_a debe tener entre 1 y 100 caracteres"}), 400
+    if len(comentario) > 500 or not actor or len(actor) > 100:
+        return jsonify({"error": "Comentario o actor inválido"}), 400
+
+    changes: list[str] = []
+    if estado and estado != solicitud["estado"]:
+        changes.append(f"Estado: {solicitud['estado']} -> {estado}")
+        solicitud["estado"] = estado
+    if prioridad and prioridad != solicitud["prioridad"]:
+        changes.append(f"Prioridad: {solicitud['prioridad']} -> {prioridad}")
+        solicitud["prioridad"] = prioridad
+        solicitud["fecha_objetivo_sla"] = _sla_deadline(solicitud["fecha_creacion"], prioridad)
+    if asignado_a and asignado_a != solicitud.get("asignado_a"):
+        changes.append(f"Asignación: {solicitud.get('asignado_a', 'sin asignar')} -> {asignado_a}")
+        solicitud["asignado_a"] = asignado_a
+    if comentario:
+        changes.append(f"Nota: {comentario}")
+    if not changes:
+        return jsonify({"error": "No se han indicado cambios"}), 400
+
+    updated_at = _utc_now()
+    solicitud["fecha_actualizacion"] = updated_at
+    solicitud.setdefault("historial", []).append(
+        {
+            "fecha": updated_at,
+            "accion": "actualizacion",
+            "actor": actor,
+            "detalle": "; ".join(changes),
+        }
+    )
+    storage.save(incidencias)
+    return jsonify(solicitud)
 
 
 @app.get("/incidencias")
@@ -249,6 +345,8 @@ def metricas() -> Any:
     por_prioridad = {"baja": 0, "media": 0, "alta": 0}
     por_estado = {"abierta": 0, "en_proceso": 0, "cerrada": 0}
     por_tipo = dict.fromkeys(VALID_TIPOS, 0)
+    sla = {"en_plazo": 0, "vencidas": 0, "cerradas": 0}
+    now = datetime.now(timezone.utc)
 
     for item in incidencias:
         prioridad = item.get("prioridad", "media")
@@ -260,6 +358,14 @@ def metricas() -> Any:
             por_estado[estado] += 1
         if tipo in por_tipo:
             por_tipo[tipo] += 1
+        if estado == "cerrada":
+            sla["cerradas"] += 1
+        else:
+            deadline_value = item.get("fecha_objetivo_sla")
+            if deadline_value and datetime.fromisoformat(deadline_value.replace("Z", "+00:00")) < now:
+                sla["vencidas"] += 1
+            else:
+                sla["en_plazo"] += 1
 
     return jsonify(
         {
@@ -267,6 +373,7 @@ def metricas() -> Any:
             "por_prioridad": por_prioridad,
             "por_estado": por_estado,
             "por_tipo_solicitud": por_tipo,
+            "sla": sla,
             "timestamp": _utc_now(),
         }
     )
