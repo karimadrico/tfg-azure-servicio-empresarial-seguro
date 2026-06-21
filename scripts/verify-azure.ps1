@@ -45,12 +45,29 @@ Write-Host ""
 
 Test-Endpoint -Name "Estado del servicio" -Path "/"
 Test-Endpoint -Name "Health check" -Path "/health"
-Test-Endpoint -Name "Crear solicitud TI" -Method "POST" -Path "/solicitudes" -Body @{
+
+Write-Output "-> Crear solicitud TI"
+$Created = Invoke-RestMethod `
+    -Uri "$BaseUrl/solicitudes" `
+    -Method "POST" `
+    -Headers $Headers `
+    -ContentType "application/json" `
+    -Body (@{
     tipo_solicitud = "acceso"
     titulo = "Prueba tribunal"
     descripcion = "Solicito acceso VPN al entorno cloud de desarrollo"
     reportado_por = "karima@ubu.es"
+    } | ConvertTo-Json -Compress)
+$Created | ConvertTo-Json -Depth 6
+Write-Output ""
+
+Test-Endpoint -Name "Asignar y comenzar solicitud" -Method "PATCH" -Path "/solicitudes/$($Created.id)" -Body @{
+    estado = "en_proceso"
+    asignado_a = "equipo_seguridad"
+    comentario = "Solicitud validada durante la prueba de despliegue"
+    actor = "script_verificacion"
 }
+Test-Endpoint -Name "Consultar detalle e historial" -Path "/solicitudes/$($Created.id)"
 Test-Endpoint -Name "Listar solicitudes" -Path "/solicitudes"
 Test-Endpoint -Name "Metricas" -Path "/metricas"
 
