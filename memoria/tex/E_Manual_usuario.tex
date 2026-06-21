@@ -61,7 +61,7 @@ El prototipo contempla varios perfiles de uso:
 
 \begin{itemize}
     \item \textbf{Usuario interno}: utiliza el portal web para registrar solicitudes de acceso, entorno, aplicación, configuración o incidencia.
-    \item \textbf{Equipo TI}: consulta solicitudes y métricas mediante endpoints protegidos con token Bearer.
+    \item \textbf{Equipo TI}: utiliza la bandeja protegida para consultar, filtrar, asignar, priorizar y cerrar solicitudes.
     \item \textbf{Sistema externo}: puede generar solicitudes mediante la Logic App sin conocer los detalles internos de la API.
     \item \textbf{Administrador cloud}: mantiene configuración, secretos, despliegue y monitorización en Azure.
 \end{itemize}
@@ -78,6 +78,12 @@ La respuesta indica si el servicio está operativo y si utiliza almacenamiento l
 \subsection{Crear solicitud desde el portal}
 
 El usuario puede abrir el portal web, seleccionar el tipo de solicitud, introducir título, descripción y correo del solicitante, y enviar el formulario. La API devolverá un identificador, prioridad, clasificación y recomendación operativa.
+
+\subsection{Gestionar solicitudes desde el portal}
+
+El equipo TI selecciona la pestaña \textit{Gestión del equipo TI}, introduce el token custodiado en Key Vault y carga la bandeja. La vista muestra totales, solicitudes abiertas, trabajo en proceso y casos con SLA vencido. Los filtros permiten acotar por estado, prioridad y tipo.
+
+Al seleccionar una fila se abre el detalle con solicitante, descripción, clasificación, recomendación y fecha objetivo. El operador puede cambiar el estado, la prioridad o el responsable y añadir una nota. Cada actuación queda incorporada al historial; el token se mantiene únicamente en memoria durante la sesión del navegador y no se guarda en almacenamiento local.
 
 \subsection{Crear solicitud desde API}
 
@@ -111,6 +117,8 @@ Si se accede a esta URL directamente desde el navegador sin cabecera de autoriza
 GET /metricas
 Authorization: Bearer <token>
 \end{verbatim}
+
+La respuesta incluye agregados por estado, prioridad y tipo, además de solicitudes en plazo, vencidas y cerradas.
 \subsection{Crear solicitud mediante Logic App}
 
 La Logic App permite automatizar la entrada de solicitudes desde un sistema externo. El usuario o sistema integrador envía un JSON al trigger HTTP de la Logic App y el flujo invoca internamente \texttt{POST /solicitudes}. La respuesta final mantiene el mismo formato que la API, incluyendo identificador, prioridad, clasificación y recomendación.

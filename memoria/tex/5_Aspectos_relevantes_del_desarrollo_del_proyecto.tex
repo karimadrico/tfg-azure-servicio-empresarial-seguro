@@ -65,7 +65,9 @@ La API desarrollada en \texttt{src/app.py} expone los siguientes endpoints:
     \item \texttt{GET /health}: comprobación de salud y modo de almacenamiento.
     \item \texttt{POST /solicitudes}: creación de solicitudes con clasificación automática.
     \item \texttt{GET /solicitudes}: listado con filtros por estado, prioridad y tipo.
-    \item \texttt{GET /metricas}: métricas agregadas del sistema.
+    \item \texttt{GET /solicitudes/<id>}: consulta detallada de una solicitud.
+    \item \texttt{PATCH /solicitudes/<id>}: actualización de estado, prioridad, responsable y notas.
+    \item \texttt{GET /metricas}: métricas agregadas del sistema y seguimiento de SLA.
 \end{itemize}
 
 La tabla \ref{tabla:endpoints_api} resume el contrato principal de la API, indicando el mecanismo de seguridad y la forma en que se ha validado cada operación.
@@ -81,13 +83,17 @@ GET & \texttt{/portal} & Pública & Acceso al portal web desplegado en App Servi
 GET & \texttt{/health} & Pública & Verificación de estado y modo de almacenamiento. \\
 POST & \texttt{/solicitudes} & Pública con validación de entrada & Creación de solicitud y clasificación automática. \\
 GET & \texttt{/solicitudes} & Token Bearer & Consulta protegida con filtros y paginación. \\
-GET & \texttt{/metricas} & Token Bearer & Revisión de métricas agregadas del sistema. \\
+GET & \texttt{/solicitudes/<id>} & Token Bearer & Consulta del detalle y del historial de una solicitud. \\
+PATCH & \texttt{/solicitudes/<id>} & Token Bearer & Cambio controlado de estado, prioridad, asignación y notas. \\
+GET & \texttt{/metricas} & Token Bearer & Revisión de métricas agregadas y cumplimiento de SLA. \\
 \end{tabularx}
 \caption{Endpoints principales de la API}
 \label{tabla:endpoints_api}
 \end{table}
 
 Al crear una solicitud, el módulo \texttt{classifier.py} analiza el título y la descripción para asignar tipo de solicitud (\textit{acceso}, \textit{entorno}, \textit{aplicación}, \textit{configuración}, \textit{incidencia}), prioridad (\textit{baja}, \textit{media}, \textit{alta}), categoría (\textit{seguridad}, \textit{infraestructura}, \textit{soporte}, \textit{general}) y una recomendación operativa, devolviendo un valor de confianza asociado.
+
+Después del registro, la bandeja del equipo TI permite gestionar el trabajo pendiente sin acceder directamente al almacenamiento. Cada actualización se incorpora al historial de la solicitud y las prioridades alta, media y baja reciben objetivos iniciales de cuatro, veinticuatro y setenta y dos horas, respectivamente. Estos datos alimentan el resumen de solicitudes en plazo, vencidas y cerradas.
 
 \section{Componente de análisis automático basado en reglas}
 
@@ -149,7 +155,7 @@ El despliegue reproducible se concentra en \texttt{scripts/deploy-azure.ps1}. El
 
 La Logic App actúa como capa de orquestación para integrar la plataforma con otros sistemas de la empresa. En el prototipo, un sistema externo puede enviar una petición HTTP a la Logic App y esta invoca de forma controlada el endpoint \texttt{POST /solicitudes} de la API desplegada en App Service. La API conserva la responsabilidad de validar datos, clasificar la solicitud, generar la recomendación y persistir el registro en Azure Blob Storage.
 
-Este flujo resulta útil para un escenario empresarial realista: un formulario corporativo, una herramienta de soporte, un buzón automatizado o un sistema de atención interna podrían crear solicitudes sin acceder manualmente al portal. La Logic App no sustituye al equipo de TI ni al backend, sino que automatiza la entrada de trabajo y permite que el equipo técnico consulte, priorice y supervise las solicitudes desde la plataforma.
+Este flujo resulta útil para un escenario empresarial realista: un formulario corporativo, una herramienta de soporte, un buzón automatizado o un sistema de atención interna podrían crear solicitudes sin acceder manualmente al portal. La Logic App no sustituye al equipo de TI ni al backend, sino que automatiza la entrada de trabajo. La asignación, el seguimiento y el cierre se realizan en la bandeja operativa del portal.
 \section{Seguridad y gestión de secretos}
 
 La autenticación de la API utiliza un token Bearer almacenado en Azure Key Vault. La App Service accede al secreto mediante Managed Identity, evitando credenciales embebidas en el código fuente. El almacenamiento de solicitudes reside en un contenedor Blob con acceso privado.

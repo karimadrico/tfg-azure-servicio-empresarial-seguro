@@ -120,7 +120,7 @@ La tabla \ref{tabla:roles_operativos} diferencia los actores que intervienen en 
 \hline
 Usuario interno & Registrar solicitudes operativas TI. & Portal web y creación de solicitudes. \\
 Sistema externo & Automatizar la entrada de solicitudes. & Trigger HTTP de Logic App, sin acceso directo a Storage ni Key Vault. \\
-Equipo TI & Revisar solicitudes, métricas y prioridades. & Endpoints protegidos de consulta y paneles de evidencias. \\
+Equipo TI & Revisar, asignar, actualizar y cerrar solicitudes. & Bandeja operativa y endpoints protegidos de gestión. \\
 Administrador cloud & Mantener despliegue, configuración y secretos. & Azure App Service, Key Vault, Storage, Logic App y Monitor. \\
 Tribunal & Evaluar funcionamiento, documentación y calidad. & Portal, repositorio, SonarCloud, Zube y evidencias documentadas. \\
 \end{tabularx}
@@ -161,7 +161,9 @@ El flujo principal del sistema es:
     \item Clasificación automática mediante reglas de negocio.
     \item Generación de recomendaciones de actuación operativa.
     \item Persistencia de solicitudes en Blob Storage o fichero local.
-    \item Respuesta JSON con identificador, prioridad, tipo, recomendación y confianza.
+    \item Respuesta JSON con identificador, prioridad, tipo, recomendación, confianza y objetivo SLA.
+    \item Gestión posterior mediante asignación, transiciones de estado y notas de seguimiento.
+    \item Registro de cada actuación en el historial de la solicitud.
     \item Verificación del despliegue mediante endpoint \texttt{/health}, portal web y pruebas HTTP.
 \end{enumerate}
 
@@ -259,7 +261,7 @@ Las figuras \ref{fig:azure-app-service}, \ref{fig:azure-key-vault}, \ref{fig:azu
 
 \section{Diseño de datos}
 
-La persistencia del prototipo utiliza un documento JSON por solicitud en Azure Blob Storage. No existe una base de datos relacional, por lo que el modelo de datos se describe como una entidad documental.
+La persistencia del prototipo utiliza un único blob JSON que contiene la colección de solicitudes. No existe una base de datos relacional, por lo que el modelo se describe como una colección documental adecuada al volumen de demostración. En un entorno con escrituras concurrentes sería necesario migrar a un almacén transaccional o aplicar control de concurrencia sobre el blob.
 
 \begin{table}[h]
 \centering
@@ -276,7 +278,11 @@ categoria & texto & Área funcional detectada: infraestructura, seguridad, softw
 estado & texto & Estado operativo de la solicitud. \\
 recomendacion & texto & Acción sugerida para el equipo TI. \\
 reportado\_por & texto & Correo o identificador del solicitante. \\
-created\_at & fecha & Fecha de creación de la solicitud. \\
+asignado\_a & texto & Equipo o responsable encargado del seguimiento. \\
+fecha\_creacion & fecha & Fecha de creación de la solicitud. \\
+fecha\_actualizacion & fecha & Fecha de la última actuación registrada. \\
+fecha\_objetivo\_sla & fecha & Límite inicial calculado a partir de la prioridad. \\
+historial & lista & Actuaciones con fecha, actor y detalle del cambio. \\
 \end{tabularx}
 \caption{Diccionario de datos de la solicitud}
 \end{table}

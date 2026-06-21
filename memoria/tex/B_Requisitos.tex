@@ -22,6 +22,8 @@ Los requisitos funcionales recogen las capacidades visibles del sistema para usu
     \item RF-05 Gestionar secretos mediante Azure Key Vault.
     \item RF-06 Clasificar solicitudes automáticamente.
     \item RF-07 Automatizar la entrada de solicitudes mediante Logic App.
+    \item RF-08 Gestionar el ciclo de vida de una solicitud.
+    \item RF-09 Registrar trazabilidad y plazo objetivo de atención.
 \end{itemize}
 
 Los requisitos no funcionales recogen propiedades transversales necesarias para que el sistema sea evaluable, seguro y mantenible:
@@ -51,10 +53,12 @@ RF-04 & Funcional & Alta & Comprobación de persistencia en Blob Storage y modo 
 RF-05 & Funcional & Alta & Capturas de Key Vault, secreto e identidad administrada. \\
 RF-06 & Funcional & Media & Pruebas unitarias del clasificador y respuesta de creación de solicitud. \\
 RF-07 & Funcional & Media & Evidencia de Logic App con trigger HTTP y solicitud creada. \\
+RF-08 & Funcional & Alta & Pruebas de consulta individual y actualización de estado, prioridad y responsable. \\
+RF-09 & Funcional & Alta & Comprobación del historial y de las métricas de cumplimiento de SLA. \\
 RNF-01 & No funcional & Alta & Revisión de autenticación, secretos fuera del código y SonarCloud. \\
 RNF-02 & No funcional & Media & Uso de App Service y Blob Storage como servicios gestionados. \\
 RNF-03 & No funcional & Media & Endpoint \texttt{/health} y script \texttt{verify-azure.ps1}. \\
-RNF-04 & No funcional & Alta & Identificador, estado, prioridad, tipo, fecha y recomendación por solicitud. \\
+RNF-04 & No funcional & Alta & Identificador, fechas, estado, prioridad, responsable e historial por solicitud. \\
 RNF-05 & No funcional & Media & Capturas de Application Insights, Azure Monitor y endpoint de métricas. \\
 \end{tabularx}
 \caption{Requisitos con prioridad y validación}
@@ -84,6 +88,12 @@ El sistema debe clasificar automáticamente prioridad, categoría y tipo de cada
 \subsection{RF-07 Automatización de entrada mediante Logic App}
 El sistema debe permitir que un sistema externo cree solicitudes mediante una Logic App con trigger HTTP, manteniendo la validación, clasificación y persistencia centralizadas en la API.
 
+\subsection{RF-08 Gestión del ciclo de vida}
+El equipo TI debe poder consultar una solicitud concreta, asignar un responsable y actualizar su estado o prioridad. Las transiciones se validan para impedir estados desconocidos y permitir la reapertura controlada de solicitudes cerradas.
+
+\subsection{RF-09 Trazabilidad y plazo objetivo}
+Cada solicitud debe conservar la fecha de creación y actualización, un objetivo de atención calculado según su prioridad y un historial de actuaciones con fecha, actor y detalle del cambio.
+
 \subsection{RNF-01 Seguridad}
 Autenticación Bearer, almacenamiento privado y gestión de secretos centralizada.
 
@@ -94,7 +104,7 @@ Arquitectura basada en servicios gestionados de Azure App Service y Blob Storage
 Endpoint de salud \texttt{/health} y despliegue automatizado.
 
 \subsection{RNF-04 Trazabilidad}
-Registro de fecha de creación, estado, prioridad, tipo, clasificación y recomendación de cada solicitud.
+Registro de identificador, fechas, estado, prioridad, responsable, clasificación e historial de cada solicitud.
 
 \subsection{RNF-05 Observabilidad}
 El sistema debe aportar evidencias de monitorización mediante métricas de la API, Application Insights y Azure Monitor, de forma que pueda analizarse el comportamiento del prototipo desplegado.

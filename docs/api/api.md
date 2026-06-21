@@ -16,6 +16,8 @@
 | GET | `/health` | No | Estado técnico y modo de almacenamiento |
 | POST | `/solicitudes` | No | Crear solicitud TI |
 | GET | `/solicitudes` | Bearer token | Listar solicitudes con filtros |
+| GET | `/solicitudes/<id>` | Bearer token | Consultar detalle e historial |
+| PATCH | `/solicitudes/<id>` | Bearer token | Actualizar estado, prioridad, responsable o nota |
 | POST | `/incidencias` | No | Alias compatible para crear incidencia |
 | GET | `/incidencias` | Bearer token | Alias compatible para listar incidencias |
 | GET | `/metricas` | Bearer token | Métricas agregadas |
@@ -64,5 +66,18 @@ Invoke-RestMethod `
   -Headers $headers
 ```
 
-Devuelve totales por prioridad, estado y tipo de solicitud.
+Devuelve totales por prioridad, estado y tipo de solicitud. También incluye el bloque `sla`, con solicitudes `en_plazo`, `vencidas` y `cerradas`.
+
+## Gestionar una solicitud
+
+```powershell
+Invoke-RestMethod `
+  -Method PATCH `
+  -Uri "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/solicitudes/SOL-001" `
+  -Headers $headers `
+  -ContentType "application/json" `
+  -Body '{"estado":"en_proceso","asignado_a":"equipo_seguridad","comentario":"Identidad validada","actor":"operador@empresa.com"}'
+```
+
+Estados soportados: `abierta`, `en_proceso` y `cerrada`. Cada cambio se registra en `historial` junto con su fecha, actor y detalle.
 
