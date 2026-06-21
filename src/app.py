@@ -238,6 +238,24 @@ def get_solicitud(solicitud_id: str) -> Any:
     return jsonify(solicitud)
 
 
+def _validate_state_transition(new_state: str, current_state: str) -> tuple[str, int] | None:
+    if new_state and new_state not in VALID_ESTADOS:
+        return "Estado inválido", 400
+    if new_state and new_state != current_state and new_state not in TRANSICIONES_ESTADO[current_state]:
+        return f"No se puede pasar de {current_state} a {new_state}", 409
+    return None
+
+
+def _validate_update_values(payload: dict[str, Any], values: dict[str, str]) -> tuple[str, int] | None:
+    if values["prioridad"] and values["prioridad"] not in VALID_PRIORIDADES:
+        return PRIORIDAD_INVALIDA, 400
+    if "asignado_a" in payload and (not values["asignado_a"] or len(values["asignado_a"]) > 100):
+        return "asignado_a debe tener entre 1 y 100 caracteres", 400
+    if len(values["comentario"]) > 500 or not values["actor"] or len(values["actor"]) > 100:
+        return "Comentario o actor inválido", 400
+    return None
+
+
 def _validate_update_payload(
     payload: dict[str, Any], solicitud: dict[str, Any]
 ) -> tuple[dict[str, str] | None, tuple[str, int] | None]:
@@ -252,21 +270,11 @@ def _validate_update_payload(
         "comentario": (payload.get("comentario") or "").strip(),
         "actor": (payload.get("actor") or "equipo_ti").strip(),
     }
-    if values["estado"] and values["estado"] not in VALID_ESTADOS:
-        return None, ("Estado inválido", 400)
-    if (
-        values["estado"]
-        and values["estado"] != solicitud["estado"]
-        and values["estado"] not in TRANSICIONES_ESTADO[solicitud["estado"]]
-    ):
-        message = f"No se puede pasar de {solicitud['estado']} a {values['estado']}"
-        return None, (message, 409)
-    if values["prioridad"] and values["prioridad"] not in VALID_PRIORIDADES:
-        return None, (PRIORIDAD_INVALIDA, 400)
-    if "asignado_a" in payload and (not values["asignado_a"] or len(values["asignado_a"]) > 100):
-        return None, ("asignado_a debe tener entre 1 y 100 caracteres", 400)
-    if len(values["comentario"]) > 500 or not values["actor"] or len(values["actor"]) > 100:
-        return None, ("Comentario o actor inválido", 400)
+    validation_error = _validate_state_transition(values["estado"], solicitud["estado"])
+    if validation_error is None:
+        validation_error = _validate_update_values(payload, values)
+    if validation_error:
+        return None, validation_error
     return values, None
 
 
