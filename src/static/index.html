@@ -3,167 +3,448 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal TI Empresarial — TFG Azure</title>
+  <title>Portal TI Empresarial - TFG Azure</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --accent: #38bdf8;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --ok: #4ade80;
+      --bg: #f5f7fa;
+      --surface: #ffffff;
+      --line: #d8dee7;
+      --text: #172033;
+      --muted: #5d687a;
+      --brand: #0067b8;
+      --brand-dark: #004f8c;
+      --success: #107c10;
+      --warning: #986f0b;
+      --danger: #c42b1c;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: "Segoe UI", system-ui, sans-serif;
-      background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 100%);
-      color: var(--text);
       min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, sans-serif;
     }
     header {
-      padding: 2rem 1.5rem 1rem;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 64px;
+      padding: 0 2rem;
+      color: white;
+      background: #172033;
     }
-    header h1 { margin: 0 0 0.5rem; font-size: 1.8rem; }
-    header p { margin: 0; color: var(--muted); }
-    main {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 1rem 1.5rem 3rem;
+    header h1 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+    header span { color: #b9c4d4; font-size: 0.85rem; }
+    nav {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
     }
-    .card {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    .tab {
+      width: auto;
+      margin: 0;
+      padding: 0.9rem 1rem;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      border-radius: 0;
+      color: var(--muted);
+      background: transparent;
+      font-weight: 600;
     }
-    label { display: block; margin: 1rem 0 0.35rem; font-size: 0.9rem; }
+    .tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+    main { max-width: 1180px; margin: 0 auto; padding: 1.5rem 2rem 3rem; }
+    section[hidden] { display: none; }
+    h2 { margin: 0 0 0.35rem; font-size: 1.35rem; }
+    h3 { margin: 0 0 1rem; font-size: 1rem; }
+    .intro { margin: 0 0 1.4rem; color: var(--muted); }
+    .panel {
+      padding: 1.35rem;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .field-wide { grid-column: 1 / -1; }
+    label { display: block; margin-bottom: 0.35rem; font-size: 0.85rem; font-weight: 600; }
     input, select, textarea {
       width: 100%;
-      padding: 0.7rem 0.8rem;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      background: #0f172a;
+      min-height: 40px;
+      padding: 0.6rem 0.7rem;
+      border: 1px solid #9aa5b5;
+      border-radius: 4px;
+      background: white;
       color: var(--text);
-      font-size: 1rem;
+      font: inherit;
     }
-    textarea { min-height: 120px; resize: vertical; }
+    textarea { min-height: 108px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { outline: 2px solid #8cc8f2; border-color: var(--brand); }
     button {
-      margin-top: 1.25rem;
-      width: 100%;
-      padding: 0.85rem;
-      border: none;
-      border-radius: 8px;
-      background: var(--accent);
-      color: #0f172a;
-      font-weight: 700;
-      font-size: 1rem;
+      width: auto;
+      min-height: 38px;
+      margin: 0;
+      padding: 0.55rem 1rem;
+      border: 1px solid var(--brand);
+      border-radius: 4px;
+      background: var(--brand);
+      color: white;
+      font: inherit;
+      font-weight: 600;
       cursor: pointer;
     }
-    button:hover { filter: brightness(1.05); }
-    #resultado {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      border-radius: 8px;
-      background: #0f172a;
-      border: 1px solid #334155;
-      display: none;
-      white-space: pre-wrap;
-      font-family: Consolas, monospace;
-      font-size: 0.85rem;
+    button:hover { background: var(--brand-dark); }
+    button.secondary { color: var(--brand); background: white; }
+    button.secondary:hover { background: #eef6fc; }
+    .actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 1rem; }
+    .message { display: none; margin-top: 1rem; padding: 0.85rem; border-left: 4px solid var(--brand); background: #eef6fc; }
+    .message.error { border-color: var(--danger); background: #fdf3f2; }
+    .message.success { border-color: var(--success); background: #f1faf1; }
+    .access-bar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto;
+      gap: 0.7rem;
+      align-items: end;
+      margin-bottom: 1rem;
     }
-    .badge {
-      display: inline-block;
-      padding: 0.2rem 0.55rem;
-      border-radius: 999px;
-      background: #164e63;
-      color: var(--ok);
-      font-size: 0.75rem;
-      margin-left: 0.5rem;
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; margin-bottom: 1rem; }
+    .metric { padding: 0.9rem 1rem; background: white; border: 1px solid var(--line); border-radius: 6px; }
+    .metric strong { display: block; margin-top: 0.2rem; font-size: 1.45rem; }
+    .metric span { color: var(--muted); font-size: 0.8rem; }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.8fr); gap: 1rem; }
+    .filters { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 0.6rem; margin-bottom: 1rem; align-items: end; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th, td { padding: 0.7rem 0.55rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+    th { color: var(--muted); font-size: 0.76rem; text-transform: uppercase; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover { background: #f3f8fc; }
+    .badge { display: inline-block; padding: 0.2rem 0.45rem; border-radius: 3px; font-size: 0.75rem; font-weight: 600; }
+    .alta { color: #8e1b10; background: #fde7e5; }
+    .media { color: #765400; background: #fff4ce; }
+    .baja { color: #0b6a0b; background: #dff6dd; }
+    .detail-empty { color: var(--muted); }
+    .detail-list { margin: 0 0 1rem; padding: 0; list-style: none; }
+    .detail-list li { margin-bottom: 0.6rem; }
+    .detail-list strong { display: block; color: var(--muted); font-size: 0.75rem; }
+    .history { max-height: 220px; overflow-y: auto; margin: 1rem 0 0; padding-left: 1rem; border-left: 2px solid var(--line); }
+    .history article { margin-bottom: 0.9rem; font-size: 0.83rem; }
+    .history time { display: block; color: var(--muted); font-size: 0.74rem; }
+    footer { padding: 1rem 2rem; border-top: 1px solid var(--line); color: var(--muted); text-align: center; font-size: 0.78rem; }
+    @media (max-width: 850px) {
+      header, nav { padding-left: 1rem; padding-right: 1rem; }
+      main { padding: 1rem; }
+      .workspace, .grid { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .filters { grid-template-columns: 1fr 1fr; }
+      .field-wide { grid-column: auto; }
     }
-    footer {
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.8rem;
-      padding: 1rem;
+    @media (max-width: 520px) {
+      header { align-items: flex-start; flex-direction: column; padding-top: 0.8rem; padding-bottom: 0.8rem; }
+      .access-bar, .filters, .metrics { grid-template-columns: 1fr; }
+      nav { overflow-x: auto; }
+      .tab { white-space: nowrap; }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Portal de Solicitudes TI <span class="badge">Azure Cloud</span></h1>
-    <p>Automatización segura de procesos internos — Universidad de Burgos TFG</p>
+    <h1>Portal de Solicitudes TI</h1>
+    <span>Servicio empresarial seguro en Microsoft Azure</span>
   </header>
 
+  <nav aria-label="Vistas del portal">
+    <button class="tab active" data-view="alta">Nueva solicitud</button>
+    <button class="tab" data-view="gestion">Gestión del equipo TI</button>
+  </nav>
+
   <main>
-    <div class="card">
-      <h2>Nueva solicitud</h2>
-      <p style="color: var(--muted); margin-top: 0;">
-        Registra accesos, entornos, aplicaciones o incidencias. El sistema clasifica y recomienda acciones automáticamente.
-      </p>
-
-      <form id="form-solicitud">
-        <label for="tipo">Tipo de solicitud</label>
-        <select id="tipo" name="tipo_solicitud">
-          <option value="acceso">Acceso a recurso</option>
-          <option value="entorno">Creación de entorno</option>
-          <option value="aplicacion">Alta de aplicación</option>
-          <option value="configuracion">Cambio de configuración</option>
-          <option value="incidencia">Incidencia / soporte</option>
-        </select>
-
-        <label for="titulo">Título</label>
-        <input id="titulo" name="titulo" required maxlength="200"
-               placeholder="Ej: Solicitud acceso VPN departamento financiero">
-
-        <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" name="descripcion" required minlength="10" maxlength="2000"
-                  placeholder="Describe la necesidad operativa con el máximo detalle posible."></textarea>
-
-        <label for="email">Solicitante (email corporativo)</label>
-        <input id="email" name="reportado_por" type="email" required
-               placeholder="usuario@empresa.com">
-
-        <button type="submit">Enviar solicitud</button>
+    <section id="view-alta">
+      <h2>Registrar una solicitud</h2>
+      <p class="intro">El sistema valida, clasifica y asigna un plazo objetivo según la prioridad detectada.</p>
+      <form id="form-solicitud" class="panel">
+        <div class="grid">
+          <div>
+            <label for="tipo">Tipo de solicitud</label>
+            <select id="tipo" name="tipo_solicitud">
+              <option value="acceso">Acceso a recurso</option>
+              <option value="entorno">Creación de entorno</option>
+              <option value="aplicacion">Alta de aplicación</option>
+              <option value="configuracion">Cambio de configuración</option>
+              <option value="incidencia">Incidencia o soporte</option>
+            </select>
+          </div>
+          <div>
+            <label for="email">Solicitante</label>
+            <input id="email" name="reportado_por" type="email" required placeholder="usuario@empresa.com">
+          </div>
+          <div class="field-wide">
+            <label for="titulo">Título</label>
+            <input id="titulo" name="titulo" required maxlength="200" placeholder="Acceso VPN para el equipo financiero">
+          </div>
+          <div class="field-wide">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" name="descripcion" required minlength="10" maxlength="2000" placeholder="Describe la necesidad, el servicio afectado y el impacto operativo."></textarea>
+          </div>
+        </div>
+        <div class="actions"><button type="submit">Registrar solicitud</button></div>
+        <div id="resultado-alta" class="message" role="status"></div>
       </form>
+    </section>
 
-      <pre id="resultado"></pre>
-    </div>
+    <section id="view-gestion" hidden>
+      <h2>Gestión del equipo TI</h2>
+      <p class="intro">Consulta la carga de trabajo, asigna responsables y conserva la trazabilidad de cada cambio.</p>
+      <div class="access-bar panel">
+        <div>
+          <label for="api-key">Token de acceso</label>
+          <input id="api-key" type="password" autocomplete="off" placeholder="Bearer token almacenado en Key Vault">
+        </div>
+        <button id="conectar" type="button">Cargar bandeja</button>
+      </div>
+
+      <div id="metrics" class="metrics" hidden>
+        <div class="metric"><span>Total</span><strong id="m-total">0</strong></div>
+        <div class="metric"><span>Abiertas</span><strong id="m-abiertas">0</strong></div>
+        <div class="metric"><span>En proceso</span><strong id="m-proceso">0</strong></div>
+        <div class="metric"><span>SLA vencido</span><strong id="m-vencidas">0</strong></div>
+      </div>
+
+      <div class="workspace">
+        <div class="panel">
+          <div class="filters">
+            <div>
+              <label for="f-estado">Estado</label>
+              <select id="f-estado"><option value="">Todos</option><option value="abierta">Abierta</option><option value="en_proceso">En proceso</option><option value="cerrada">Cerrada</option></select>
+            </div>
+            <div>
+              <label for="f-prioridad">Prioridad</label>
+              <select id="f-prioridad"><option value="">Todas</option><option value="alta">Alta</option><option value="media">Media</option><option value="baja">Baja</option></select>
+            </div>
+            <div>
+              <label for="f-tipo">Tipo</label>
+              <select id="f-tipo"><option value="">Todos</option><option value="acceso">Acceso</option><option value="entorno">Entorno</option><option value="aplicacion">Aplicación</option><option value="configuracion">Configuración</option><option value="incidencia">Incidencia</option></select>
+            </div>
+            <button id="filtrar" class="secondary" type="button">Aplicar</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Solicitud</th><th>Prioridad</th><th>Estado</th><th>Responsable</th></tr></thead>
+              <tbody id="solicitudes-body"><tr><td colspan="5">Introduce el token para cargar las solicitudes.</td></tr></tbody>
+            </table>
+          </div>
+          <div id="resultado-gestion" class="message" role="status"></div>
+        </div>
+
+        <aside class="panel" aria-label="Detalle de solicitud">
+          <div id="detail-empty" class="detail-empty">Selecciona una solicitud para ver su detalle.</div>
+          <div id="detail-content" hidden>
+            <h3 id="detail-title"></h3>
+            <ul class="detail-list" id="detail-list"></ul>
+            <form id="form-update">
+              <label for="u-estado">Estado</label>
+              <select id="u-estado"><option value="abierta">Abierta</option><option value="en_proceso">En proceso</option><option value="cerrada">Cerrada</option></select>
+              <label for="u-prioridad">Prioridad</label>
+              <select id="u-prioridad"><option value="alta">Alta</option><option value="media">Media</option><option value="baja">Baja</option></select>
+              <label for="u-asignado">Responsable</label>
+              <input id="u-asignado" maxlength="100" required>
+              <label for="u-comentario">Nota de seguimiento</label>
+              <textarea id="u-comentario" maxlength="500" placeholder="Motivo del cambio o actuación realizada"></textarea>
+              <div class="actions"><button type="submit">Guardar cambios</button></div>
+            </form>
+            <div class="history" id="history"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
   </main>
 
-  <footer>TFG — Cloud Computing en Microsoft Azure — Karima Drafli Rico</footer>
+  <footer>TFG - Cloud Computing en Microsoft Azure - Karima Drafli Rico</footer>
 
   <script>
-    const form = document.getElementById("form-solicitud");
-    const resultado = document.getElementById("resultado");
+    const state = { token: "", selectedId: null };
+    const $ = (id) => document.getElementById(id);
 
-    form.addEventListener("submit", async (event) => {
+    function showMessage(element, text, type = "") {
+      element.className = `message ${type}`;
+      element.textContent = text;
+      element.style.display = "block";
+    }
+
+    function authHeaders() {
+      return { Authorization: `Bearer ${state.token}`, "Content-Type": "application/json" };
+    }
+
+    async function apiRequest(url, options = {}) {
+      const response = await fetch(url, options);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || `Error HTTP ${response.status}`);
+      return data;
+    }
+
+    document.querySelectorAll(".tab").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((tab) => tab.classList.remove("active"));
+        button.classList.add("active");
+        $("view-alta").hidden = button.dataset.view !== "alta";
+        $("view-gestion").hidden = button.dataset.view !== "gestion";
+      });
+    });
+
+    $("form-solicitud").addEventListener("submit", async (event) => {
       event.preventDefault();
-      resultado.style.display = "block";
-      resultado.textContent = "Procesando solicitud...";
-
-      const payload = {
-        tipo_solicitud: form.tipo_solicitud.value,
-        titulo: form.titulo.value.trim(),
-        descripcion: form.descripcion.value.trim(),
-        reportado_por: form.reportado_por.value.trim(),
-      };
-
+      const form = event.currentTarget;
+      const output = $("resultado-alta");
+      showMessage(output, "Procesando solicitud...");
       try {
-        const response = await fetch("/solicitudes", {
+        const data = await apiRequest("/solicitudes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({
+            tipo_solicitud: form.tipo_solicitud.value,
+            titulo: form.titulo.value.trim(),
+            descripcion: form.descripcion.value.trim(),
+            reportado_por: form.reportado_por.value.trim(),
+          }),
         });
-        const data = await response.json();
-        if (!response.ok) {
-          resultado.textContent = "Error: " + JSON.stringify(data, null, 2);
-          return;
-        }
-        resultado.textContent = JSON.stringify(data, null, 2);
+        showMessage(output, `${data.id} registrada. Prioridad ${data.prioridad}; asignada a ${data.asignado_a}.`, "success");
+        form.reset();
       } catch (error) {
-        resultado.textContent = "No se pudo conectar con la API: " + error.message;
+        showMessage(output, error.message, "error");
+      }
+    });
+
+    function queryString() {
+      const params = new URLSearchParams();
+      if ($("f-estado").value) params.set("estado", $("f-estado").value);
+      if ($("f-prioridad").value) params.set("prioridad", $("f-prioridad").value);
+      if ($("f-tipo").value) params.set("tipo_solicitud", $("f-tipo").value);
+      return params.toString();
+    }
+
+    function renderRows(items) {
+      const body = $("solicitudes-body");
+      body.replaceChildren();
+      if (!items.length) {
+        const row = body.insertRow();
+        const cell = row.insertCell();
+        cell.colSpan = 5;
+        cell.textContent = "No hay solicitudes para los filtros seleccionados.";
+        return;
+      }
+      items.forEach((item) => {
+        const row = body.insertRow();
+        row.tabIndex = 0;
+        row.insertCell().textContent = item.id;
+        row.insertCell().textContent = item.titulo;
+        const priorityCell = row.insertCell();
+        const badge = document.createElement("span");
+        badge.className = `badge ${item.prioridad}`;
+        badge.textContent = item.prioridad;
+        priorityCell.appendChild(badge);
+        row.insertCell().textContent = item.estado;
+        row.insertCell().textContent = item.asignado_a;
+        const open = () => loadDetail(item.id);
+        row.addEventListener("click", open);
+        row.addEventListener("keydown", (event) => { if (event.key === "Enter") open(); });
+      });
+    }
+
+    async function loadDashboard() {
+      const output = $("resultado-gestion");
+      try {
+        const suffix = queryString();
+        const [list, metrics] = await Promise.all([
+          apiRequest(`/solicitudes${suffix ? `?${suffix}` : ""}`, { headers: authHeaders() }),
+          apiRequest("/metricas", { headers: authHeaders() }),
+        ]);
+        renderRows(list.resultados);
+        $("m-total").textContent = metrics.total_solicitudes;
+        $("m-abiertas").textContent = metrics.por_estado.abierta;
+        $("m-proceso").textContent = metrics.por_estado.en_proceso;
+        $("m-vencidas").textContent = metrics.sla.vencidas;
+        $("metrics").hidden = false;
+        output.style.display = "none";
+      } catch (error) {
+        showMessage(output, error.message, "error");
+      }
+    }
+
+    async function loadDetail(id) {
+      try {
+        const item = await apiRequest(`/solicitudes/${id}`, { headers: authHeaders() });
+        state.selectedId = id;
+        $("detail-empty").hidden = true;
+        $("detail-content").hidden = false;
+        $("detail-title").textContent = `${item.id} - ${item.titulo}`;
+        const detailList = $("detail-list");
+        detailList.replaceChildren();
+        [
+          ["Solicitante", item.reportado_por],
+          ["Descripción", item.descripcion],
+          ["Clasificación", `${item.tipo_solicitud} / ${item.clasificacion} (${item.confianza_clasificacion})`],
+          ["Objetivo SLA", item.fecha_objetivo_sla],
+          ["Recomendación", item.recomendacion],
+        ].forEach(([label, value]) => {
+          const entry = document.createElement("li");
+          const heading = document.createElement("strong");
+          heading.textContent = label;
+          entry.append(heading, document.createTextNode(value));
+          detailList.appendChild(entry);
+        });
+        $("u-estado").value = item.estado;
+        $("u-prioridad").value = item.prioridad;
+        $("u-asignado").value = item.asignado_a;
+        $("u-comentario").value = "";
+        const history = $("history");
+        history.replaceChildren();
+        [...(item.historial || [])].reverse().forEach((entry) => {
+          const article = document.createElement("article");
+          const actor = document.createElement("strong");
+          actor.textContent = entry.actor;
+          const time = document.createElement("time");
+          time.textContent = entry.fecha;
+          const detail = document.createElement("div");
+          detail.textContent = entry.detalle;
+          article.append(actor, time, detail);
+          history.appendChild(article);
+        });
+      } catch (error) {
+        showMessage($("resultado-gestion"), error.message, "error");
+      }
+    }
+
+    $("conectar").addEventListener("click", () => {
+      state.token = $("api-key").value.trim();
+      if (!state.token) {
+        showMessage($("resultado-gestion"), "Introduce el token de acceso del equipo TI.", "error");
+        return;
+      }
+      loadDashboard();
+    });
+    $("filtrar").addEventListener("click", loadDashboard);
+
+    $("form-update").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!state.selectedId) return;
+      try {
+        await apiRequest(`/solicitudes/${state.selectedId}`, {
+          method: "PATCH",
+          headers: authHeaders(),
+          body: JSON.stringify({
+            estado: $("u-estado").value,
+            prioridad: $("u-prioridad").value,
+            asignado_a: $("u-asignado").value.trim(),
+            comentario: $("u-comentario").value.trim(),
+            actor: "equipo_ti",
+          }),
+        });
+        await Promise.all([loadDetail(state.selectedId), loadDashboard()]);
+        showMessage($("resultado-gestion"), `${state.selectedId} actualizada correctamente.`, "success");
+      } catch (error) {
+        showMessage($("resultado-gestion"), error.message, "error");
       }
     });
   </script>
