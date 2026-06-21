@@ -190,7 +190,7 @@
           </div>
         </div>
         <div class="actions"><button type="submit">Registrar solicitud</button></div>
-        <div id="resultado-alta" class="message" role="status"></div>
+        <output id="resultado-alta" class="message"></output>
       </form>
     </section>
 
@@ -235,13 +235,13 @@
               <tbody id="solicitudes-body"><tr><td colspan="5">Introduce el token para cargar las solicitudes.</td></tr></tbody>
             </table>
           </div>
-          <div id="resultado-gestion" class="message" role="status"></div>
+          <output id="resultado-gestion" class="message"></output>
         </div>
 
         <aside class="panel" aria-label="Detalle de solicitud">
           <div id="detail-empty" class="detail-empty">Selecciona una solicitud para ver su detalle.</div>
           <div id="detail-content" hidden>
-            <h3 id="detail-title"></h3>
+            <h3 id="detail-title">Detalle de solicitud</h3>
             <ul class="detail-list" id="detail-list"></ul>
             <form id="form-update">
               <label for="u-estado">Estado</label>
@@ -356,8 +356,9 @@
       const output = $("resultado-gestion");
       try {
         const suffix = queryString();
+        const listUrl = suffix ? `/solicitudes?${suffix}` : "/solicitudes";
         const [list, metrics] = await Promise.all([
-          apiRequest(`/solicitudes${suffix ? `?${suffix}` : ""}`, { headers: authHeaders() }),
+          apiRequest(listUrl, { headers: authHeaders() }),
           apiRequest("/metricas", { headers: authHeaders() }),
         ]);
         renderRows(list.resultados);

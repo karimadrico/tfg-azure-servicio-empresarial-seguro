@@ -25,6 +25,8 @@ TRANSICIONES_ESTADO = {
     "cerrada": {"en_proceso"},
 }
 SLA_HORAS = {"alta": 4, "media": 24, "baja": 72}
+UTC_OFFSET = "+00:00"
+PRIORIDAD_INVALIDA = "Prioridad inválida"
 
 
 @app.after_request
@@ -37,7 +39,7 @@ def add_security_headers(response: Any) -> Any:
 
 
 def _utc_now() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace(UTC_OFFSET, "Z")
 
 
 def _next_id(incidencias: list[dict[str, Any]]) -> str:
@@ -57,9 +59,9 @@ def _find_solicitud(incidencias: list[dict[str, Any]], solicitud_id: str) -> dic
 
 
 def _sla_deadline(created_at: str, prioridad: str) -> str:
-    created = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+    created = datetime.fromisoformat(created_at.replace("Z", UTC_OFFSET))
     deadline = created + timedelta(hours=SLA_HORAS[prioridad])
-    return deadline.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    return deadline.replace(microsecond=0).isoformat().replace(UTC_OFFSET, "Z")
 
 
 def _is_valid_email(value: str) -> bool:
@@ -131,7 +133,7 @@ def _validate_solicitud_payload(payload: dict[str, Any]) -> tuple[dict[str, str]
     if not _is_valid_email(reportado_por):
         return None, "reportado_por debe ser un email válido"
     if prioridad_manual and prioridad_manual not in VALID_PRIORIDADES:
-        return None, "Prioridad inválida"
+        return None, PRIORIDAD_INVALIDA
     if tipo_solicitud not in VALID_TIPOS:
         return None, "tipo_solicitud inválido"
 
@@ -236,49 +238,73 @@ def get_solicitud(solicitud_id: str) -> Any:
     return jsonify(solicitud)
 
 
+def _validate_update_payload(
+    payload: dict[str, Any], solicitud: dict[str, Any]
+) -> tuple[dict[str, str] | None, tuple[str, int] | None]:
+    allowed_fields = {"estado", "prioridad", "asignado_a", "comentario", "actor"}
+    if not payload or any(field not in allowed_fields for field in payload):
+        return None, ("La actualización contiene campos no permitidos", 400)
+
+    values = {
+        "estado": payload.get("estado") or "",
+        "prioridad": payload.get("prioridad") or "",
+        "asignado_a": (payload.get("asignado_a") or "").strip(),
+        "comentario": (payload.get("comentario") or "").strip(),
+        "actor": (payload.get("actor") or "equipo_ti").strip(),
+    }
+    if values["estado"] and values["estado"] not in VALID_ESTADOS:
+        return None, ("Estado inválido", 400)
+    if (
+        values["estado"]
+        and values["estado"] != solicitud["estado"]
+        and values["estado"] not in TRANSICIONES_ESTADO[solicitud["estado"]]
+    ):
+        message = f"No se puede pasar de {solicitud['estado']} a {values['estado']}"
+        return None, (message, 409)
+    if values["prioridad"] and values["prioridad"] not in VALID_PRIORIDADES:
+        return None, (PRIORIDAD_INVALIDA, 400)
+    if "asignado_a" in payload and (not values["asignado_a"] or len(values["asignado_a"]) > 100):
+        return None, ("asignado_a debe tener entre 1 y 100 caracteres", 400)
+    if len(values["comentario"]) > 500 or not values["actor"] or len(values["actor"]) > 100:
+        return None, ("Comentario o actor inválido", 400)
+    return values, None
+
+
+def _apply_update_values(solicitud: dict[str, Any], values: dict[str, str]) -> list[str]:
+    changes: list[str] = []
+    if values["estado"] and values["estado"] != solicitud["estado"]:
+        changes.append(f"Estado: {solicitud['estado']} -> {values['estado']}")
+        solicitud["estado"] = values["estado"]
+    if values["prioridad"] and values["prioridad"] != solicitud["prioridad"]:
+        changes.append(f"Prioridad: {solicitud['prioridad']} -> {values['prioridad']}")
+        solicitud["prioridad"] = values["prioridad"]
+        solicitud["fecha_objetivo_sla"] = _sla_deadline(
+            solicitud["fecha_creacion"], values["prioridad"]
+        )
+    if values["asignado_a"] and values["asignado_a"] != solicitud.get("asignado_a"):
+        previous = solicitud.get("asignado_a", "sin asignar")
+        changes.append(f"Asignación: {previous} -> {values['asignado_a']}")
+        solicitud["asignado_a"] = values["asignado_a"]
+    if values["comentario"]:
+        changes.append(f"Nota: {values['comentario']}")
+    return changes
+
+
 @app.patch("/solicitudes/<solicitud_id>")
 @require_auth
 def update_solicitud(solicitud_id: str) -> Any:
     payload = request.get_json(silent=True) or {}
-    allowed_fields = {"estado", "prioridad", "asignado_a", "comentario", "actor"}
-    if not payload or any(field not in allowed_fields for field in payload):
-        return jsonify({"error": "La actualización contiene campos no permitidos"}), 400
-
     incidencias = storage.load()
     solicitud = _find_solicitud(incidencias, solicitud_id)
     if solicitud is None:
         return jsonify({"error": "Solicitud no encontrada"}), 404
 
-    estado = payload.get("estado")
-    prioridad = payload.get("prioridad")
-    asignado_a = (payload.get("asignado_a") or "").strip()
-    comentario = (payload.get("comentario") or "").strip()
-    actor = (payload.get("actor") or "equipo_ti").strip()
+    values, validation_error = _validate_update_payload(payload, solicitud)
+    if validation_error:
+        message, status = validation_error
+        return jsonify({"error": message}), status
 
-    if estado and estado not in VALID_ESTADOS:
-        return jsonify({"error": "Estado inválido"}), 400
-    if estado and estado != solicitud["estado"] and estado not in TRANSICIONES_ESTADO[solicitud["estado"]]:
-        return jsonify({"error": f"No se puede pasar de {solicitud['estado']} a {estado}"}), 409
-    if prioridad and prioridad not in VALID_PRIORIDADES:
-        return jsonify({"error": "Prioridad inválida"}), 400
-    if "asignado_a" in payload and (not asignado_a or len(asignado_a) > 100):
-        return jsonify({"error": "asignado_a debe tener entre 1 y 100 caracteres"}), 400
-    if len(comentario) > 500 or not actor or len(actor) > 100:
-        return jsonify({"error": "Comentario o actor inválido"}), 400
-
-    changes: list[str] = []
-    if estado and estado != solicitud["estado"]:
-        changes.append(f"Estado: {solicitud['estado']} -> {estado}")
-        solicitud["estado"] = estado
-    if prioridad and prioridad != solicitud["prioridad"]:
-        changes.append(f"Prioridad: {solicitud['prioridad']} -> {prioridad}")
-        solicitud["prioridad"] = prioridad
-        solicitud["fecha_objetivo_sla"] = _sla_deadline(solicitud["fecha_creacion"], prioridad)
-    if asignado_a and asignado_a != solicitud.get("asignado_a"):
-        changes.append(f"Asignación: {solicitud.get('asignado_a', 'sin asignar')} -> {asignado_a}")
-        solicitud["asignado_a"] = asignado_a
-    if comentario:
-        changes.append(f"Nota: {comentario}")
+    changes = _apply_update_values(solicitud, values or {})
     if not changes:
         return jsonify({"error": "No se han indicado cambios"}), 400
 
@@ -288,7 +314,7 @@ def update_solicitud(solicitud_id: str) -> Any:
         {
             "fecha": updated_at,
             "accion": "actualizacion",
-            "actor": actor,
+            "actor": values["actor"],
             "detalle": "; ".join(changes),
         }
     )
@@ -308,7 +334,7 @@ def list_incidencias() -> Any:
     if estado and estado not in VALID_ESTADOS:
         return jsonify({"error": "Estado inválido"}), 400
     if prioridad and prioridad not in VALID_PRIORIDADES:
-        return jsonify({"error": "Prioridad inválida"}), 400
+            return jsonify({"error": PRIORIDAD_INVALIDA}), 400
     if tipo and tipo not in VALID_TIPOS:
         return jsonify({"error": "tipo_solicitud inválido"}), 400
     if limit < 1 or limit > 100 or offset < 0:
@@ -362,7 +388,7 @@ def metricas() -> Any:
             sla["cerradas"] += 1
         else:
             deadline_value = item.get("fecha_objetivo_sla")
-            if deadline_value and datetime.fromisoformat(deadline_value.replace("Z", "+00:00")) < now:
+            if deadline_value and datetime.fromisoformat(deadline_value.replace("Z", UTC_OFFSET)) < now:
                 sla["vencidas"] += 1
             else:
                 sla["en_plazo"] += 1
