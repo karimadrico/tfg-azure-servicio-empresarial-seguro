@@ -20,12 +20,15 @@ class ApiTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp_dir = tempfile.TemporaryDirectory()
         self.data_file = Path(self.temp_dir.name) / "incidencias.json"
+        self.original_api_key = api_app.config.API_KEY
+        api_app.config.API_KEY = ""
         api_app.config.LOCAL_DATA_FILE = str(self.data_file)
         api_app.storage.config.LOCAL_DATA_FILE = str(self.data_file)
         api_app.storage._incidencias = None
         self.client = api_app.app.test_client()
 
     def tearDown(self) -> None:
+        api_app.config.API_KEY = self.original_api_key
         self.temp_dir.cleanup()
 
     def test_root_endpoint(self) -> None:
@@ -151,6 +154,102 @@ class ApiTests(unittest.TestCase):
 
         missing = self.client.get("/solicitudes/SOL-999")
         self.assertEqual(missing.status_code, 404)
+
+
+    def test_protected_endpoints_require_valid_token(self) -> None:
+        api_app.config.API_KEY = "token-pruebas"
+
+        self.assertEqual(self.client.get("/solicitudes").status_code, 401)
+        self.assertEqual(
+            self.client.get(
+                "/solicitudes",
+                headers={"Authorization": "Bearer incorrecto"},
+            ).status_code,
+            401,
+        )
+        authorized = self.client.get(
+            "/solicitudes",
+            headers={"Authorization": "Bearer token-pruebas"},
+        )
+        self.assertEqual(authorized.status_code, 200)
+
+    def test_create_rejects_invalid_payloads(self) -> None:
+        valid = {
+            "titulo": "Solicitud válida",
+            "descripcion": "Descripción suficientemente detallada",
+            "reportado_por": "usuario@empresa.com",
+        }
+        invalid_payloads = (
+            ({**valid, "titulo": ""}, "título"),
+            ({**valid, "descripcion": "corta"}, "descripción"),
+            ({**valid, "reportado_por": "correo-invalido"}, "email"),
+            ({**valid, "prioridad": "urgente"}, "Prioridad"),
+            ({**valid, "tipo_solicitud": "compra"}, "tipo_solicitud"),
+        )
+
+        for payload, expected_error in invalid_payloads:
+            with self.subTest(expected_error=expected_error):
+                response = self.client.post("/solicitudes", json=payload)
+                self.assertEqual(response.status_code, 400)
+                self.assertIn(expected_error, response.get_json()["error"])
+
+    def test_list_filters_and_pagination_validation(self) -> None:
+        for title, priority in (("Servidor crítico caído", "alta"), ("Consulta general", "baja")):
+            self.client.post(
+                "/solicitudes",
+                json={
+                    "titulo": title,
+                    "descripcion": "Descripción operativa para probar los filtros",
+                    "reportado_por": "filtros@empresa.com",
+                    "prioridad": priority,
+                },
+            )
+
+        filtered = self.client.get("/solicitudes?prioridad=alta&limit=1&offset=0")
+        self.assertEqual(filtered.status_code, 200)
+        self.assertEqual(filtered.get_json()["total"], 1)
+        self.assertEqual(filtered.get_json()["resultados"][0]["prioridad"], "alta")
+
+        invalid_queries = (
+            "/solicitudes?estado=desconocido",
+            "/solicitudes?prioridad=urgente",
+            "/solicitudes?tipo_solicitud=compra",
+            "/solicitudes?limit=101",
+        )
+        for url in invalid_queries:
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 400)
+
+    def test_update_validation_and_closed_transition(self) -> None:
+        created = self.client.post(
+            "/solicitudes",
+            json={
+                "titulo": "Revisión de acceso",
+                "descripcion": "Validar el acceso temporal solicitado",
+                "reportado_por": "operaciones@empresa.com",
+            },
+        ).get_json()
+        url = f"/solicitudes/{created['id']}"
+
+        invalid_updates = (
+            ({"campo": "no permitido"}, 400),
+            ({"asignado_a": ""}, 400),
+            ({"comentario": "x" * 501}, 400),
+            ({"estado": "abierta"}, 400),
+        )
+        for payload, status in invalid_updates:
+            with self.subTest(payload=list(payload)):
+                self.assertEqual(self.client.patch(url, json=payload).status_code, status)
+
+        self.assertEqual(self.client.patch(url, json={"estado": "cerrada"}).status_code, 200)
+        self.assertEqual(self.client.patch(url, json={"estado": "abierta"}).status_code, 409)
+
+    def test_local_storage_can_reload_saved_data(self) -> None:
+        expected = [{"id": "SOL-001", "estado": "abierta"}]
+        api_app.storage.save(expected)
+        api_app.storage._incidencias = None
+
+        self.assertEqual(api_app.storage.load(), expected)
 
 
 class ClassifierTests(unittest.TestCase):

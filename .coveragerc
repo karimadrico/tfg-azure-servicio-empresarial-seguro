@@ -1,0 +1,12 @@
+[run]
+branch = True
+source = src
+omit =
+    src/test_local_api.py
+
+[report]
+show_missing = True
+skip_empty = True
+
+[xml]
+output = coverage.xml
