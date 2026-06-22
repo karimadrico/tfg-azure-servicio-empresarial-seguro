@@ -125,6 +125,61 @@ class ApiTests(unittest.TestCase):
         )
         self.assertEqual(invalid.status_code, 400)
 
+    def test_sensitive_request_approval_workflow(self) -> None:
+        created = self.client.post(
+            "/solicitudes",
+            json={
+                "tipo_solicitud": "acceso",
+                "titulo": "Acceso al portal financiero",
+                "descripcion": "Solicito permisos para operar en el portal de produccion",
+                "reportado_por": "analista@empresa.com",
+                "servicio_id": "aplicacion-finanzas",
+                "activo_id": "portal-finanzas",
+                "entorno": "produccion",
+            },
+        ).get_json()
+        self.assertEqual(created["estado"], "pendiente_aprobacion")
+        self.assertEqual(created["estado_aprobacion"], "pendiente")
+
+        notified = self.client.post(f"/solicitudes/{created['id']}/notificar-aprobacion")
+        self.assertEqual(notified.status_code, 200)
+        self.assertIsNotNone(notified.get_json()["notificacion_aprobacion"])
+
+        approved = self.client.post(
+            f"/solicitudes/{created['id']}/aprobacion",
+            json={
+                "decision": "aprobar",
+                "actor": "responsable_finanzas",
+                "comentario": "Acceso autorizado durante el cierre mensual.",
+            },
+        )
+        self.assertEqual(approved.status_code, 200)
+        self.assertEqual(approved.get_json()["estado"], "abierta")
+        self.assertEqual(approved.get_json()["estado_aprobacion"], "aprobada")
+
+    def test_escalation_updates_priority_owner_and_history(self) -> None:
+        created = self.client.post(
+            "/solicitudes",
+            json={
+                "titulo": "Servicio con degradacion continuada",
+                "descripcion": "La degradacion afecta al trabajo diario del departamento",
+                "reportado_por": "operaciones@empresa.com",
+                "servicio_id": "correo",
+                "activo_id": "buzon-usuario",
+                "entorno": "corporativo",
+            },
+        ).get_json()
+        escalated = self.client.post(
+            f"/solicitudes/{created['id']}/escalar",
+            json={"actor": "equipo_ti", "motivo": "Impacto creciente en varios usuarios"},
+        )
+        self.assertEqual(escalated.status_code, 200)
+        payload = escalated.get_json()
+        self.assertEqual(payload["prioridad"], "alta")
+        self.assertEqual(payload["nivel_escalado"], 1)
+        self.assertEqual(payload["asignado_a"], "equipo_colaboracion")
+        self.assertEqual(payload["historial"][-1]["accion"], "escalado")
+
     def test_metricas(self) -> None:
         self.client.post(
             "/incidencias",

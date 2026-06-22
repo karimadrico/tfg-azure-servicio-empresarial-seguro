@@ -11,6 +11,12 @@ from flask import Flask, jsonify, request, send_from_directory
 from catalog import catalog_as_list, default_selection, resolve_service_context
 from classifier import VALID_TIPOS, classify_solicitud
 from config import Config
+from request_workflow import (
+    apply_approval_decision,
+    apply_escalation,
+    initial_workflow_fields,
+    mark_approval_notification,
+)
 from storage import IncidenciaStorage
 
 # API REST sin sesiones por cookie; los endpoints protegidos usan Bearer token.
@@ -18,12 +24,14 @@ app = Flask(__name__, static_folder="static")  # NOSONAR
 config = Config()
 storage = IncidenciaStorage(config)
 
-VALID_ESTADOS = {"abierta", "en_proceso", "cerrada"}
+VALID_ESTADOS = {"pendiente_aprobacion", "abierta", "en_proceso", "cerrada", "rechazada"}
 VALID_PRIORIDADES = {"baja", "media", "alta"}
 TRANSICIONES_ESTADO = {
+    "pendiente_aprobacion": set(),
     "abierta": {"en_proceso", "cerrada"},
     "en_proceso": {"abierta", "cerrada"},
     "cerrada": {"en_proceso"},
+    "rechazada": set(),
 }
 SLA_HORAS = {"alta": 4, "media": 24, "baja": 72}
 UTC_OFFSET = "+00:00"
@@ -171,13 +179,17 @@ def _create_solicitud_record(validated: dict[str, Any]) -> tuple[dict[str, Any] 
     )
     if service_error:
         return None, service_error
+    if service_context is None:
+        return None, "No se pudo resolver el servicio"
 
     created_at = _utc_now()
+    workflow_fields = initial_workflow_fields(
+        classification.tipo_solicitud, service_context, created_at
+    )
     nueva = {
         "id": _next_id(incidencias),
         "titulo": validated["titulo"],
         "descripcion": validated["descripcion"],
-        "estado": "abierta",
         "prioridad": classification.prioridad,
         "tipo_solicitud": classification.tipo_solicitud,
         "clasificacion": classification.clasificacion,
@@ -201,6 +213,7 @@ def _create_solicitud_record(validated: dict[str, Any]) -> tuple[dict[str, Any] 
     }
 
     nueva.update(service_context)
+    nueva.update(workflow_fields)
     incidencias.append(nueva)
     storage.save(incidencias)
     return nueva, None
@@ -344,6 +357,72 @@ def update_solicitud(solicitud_id: str) -> Any:
         }
     )
     storage.save(incidencias)
+    return jsonify(solicitud)
+
+
+def _workflow_record(solicitud_id: str) -> tuple[list[dict[str, Any]], dict[str, Any] | None]:
+    records = storage.load()
+    return records, _find_solicitud(records, solicitud_id)
+
+
+@app.post("/solicitudes/<solicitud_id>/aprobacion")
+@require_auth
+def decide_approval(solicitud_id: str) -> Any:
+    payload = request.get_json(silent=True) or {}
+    records, solicitud = _workflow_record(solicitud_id)
+    if solicitud is None:
+        return jsonify({"error": "Solicitud no encontrada"}), 404
+
+    decided_at = _utc_now()
+    _, error = apply_approval_decision(
+        solicitud,
+        (payload.get("decision") or "").strip(),
+        (payload.get("actor") or "").strip(),
+        (payload.get("comentario") or "").strip(),
+        decided_at,
+    )
+    if error:
+        return jsonify({"error": error}), 409
+    if solicitud["estado_aprobacion"] == "aprobada":
+        solicitud["fecha_inicio_sla"] = decided_at
+        solicitud["fecha_objetivo_sla"] = _sla_deadline(decided_at, solicitud["prioridad"])
+    storage.save(records)
+    return jsonify(solicitud)
+
+
+@app.post("/solicitudes/<solicitud_id>/escalar")
+@require_auth
+def escalate_solicitud(solicitud_id: str) -> Any:
+    payload = request.get_json(silent=True) or {}
+    records, solicitud = _workflow_record(solicitud_id)
+    if solicitud is None:
+        return jsonify({"error": "Solicitud no encontrada"}), 404
+
+    escalated_at = _utc_now()
+    _, error = apply_escalation(
+        solicitud,
+        (payload.get("actor") or "").strip(),
+        (payload.get("motivo") or "").strip(),
+        escalated_at,
+    )
+    if error:
+        return jsonify({"error": error}), 409
+    solicitud["fecha_objetivo_sla"] = _sla_deadline(escalated_at, "alta")
+    storage.save(records)
+    return jsonify(solicitud)
+
+
+@app.post("/solicitudes/<solicitud_id>/notificar-aprobacion")
+@require_auth
+def notify_approval(solicitud_id: str) -> Any:
+    records, solicitud = _workflow_record(solicitud_id)
+    if solicitud is None:
+        return jsonify({"error": "Solicitud no encontrada"}), 404
+
+    error = mark_approval_notification(solicitud, "logic_app", _utc_now())
+    if error:
+        return jsonify({"error": error}), 409
+    storage.save(records)
     return jsonify(solicitud)
 
 

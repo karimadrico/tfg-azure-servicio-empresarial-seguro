@@ -63,6 +63,15 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
                 prioridad: {
                   type: 'string'
                 }
+                servicio_id: {
+                  type: 'string'
+                }
+                activo_id: {
+                  type: 'string'
+                }
+                entorno: {
+                  type: 'string'
+                }
               }
             }
           }
@@ -95,6 +104,9 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
                   descripcion: '@{triggerBody()?[\'descripcion\']}'
                   reportado_por: '@{triggerBody()?[\'reportado_por\']}'
                   prioridad: '@{triggerBody()?[\'prioridad\']}'
+                  servicio_id: '@{coalesce(triggerBody()?[\'servicio_id\'], \'general\')}'
+                  activo_id: '@{coalesce(triggerBody()?[\'activo_id\'], \'puesto-usuario\')}'
+                  entorno: '@{coalesce(triggerBody()?[\'entorno\'], \'corporativo\')}'
                 }
               }
               runtimeConfiguration: {
@@ -106,10 +118,39 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
                 }
               }
             }
+            notificar_si_requiere_aprobacion: {
+              type: 'If'
+              runAfter: {
+                crear_solicitud: [
+                  'Succeeded'
+                ]
+              }
+              expression: '@equals(body(\'crear_solicitud\')?[\'requiere_aprobacion\'], true)'
+              actions: {
+                registrar_notificacion_aprobacion: {
+                  type: 'Http'
+                  inputs: {
+                    method: 'POST'
+                    uri: '@{concat(parameters(\'apiBaseUrl\'), \'/solicitudes/\', body(\'crear_solicitud\')?[\'id\'], \'/notificar-aprobacion\')}'
+                    headers: {
+                      'Content-Type': 'application/json'
+                      Authorization: '@{concat(\'Bearer \', parameters(\'apiKey\'))}'
+                    }
+                    body: {
+                      canal: 'logic_app'
+                      aprobador: '@{body(\'crear_solicitud\')?[\'aprobador\']}'
+                    }
+                  }
+                }
+              }
+              else: {
+                actions: {}
+              }
+            }
             responder_cliente: {
               type: 'Response'
               runAfter: {
-                crear_solicitud: [
+                notificar_si_requiere_aprobacion: [
                   'Succeeded'
                 ]
               }

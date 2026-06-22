@@ -229,7 +229,7 @@
           <div class="filters">
             <div>
               <label for="f-estado">Estado</label>
-              <select id="f-estado"><option value="">Todos</option><option value="abierta">Abierta</option><option value="en_proceso">En proceso</option><option value="cerrada">Cerrada</option></select>
+              <select id="f-estado"><option value="">Todos</option><option value="pendiente_aprobacion">Pendiente de aprobación</option><option value="abierta">Abierta</option><option value="en_proceso">En proceso</option><option value="cerrada">Cerrada</option><option value="rechazada">Rechazada</option></select>
             </div>
             <div>
               <label for="f-prioridad">Prioridad</label>
@@ -265,7 +265,7 @@
             <ul class="detail-list" id="detail-list"></ul>
             <form id="form-update">
               <label for="u-estado">Estado</label>
-              <select id="u-estado"><option value="abierta">Abierta</option><option value="en_proceso">En proceso</option><option value="cerrada">Cerrada</option></select>
+              <select id="u-estado"><option value="pendiente_aprobacion">Pendiente de aprobación</option><option value="abierta">Abierta</option><option value="en_proceso">En proceso</option><option value="cerrada">Cerrada</option><option value="rechazada">Rechazada</option></select>
               <label for="u-prioridad">Prioridad</label>
               <select id="u-prioridad"><option value="alta">Alta</option><option value="media">Media</option><option value="baja">Baja</option></select>
               <label for="u-asignado">Responsable</label>
@@ -274,6 +274,13 @@
               <textarea id="u-comentario" maxlength="500" placeholder="Motivo del cambio o actuación realizada"></textarea>
               <div class="actions"><button type="submit">Guardar cambios</button></div>
             </form>
+            <div class="actions" id="approval-actions" hidden>
+              <button id="aprobar" type="button">Aprobar</button>
+              <button id="rechazar" class="secondary" type="button">Rechazar</button>
+            </div>
+            <div class="actions">
+              <button id="escalar" class="secondary" type="button">Escalar solicitud</button>
+            </div>
             <div class="history" id="history"></div>
           </div>
         </aside>
@@ -366,7 +373,8 @@
             entorno: form.entorno.value,
           }),
         });
-        showMessage(output, `${data.id} registrada. Prioridad ${data.prioridad}; asignada a ${data.asignado_a}.`, "success");
+        const approval = data.requiere_aprobacion ? ` Pendiente de aprobación por ${data.aprobador}.` : "";
+        showMessage(output, `${data.id} registrada. Impacto ${data.impacto}; asignada a ${data.asignado_a}.${approval}`, "success");
         form.reset();
         updateServiceSelection();
       } catch (error) {
@@ -450,6 +458,8 @@
           ["Servicio / activo", `${item.servicio || "Servicio TI general"} / ${item.activo || "Puesto de usuario"}`],
           ["Entorno e impacto", `${item.entorno || "corporativo"} / ${item.impacto || "bajo"}`],
           ["Clasificación", `${item.tipo_solicitud} / ${item.clasificacion} (${item.confianza_clasificacion})`],
+          ["Aprobación", item.requiere_aprobacion ? `${item.estado_aprobacion} / ${item.aprobador}` : "No requerida"],
+          ["Escalado", item.nivel_escalado ? `Nivel ${item.nivel_escalado}: ${item.motivo_escalado}` : "No escalada"],
           ["Objetivo SLA", item.fecha_objetivo_sla],
           ["Recomendación", item.recomendacion],
         ].forEach(([label, value]) => {
@@ -463,6 +473,7 @@
         $("u-prioridad").value = item.prioridad;
         $("u-asignado").value = item.asignado_a;
         $("u-comentario").value = "";
+        $("approval-actions").hidden = item.estado_aprobacion !== "pendiente";
         const history = $("history");
         history.replaceChildren();
         [...(item.historial || [])].reverse().forEach((entry) => {
@@ -508,6 +519,47 @@
         });
         await Promise.all([loadDetail(state.selectedId), loadDashboard()]);
         showMessage($("resultado-gestion"), `${state.selectedId} actualizada correctamente.`, "success");
+      } catch (error) {
+        showMessage($("resultado-gestion"), error.message, "error");
+      }
+    });
+
+    async function decideApproval(decision) {
+      if (!state.selectedId) return;
+      try {
+        await apiRequest(`/solicitudes/${state.selectedId}/aprobacion`, {
+          method: "POST",
+          headers: authHeaders(),
+          body: JSON.stringify({
+            decision,
+            actor: "responsable_aprobador",
+            comentario: $("u-comentario").value.trim(),
+          }),
+        });
+        await Promise.all([loadDetail(state.selectedId), loadDashboard()]);
+        showMessage($("resultado-gestion"), `Decisión registrada para ${state.selectedId}.`, "success");
+      } catch (error) {
+        showMessage($("resultado-gestion"), error.message, "error");
+      }
+    }
+
+    $("aprobar").addEventListener("click", () => decideApproval("aprobar"));
+    $("rechazar").addEventListener("click", () => decideApproval("rechazar"));
+    $("escalar").addEventListener("click", async () => {
+      if (!state.selectedId) return;
+      const reason = $("u-comentario").value.trim();
+      if (!reason) {
+        showMessage($("resultado-gestion"), "Escribe el motivo del escalado en la nota de seguimiento.", "error");
+        return;
+      }
+      try {
+        await apiRequest(`/solicitudes/${state.selectedId}/escalar`, {
+          method: "POST",
+          headers: authHeaders(),
+          body: JSON.stringify({ actor: "equipo_ti", motivo: reason }),
+        });
+        await Promise.all([loadDetail(state.selectedId), loadDashboard()]);
+        showMessage($("resultado-gestion"), `${state.selectedId} escalada correctamente.`, "success");
       } catch (error) {
         showMessage($("resultado-gestion"), error.message, "error");
       }

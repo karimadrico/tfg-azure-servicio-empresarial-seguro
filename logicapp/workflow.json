@@ -91,10 +91,39 @@
         }
       }
     },
+    "notificar_si_requiere_aprobacion": {
+      "type": "If",
+      "runAfter": {
+        "crear_solicitud": [
+          "Succeeded"
+        ]
+      },
+      "expression": "@equals(body('crear_solicitud')?['requiere_aprobacion'], true)",
+      "actions": {
+        "registrar_notificacion_aprobacion": {
+          "type": "Http",
+          "inputs": {
+            "method": "POST",
+            "uri": "@{concat(parameters('apiBaseUrl'), '/solicitudes/', body('crear_solicitud')?['id'], '/notificar-aprobacion')}",
+            "headers": {
+              "Content-Type": "application/json",
+              "Authorization": "@{concat('Bearer ', parameters('apiKey'))}"
+            },
+            "body": {
+              "canal": "logic_app",
+              "aprobador": "@{body('crear_solicitud')?['aprobador']}"
+            }
+          }
+        }
+      },
+      "else": {
+        "actions": {}
+      }
+    },
     "responder_cliente": {
       "type": "Response",
       "runAfter": {
-        "crear_solicitud": [
+        "notificar_si_requiere_aprobacion": [
           "Succeeded",
           "Failed",
           "TimedOut"
