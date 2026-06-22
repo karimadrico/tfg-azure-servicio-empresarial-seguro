@@ -55,6 +55,14 @@ La figura \ref{fig:infografia-arquitectura-azure} resume visualmente los servici
 \label{fig:infografia-arquitectura-azure}
 \end{figure}
 
+\subsection{Límites y dependencias entre componentes}
+
+La API es el punto de aplicación de las reglas del negocio. Tanto el portal como la Logic App llaman a la misma operación de creación; de este modo, añadir un canal de entrada no duplica validaciones ni clasificación. El portal se entrega como contenido estático desde el mismo App Service, una decisión que simplifica el prototipo y evita desplegar un segundo alojamiento. Esta unión sería revisable si el frontend necesitara un ciclo de publicación independiente, distribución mediante CDN o un equipo de desarrollo separado.
+
+Storage y Key Vault no son accesibles desde el navegador. La API actúa como frontera: valida el contenido antes de persistirlo y recupera el secreto mediante la identidad del App Service. La Logic App tampoco escribe directamente en el blob. Al conservar una única ruta de entrada se reduce el número de componentes capaces de alterar datos y se mantiene igual el resultado funcional con independencia del canal utilizado.
+
+La dependencia más sensible es la disponibilidad del almacenamiento. Si Blob Storage falla, la aplicación puede seguir respondiendo en el endpoint de salud, pero no debe confirmar una solicitud que no haya quedado persistida. La implementación propaga el error y evita devolver un identificador de éxito falso. En un entorno de producción se añadirían reintentos controlados, telemetría específica y una cola para absorber interrupciones temporales; en el prototipo se prioriza que el fallo sea visible y reproducible.
+
 \section{API REST implementada}
 
 La API desarrollada en \texttt{src/app.py} expone los siguientes endpoints:
@@ -94,6 +102,14 @@ GET & \texttt{/metricas} & Token Bearer & Revisión de métricas agregadas y cum
 Al crear una solicitud, el módulo \texttt{classifier.py} analiza el título y la descripción para asignar tipo de solicitud (\textit{acceso}, \textit{entorno}, \textit{aplicación}, \textit{configuración}, \textit{incidencia}), prioridad (\textit{baja}, \textit{media}, \textit{alta}), categoría (\textit{seguridad}, \textit{infraestructura}, \textit{soporte}, \textit{general}) y una recomendación operativa, devolviendo un valor de confianza asociado.
 
 Después del registro, la bandeja del equipo TI permite gestionar el trabajo pendiente sin acceder directamente al almacenamiento. Cada actualización se incorpora al historial de la solicitud y las prioridades alta, media y baja reciben objetivos iniciales de cuatro, veinticuatro y setenta y dos horas, respectivamente. Estos datos alimentan el resumen de solicitudes en plazo, vencidas y cerradas.
+
+\subsection{Ciclo operativo de una solicitud}
+
+El registro no se limita a guardar un formulario. Una solicitud nace en estado abierta, recibe un identificador estable y conserva la clasificación calculada. El equipo de TI puede asignar un responsable, ajustar la prioridad cuando dispone de más contexto y pasarla a \textit{en proceso} o \textit{cerrada}. Cada modificación incorpora actor, fecha y detalle al historial. La transición desde cerrada hacia abierta se rechaza para evitar reabrir trabajo sin una regla explícita; una futura versión podría incorporar una operación específica de reapertura con motivo obligatorio.
+
+Los objetivos de cuatro, veinticuatro y setenta y dos horas no se presentan como un acuerdo de nivel de servicio contractual. Son umbrales operativos del prototipo que permiten demostrar cómo una prioridad afecta a la gestión posterior. Las métricas comparan la fecha objetivo con el estado actual y distinguen trabajo en plazo, vencido y cerrado. El equipo puede así ordenar la bandeja por impacto y no únicamente por fecha de llegada.
+
+Esta evolución aproxima el producto a una herramienta de trabajo diaria: el solicitante aporta el contexto inicial, el clasificador propone un tratamiento y el equipo conserva la decisión humana final. El sistema automático no cierra solicitudes ni asigna permisos; ayuda a ordenar información y deja trazabilidad sobre las acciones realizadas.
 
 \section{Componente de análisis automático basado en reglas}
 
@@ -160,7 +176,56 @@ Este flujo resulta útil para un escenario empresarial realista: un formulario c
 
 La autenticación de la API utiliza un token Bearer almacenado en Azure Key Vault. La App Service accede al secreto mediante Managed Identity, evitando credenciales embebidas en el código fuente. El almacenamiento de solicitudes reside en un contenedor Blob con acceso privado.
 
+\subsection{Modelo de amenazas aplicado}
+
+El análisis de seguridad se acotó a las fronteras reales del prototipo. No se asumió que utilizar Azure eliminara riesgos de aplicación. Se revisaron entrada de datos, acceso a operaciones de gestión, exposición de secretos, almacenamiento y configuración de infraestructura. La tabla \ref{tabla:amenazas-controles} resume los escenarios principales y el tratamiento adoptado.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{p{3cm} X X X}
+\textbf{Amenaza} & \textbf{Consecuencia} & \textbf{Control aplicado} & \textbf{Riesgo residual} \\
+\hline
+Entrada malformada o excesiva & Datos incoherentes, errores o consumo innecesario. & Campos obligatorios, tipos permitidos y límites de longitud. & No se dispone de un firewall de aplicaciones ni limitación por usuario. \\
+Consulta sin autorización & Exposición de solicitudes e información operativa. & Token Bearer en listado, detalle, actualización y métricas. & El token es compartido y no identifica individualmente al operador. \\
+Secreto incluido en código & Filtración mediante Git o documentación. & Secreto en Key Vault, variables de entorno y exclusión de valores reales. & La rotación requiere una actuación administrativa. \\
+Acceso directo al almacenamiento & Modificación o lectura fuera de las reglas de la API. & Contenedor privado y acceso desde el backend. & La cadena de conexión conserva privilegios amplios sobre la cuenta. \\
+Tráfico sin cifrar & Interceptación de credenciales o datos. & HTTPS obligatorio en App Service y TLS en Storage. & No se han desplegado red privada ni puntos de conexión privados. \\
+Cambio no trazable & Dificultad para atribuir una decisión operativa. & Historial con actor, fecha y comentario. & El actor declarado no se valida contra un directorio corporativo. \\
+\end{tabularx}
+\caption{Amenazas, controles aplicados y riesgos residuales}
+\label{tabla:amenazas-controles}
+\end{table}
+
+La principal limitación es la identidad. El Bearer token demuestra protección básica de endpoints y almacenamiento seguro de la credencial, pero no equivale a autenticación corporativa. Una evolución a Microsoft Entra ID permitiría identificar usuarios, asignar roles y revocar accesos individualmente. También sería necesario limitar el endpoint público de creación mediante identidad, cuota o protección frente a abuso antes de aceptar datos reales.
+
+La información utilizada en las evidencias es ficticia. Aun así, una explotación empresarial tendría que definir política de conservación, derecho de acceso, minimización y borrado. La trazabilidad técnica no sustituye el análisis legal del tratamiento de datos personales.
+
 \section{Validación del prototipo}
 
-Las pruebas unitarias en \texttt{tests/test\_api.py} verifican la creación de solicitudes, el listado, las métricas, el portal web y la clasificación automática. El prototipo puede ejecutarse localmente con almacenamiento en fichero JSON o desplegarse en Azure con persistencia en Blob Storage.
+La validación se organizó en tres capas. La primera ejecuta catorce pruebas automáticas con almacenamiento temporal local; permite repetir casos sin modificar los datos desplegados. La segunda utiliza \texttt{verify-azure.ps1} contra la URL pública y comprueba el recorrido real por App Service, Key Vault y Blob Storage. La tercera conserva capturas del portal, Logic App, Azure Portal, Application Insights, Zube y SonarCloud para relacionar el resultado técnico con los recursos observados.
+
+Las pruebas automáticas cubren creación, consulta, autenticación, validaciones de entrada, filtros, paginación, ciclo de vida, historial, persistencia local, métricas y reglas de clasificación. Se incluyen caminos negativos: token incorrecto, campos vacíos, correo no válido, prioridad desconocida, paginación fuera de rango, transición no permitida e identificador inexistente. Probar únicamente respuestas correctas habría dejado sin verificar buena parte de las decisiones de seguridad y consistencia.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Nivel} & \textbf{Comprobación} & \textbf{Resultado observado} \\
+\hline
+Unidad e integración local & Catorce pruebas sobre API, almacenamiento y clasificador. & Todas finalizan correctamente con datos temporales. \\
+Despliegue público & Página raíz, portal y \texttt{/health}. & Servicio accesible por HTTPS y almacenamiento en modo Azure. \\
+Proceso empresarial & Alta, listado, detalle, actualización, historial y métricas. & Solicitud persistida y gestionada con identificador estable. \\
+Automatización & Trigger HTTP de Logic App hacia \texttt{POST /solicitudes}. & Ejecución correcta y respuesta de solicitud creada. \\
+Seguridad & Token Bearer, Key Vault, Managed Identity y blob privado. & Consultas protegidas y secreto fuera del repositorio. \\
+Observabilidad & Application Insights, Azure Monitor y endpoint de salud. & Telemetría y métricas disponibles para inspección. \\
+Calidad estática & Revisión del repositorio en SonarCloud. & Duplicación nula y análisis externo documentado. \\
+\end{tabularx}
+\caption{Niveles de validación y resultados del prototipo}
+\label{tabla:validacion-resultados}
+\end{table}
+
+El resultado confirma el funcionamiento del caso práctico, pero no constituye una prueba de carga ni una certificación de seguridad. No se ha medido concurrencia elevada, recuperación regional, disponibilidad mensual o comportamiento con miles de solicitudes. Estas pruebas exigirían un entorno estable durante más tiempo, datos representativos y criterios de aceptación acordados con una organización usuaria.
+
+La posibilidad de ejecutar el backend con fichero local y desplegarlo con Blob Storage también se utilizó como mecanismo de prueba. La lógica de la API permanece igual y la estrategia de persistencia se selecciona mediante configuración. Esta separación permite desarrollar sin consumir Azure y comprobar después la integración cloud sin mantener dos implementaciones funcionales diferentes.
 

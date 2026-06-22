@@ -2,6 +2,12 @@
 
 Para situar el alcance del prototipo se tomaron como referencia dos grupos de soluciones. El primero incluye plataformas de gestión de servicios y soporte, como ServiceNow, Jira Service Management y Zendesk. El segundo reúne trabajos académicos centrados en arquitectura cloud y automatización del despliegue; entre ellos, Sanclemente Vilda estudia una arquitectura de referencia para microservicios mediante prácticas DevOps y GitOps \cite{sanclemente2024_tfg}.
 
+Las plataformas comerciales parten de una necesidad parecida, pero ofrecen un alcance mucho mayor: catálogos de servicio, acuerdos de nivel de servicio, automatizaciones configurables, bases de conocimiento, inventario e integración con directorios corporativos. Su ventaja es la madurez funcional; su inconveniente para los objetivos del trabajo es que utilizar un producto terminado ocultaría buena parte del análisis de arquitectura, seguridad, persistencia y despliegue que se pretende demostrar.
+
+El proyecto no intenta reconstruir una suite ITSM. Selecciona un recorrido pequeño pero completo: recepción de una solicitud, validación, clasificación explicable, persistencia, gestión por el equipo y observación del resultado. Esta reducción permite que las decisiones sean visibles en el código y en Azure. También deja fuera funciones que serían imprescindibles en producción, especialmente identidad individual, catálogo formal, notificaciones, búsqueda avanzada y gestión contractual de SLA.
+
+Los trabajos académicos sobre cloud suelen concentrarse en comparar modelos de servicio, describir proveedores o desplegar una aplicación de ejemplo. La referencia de Sanclemente Vilda aporta una perspectiva más orientada a automatización e infraestructura, con tecnologías adecuadas para arquitecturas de microservicios. El presente TFG comparte la preocupación por reproducibilidad y operación, pero utiliza servicios PaaS más sencillos porque el dominio no necesita un clúster ni múltiples servicios desplegables. La diferencia no es solo tecnológica: aquí la infraestructura se evalúa como soporte de un proceso empresarial concreto.
+
 La comparación no pretende evaluar experimentalmente los productos comerciales ni afirmar que el prototipo pueda sustituirlos. Sirve para identificar qué parte del problema se aborda en el TFG:
 
 \begin{itemize}
@@ -30,3 +36,7 @@ Proyecto desarrollado & Automatización de solicitudes TI en Azure & Integra por
 \end{table}
 
 La aportación propia está en recorrer el ciclo completo con una solución acotada: requisitos, arquitectura, código, despliegue, seguridad, pruebas y evidencias. Esta perspectiva difiere tanto del uso de una herramienta comercial ya construida como de un trabajo centrado exclusivamente en infraestructura.
+
+La comparación también ayuda a situar el clasificador. Las plataformas empresariales pueden incorporar modelos estadísticos o servicios de inteligencia artificial entrenados con grandes historiales. El proyecto utiliza reglas deterministas porque no dispone de un conjunto de solicitudes reales etiquetadas. Esta elección sacrifica aprendizaje automático, pero permite explicar cada resultado y comprobarlo con casos reproducibles. Incorporar un servicio de lenguaje solo sería justificable después de construir un conjunto de evaluación y comparar precisión, coste y tratamiento de datos.
+
+Por tanto, el valor diferencial no reside en superar funcionalmente a las soluciones comerciales, sino en demostrar de forma auditable cómo se construye y despliega una base segura para ese tipo de proceso. El tribunal puede recorrer los requisitos, localizar su implementación, ejecutar pruebas, acceder al portal y revisar los recursos cloud que sostienen cada decisión.

@@ -109,6 +109,18 @@ Este enfoque facilita:
 
 La arquitectura del proyecto sigue esta idea: el portal web se encarga de la interacción con el usuario, la API Flask concentra la lógica de negocio, el clasificador aplica reglas de análisis automático, Blob Storage conserva las solicitudes y Key Vault protege el secreto usado por los endpoints protegidos. Esta separación facilita explicar el sistema, probarlo por partes y evolucionarlo en futuras versiones.
 
+\subsection{Plano de gestión y plano de datos}
+
+En una solución cloud conviene distinguir entre el plano de gestión y el plano de datos. El primero reúne las operaciones con las que se crean, configuran y supervisan recursos: alta del App Service, definición de variables de entorno, asignación de identidad o concesión de permisos. El segundo contiene las operaciones propias de la aplicación: registrar una solicitud, consultar su historial o guardar el documento en Blob Storage. Mezclar ambos planos haría que una petición funcional necesitara permisos de administración sobre Azure, un acoplamiento innecesario y difícil de proteger.
+
+En el prototipo, PowerShell y Azure CLI actúan sobre el plano de gestión durante el despliegue. La API, la Logic App y el portal operan en el plano de datos durante el uso normal. Managed Identity sirve de unión controlada entre ambos: la identidad se concede desde el plano de gestión, pero App Service la utiliza durante la ejecución para obtener el secreto autorizado. Esta separación permite aplicar privilegio mínimo y explica por qué el token de usuario no debe convertirse en una credencial de administración de la suscripción.
+
+\subsection{Persistencia documental y consistencia}
+
+Blob Storage conserva objetos y no ofrece por sí mismo las relaciones, restricciones o consultas de un sistema gestor de bases de datos. Esa diferencia condiciona el diseño. La colección de solicitudes del prototipo se serializa como JSON y la API concentra las lecturas y escrituras; ningún cliente modifica directamente el blob. Con un único proceso y el volumen de demostración, esta solución reduce infraestructura y mantiene el formato fácil de inspeccionar. La biblioteca oficial de Azure permite ejecutar las mismas operaciones desde Python mediante HTTPS \cite{azure_blob_overview,azure_blob_python}.
+
+La elección tiene un límite importante: dos escrituras concurrentes podrían partir de versiones distintas y sobrescribir cambios. Una implantación con varios equipos, mayor carga o requisitos transaccionales debería utilizar control de concurrencia mediante etiquetas de versión, separar cada solicitud en un objeto o migrar a Azure SQL o Cosmos DB. La escalabilidad del servicio cloud no corrige automáticamente un modelo de persistencia inadecuado; es necesario analizar también la granularidad y consistencia de los datos.
+
 \section{API REST}
 
 Una API REST permite la comunicación entre sistemas mediante peticiones HTTP.
@@ -126,6 +138,12 @@ En este proyecto se utilizan diferentes endpoints para:
 La seguridad es un aspecto transversal en soluciones cloud. En este TFG se han aplicado tres decisiones principales: uso de HTTPS en el despliegue, separación de secretos mediante Key Vault y autenticación Bearer para las operaciones de consulta. Estas medidas no convierten el prototipo en una solución corporativa completa, pero sí demuestran buenas prácticas básicas de diseño seguro.
 
 Además, el diseño se ha alineado con principios del Azure Well-Architected Framework, que propone pilares como seguridad, fiabilidad, eficiencia de rendimiento, optimización de costes y excelencia operativa \cite{azure_well_architected_framework}. En el contexto del proyecto, estos principios se reflejan en el uso de servicios gestionados, despliegue reproducible, recursos de bajo coste y documentación de evidencias.
+
+\subsection{Observabilidad frente a monitorización}
+
+La monitorización responde a preguntas conocidas, por ejemplo cuántas peticiones recibe el servicio o si se producen respuestas con error. La observabilidad busca además poder investigar comportamientos no previstos a partir de métricas, registros y trazas. Application Insights y Azure Monitor cubren esa necesidad básica en el proyecto: permiten comprobar actividad del App Service, localizar errores y relacionar el estado técnico con las pruebas funcionales \cite{azure_monitor}.
+
+El endpoint \texttt{/health} complementa estas herramientas, pero no las sustituye. Su respuesta confirma que la aplicación está disponible y muestra el modo de almacenamiento; no demuestra que todos los procesos empresariales funcionen. Por esa razón la validación combina tres niveles: salud técnica, pruebas automáticas del código y recorrido completo sobre el despliegue. Esta combinación evita considerar correcto un sistema únicamente porque su proceso web responde.
 
 \section{DevOps y automatización}
 
