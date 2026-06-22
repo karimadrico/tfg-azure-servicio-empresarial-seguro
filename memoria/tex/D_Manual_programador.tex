@@ -48,7 +48,7 @@ La tabla \ref{tabla:iac_comparativa} resume el papel de cada mecanismo utilizado
 
 \begin{table}[h]
 \centering
-\small
+\footnotesize
 \begin{tabularx}{\textwidth}{l X X}
 \textbf{Mecanismo} & \textbf{Uso en el proyecto} & \textbf{Ventaja principal} \\
 \hline
@@ -94,7 +94,7 @@ La tabla \ref{tabla:pruebas_realizadas} resume las pruebas principales aplicadas
 
 \begin{table}[h]
 \centering
-\small
+\footnotesize
 \begin{tabularx}{\textwidth}{l X X}
 \textbf{Prueba} & \textbf{Objetivo} & \textbf{Resultado esperado} \\
 \hline
@@ -112,7 +112,7 @@ Clasificación de seguridad & Validar detección de incidencias críticas. & Cat
 Escenarios de reglas & Ejecutar cuatro entradas con coincidencias y valores de respaldo. & Tipo, categoría y prioridad coinciden con las reglas documentadas. \\
 Verificación Azure & Probar despliegue real con script. & Health check, creación, listado y métricas correctas. \\
 Logic App & Validar automatización externa de solicitudes. & Trigger HTTP invoca \texttt{POST /solicitudes} y devuelve una solicitud creada. \\
-SonarCloud & Revisar calidad externa del código. & Quality Gate aprobado y duplicación controlada. \\
+SonarCloud & Revisar calidad externa del código. & Duplicación controlada y excepciones justificadas. \\
 \end{tabularx}
 \caption{Pruebas realizadas sobre el prototipo}
 \label{tabla:pruebas_realizadas}
@@ -128,13 +128,13 @@ El proyecto utiliza SonarCloud como servicio gestionado de SonarQube:
     \item \texttt{docs/calidad/sonarcloud.md}: documenta el resultado observado y las evidencias que deben guardarse.
 \end{itemize}
 
-Como evidencia se conserva una captura del análisis del 22 de junio. Tras incorporar la ampliación funcional, el análisis automático mantiene cero errores de fiabilidad, cero 	extit{hotspots} y duplicación nula, pero requiere revisar cuatro alertas limitadas a los contenedores 	exttt{Scope} y las acciones 	exttt{Response} de Logic Apps. Sonar solicita propiedades 	exttt{secureData} que Azure rechaza en esos elementos durante el despliegue; las acciones HTTP internas sí protegen entradas y salidas. Estas excepciones deben quedar aceptadas con su justificación técnica antes de obtener la captura definitiva del 	extit{Quality Gate}. La configuración fija Python 3.11 y la versión 3.100.0 del proveedor Azure de Terraform para evitar análisis ambiguos.
+Como evidencia se conserva una captura del análisis del 22 de junio. Tras incorporar la ampliación funcional, el análisis automático mantiene cero errores de fiabilidad, cero \textit{hotspots} y duplicación nula, pero requiere revisar cuatro alertas limitadas a los contenedores \texttt{Scope} y las acciones \texttt{Response} de Logic Apps. Sonar solicita propiedades \texttt{secureData} que Azure rechaza en esos elementos durante el despliegue; las acciones HTTP internas sí protegen entradas y salidas. Estas excepciones deben quedar aceptadas con su justificación técnica antes de obtener la captura definitiva del \textit{Quality Gate}. La configuración fija Python 3.11 y la versión 3.100.0 del proveedor Azure de Terraform para evitar análisis ambiguos.
 
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.9\textwidth]{sonarcloud-quality-gate-final-22junio.png}
-\caption{Análisis final de SonarCloud: Quality Gate aprobado y cero issues abiertos. Fuente: captura propia.}
+\caption{Evidencia de un análisis aprobado de SonarCloud anterior a la última ampliación funcional. Fuente: captura propia.}
 \label{fig:sonarcloud-quality-gate-final}
 \end{figure}
 La figura \ref{fig:observabilidad-monitor} resume la estrategia de observabilidad mediante App Service, Application Insights y Azure Monitor.
