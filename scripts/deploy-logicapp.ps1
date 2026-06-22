@@ -90,15 +90,13 @@ $ApprovalTriggerUrl = & $AzCli rest `
 
 Write-Output "Logic App desplegada."
 if ($TriggerUrl) {
-    Write-Output "URL del trigger HTTP:"
-    Write-Output $TriggerUrl
+    Write-Output "Trigger HTTP disponible. Copia su URL desde Azure Portal cuando sea necesario."
 }
 else {
     Write-Output "No se pudo obtener la URL del trigger. Puedes copiarla desde Azure Portal."
 }
 if ($ApprovalTriggerUrl) {
-    Write-Output "URL del trigger de decisiones (tratar como secreto):"
-    Write-Output $ApprovalTriggerUrl
+    Write-Output "Trigger de decisiones disponible. Su URL firmada no se muestra por seguridad."
 }
 else {
     Write-Output "No se pudo obtener la URL del trigger de decisiones."
