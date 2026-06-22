@@ -50,16 +50,27 @@ function Install-SonarScanner {
     }
 }
 
+function Test-PythonDependencies {
+    & $Python -c "import azure.identity, azure.keyvault.secrets, azure.storage.blob, coverage, flask" 2>$null
+    return $LASTEXITCODE -eq 0
+}
+
 $Python = Resolve-Python311
 Install-SonarScanner
 
 Push-Location $RepoRoot
 try {
     Write-Host "Python: $Python" -ForegroundColor DarkGray
-    Write-Host "Instalando dependencias de pruebas..." -ForegroundColor Cyan
-    & $Python -m pip install -r requirements-dev.txt
-    if ($LASTEXITCODE -ne 0) {
-        throw "No se pudieron instalar las dependencias."
+    Write-Host "Comprobando dependencias de pruebas..." -ForegroundColor Cyan
+    if (-not (Test-PythonDependencies)) {
+        Write-Host "Instalando dependencias que faltan..." -ForegroundColor Cyan
+        & $Python -m pip install -r requirements-dev.txt
+        if ($LASTEXITCODE -ne 0 -or -not (Test-PythonDependencies)) {
+            throw "No se pudieron instalar las dependencias."
+        }
+    }
+    else {
+        Write-Host "Dependencias disponibles." -ForegroundColor DarkGray
     }
 
     Write-Host "Ejecutando 14 pruebas y generando coverage.xml..." -ForegroundColor Cyan
