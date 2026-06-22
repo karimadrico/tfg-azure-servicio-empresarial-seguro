@@ -79,11 +79,29 @@ La respuesta indica si el servicio está operativo y si utiliza almacenamiento l
 
 El usuario puede abrir el portal web, seleccionar el tipo de solicitud, introducir título, descripción y correo del solicitante, y enviar el formulario. La API devolverá un identificador, prioridad, clasificación y recomendación operativa.
 
+La figura \ref{fig:portal-solicitud-registrada} muestra el resultado de una ejecución real. La solicitud crítica se registró como \texttt{SOL-007}, recibió prioridad alta y quedó asignada inicialmente al equipo cloud.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{../docs/evidencias/solicitud-portal-registrada.png}
+\caption{Solicitud registrada correctamente desde el portal desplegado. Fuente: captura propia.}
+\label{fig:portal-solicitud-registrada}
+\end{figure}
+
 \subsection{Gestionar solicitudes desde el portal}
 
 El equipo TI selecciona la pestaña \textit{Gestión del equipo TI}, introduce el token custodiado en Key Vault y carga la bandeja. La vista muestra totales, solicitudes abiertas, trabajo en proceso y casos con SLA vencido. Los filtros permiten acotar por estado, prioridad y tipo.
 
 Al seleccionar una fila se abre el detalle con solicitante, descripción, clasificación, recomendación y fecha objetivo. El operador puede cambiar el estado, la prioridad o el responsable y añadir una nota. Cada actuación queda incorporada al historial; el token se mantiene únicamente en memoria durante la sesión del navegador y no se guarda en almacenamiento local.
+
+La figura \ref{fig:portal-gestion-ti} evidencia el acceso autenticado a la bandeja. El token aparece oculto, se muestran las métricas operativas y el filtro permite localizar la incidencia crítica creada previamente sin exponer la credencial.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{../docs/evidencias/solicitud-portal-gestionTI-tokenkeyvault.png}
+\caption{Bandeja de gestión del equipo TI con métricas y solicitud prioritaria. Fuente: captura propia.}
+\label{fig:portal-gestion-ti}
+\end{figure}
 
 \subsection{Crear solicitud desde API}
 
