@@ -24,6 +24,11 @@ Los requisitos funcionales recogen las capacidades visibles del sistema para usu
     \item RF-07 Automatizar la entrada de solicitudes mediante Logic App.
     \item RF-08 Gestionar el ciclo de vida de una solicitud.
     \item RF-09 Registrar trazabilidad y plazo objetivo de atención.
+    \item RF-10 Relacionar solicitudes con servicios y activos del catálogo.
+    \item RF-11 Calcular impacto y asignar el equipo propietario.
+    \item RF-12 Gestionar aprobación de solicitudes sensibles.
+    \item RF-13 Supervisar escalados, carga de trabajo y alertas SLA.
+    \item RF-14 Exportar un informe operativo en formato CSV.
 \end{itemize}
 
 Los requisitos no funcionales recogen propiedades transversales necesarias para que el sistema sea evaluable, seguro y mantenible:
@@ -55,6 +60,11 @@ RF-06 & Funcional & Media & Pruebas unitarias del clasificador y respuesta de cr
 RF-07 & Funcional & Media & Evidencia de Logic App con trigger HTTP y solicitud creada. \\
 RF-08 & Funcional & Alta & Pruebas de consulta individual y actualización de estado, prioridad y responsable. \\
 RF-09 & Funcional & Alta & Comprobación del historial y de las métricas de cumplimiento de SLA. \\
+RF-10 & Funcional & Alta & Prueba del catálogo y validación de servicio, activo y entorno. \\
+RF-11 & Funcional & Alta & Prueba del cálculo de impacto y propietario del servicio. \\
+RF-12 & Funcional & Alta & Pruebas y evidencias de aprobación, rechazo y notificación. \\
+RF-13 & Funcional & Alta & Pruebas del escalado y del endpoint de centro operativo. \\
+RF-14 & Funcional & Media & Prueba de exportación CSV y protección frente a fórmulas. \\
 RNF-01 & No funcional & Alta & Revisión de autenticación, secretos fuera del código y SonarCloud. \\
 RNF-02 & No funcional & Media & Uso de App Service y Blob Storage como servicios gestionados. \\
 RNF-03 & No funcional & Media & Endpoint \texttt{/health} y script \texttt{verify-azure.ps1}. \\
@@ -68,7 +78,9 @@ RNF-05 & No funcional & Media & Capturas de Application Insights, Azure Monitor 
 \section{Especificación de requisitos}
 
 \subsection{RF-01 Crear solicitudes operativas TI}
+\begin{sloppypar}
 El sistema debe permitir registrar solicitudes mediante \texttt{POST /solicitudes}, validando título, descripción, tipo de solicitud y email del solicitante. El endpoint \texttt{POST /incidencias} se mantiene como compatibilidad para el caso específico de incidencias.
+\end{sloppypar}
 
 \subsection{RF-02 Consultar solicitudes}
 El sistema debe listar solicitudes mediante \texttt{GET /solicitudes}, con filtros opcionales por estado, prioridad y tipo. Esta operación requiere autenticación mediante token Bearer.
@@ -94,6 +106,21 @@ El equipo TI debe poder consultar una solicitud concreta, asignar un responsable
 \subsection{RF-09 Trazabilidad y plazo objetivo}
 Cada solicitud debe conservar la fecha de creación y actualización, un objetivo de atención calculado según su prioridad y un historial de actuaciones con fecha, actor y detalle del cambio.
 
+\subsection{RF-10 Catálogo de servicios y activos}
+El portal y la API deben permitir seleccionar un servicio empresarial, uno de sus activos y un entorno admitido. La API rechaza combinaciones que no pertenezcan al catálogo para evitar registros ambiguos.
+
+\subsection{RF-11 Cálculo de impacto y propiedad}
+El sistema debe combinar criticidad del servicio, activo, entorno y prioridad para obtener un impacto operativo. El propietario definido en el catálogo se utiliza como responsable inicial de la solicitud.
+
+\subsection{RF-12 Aprobación de solicitudes sensibles}
+Las solicitudes cuyo tipo y contexto se consideren sensibles deben permanecer pendientes hasta que el aprobador acepte o rechace la actuación. La Logic App registra la notificación y la API conserva la decisión en el historial.
+
+\subsection{RF-13 Centro operativo y escalado}
+El equipo TI debe poder escalar solicitudes y consultar aprobaciones pendientes, carga por responsable, distribución por servicio, impacto crítico, tiempos de resolución y alertas de SLA.
+
+\subsection{RF-14 Exportación de informe}
+El sistema debe generar un informe CSV de las solicitudes para su revisión externa. Los valores se neutralizan cuando comienzan por caracteres interpretables como fórmulas por una hoja de cálculo.
+
 \subsection{RNF-01 Seguridad}
 Autenticación Bearer, almacenamiento privado y gestión de secretos centralizada.
 
@@ -117,6 +144,7 @@ La figura \ref{fig:casos-uso-general} delimita las interacciones entre los usuar
 
 \begin{figure}[ht]
 \centering
+\resizebox{0.9\textwidth}{!}{%
 \begin{tikzpicture}[
     x=0.88cm,
     y=1cm,
@@ -127,12 +155,12 @@ La figura \ref{fig:casos-uso-general} delimita las interacciones entre los usuar
     \draw[rounded corners] (2,0) rectangle (12,6.3);
     \node[font=\small\bfseries, fill=white, inner sep=2pt] at (7,6.3) {Plataforma cloud de solicitudes TI};
 
-    \node[usecase] (cu1) at (5,5.2) {CU-01\\Registrar solicitud};
-    \node[usecase] (cu2) at (9,5.2) {CU-02\\Clasificar solicitud};
-    \node[usecase] (cu3) at (5,3.7) {CU-03\\Consultar solicitudes};
-    \node[usecase] (cu4) at (9,3.7) {CU-04\\Consultar métricas};
-    \node[usecase] (cu7) at (5,2.2) {CU-07\\Automatizar entrada};
-    \node[usecase] (cu5) at (9,2.2) {CU-05\\Validar despliegue};
+    \node[usecase] (cu1) at (4.3,5.2) {CU-01\\Registrar solicitud};
+    \node[usecase] (cu2) at (9.7,5.2) {CU-02\\Clasificar solicitud};
+    \node[usecase] (cu3) at (4.3,3.7) {CU-03\\Gestionar solicitudes};
+    \node[usecase] (cu4) at (9.7,3.7) {CU-04\\Centro operativo y SLA};
+    \node[usecase] (cu7) at (4.3,2.2) {CU-07\\Automatizar entrada};
+    \node[usecase] (cu5) at (9.7,2.2) {CU-05\\Validar despliegue};
     \node[usecase] (cu6) at (7,0.75) {CU-06\\Gestionar secretos};
 
     \coordinate (usuario) at (0.7,4.9);
@@ -157,13 +185,14 @@ La figura \ref{fig:casos-uso-general} delimita las interacciones entre los usuar
 
     \draw (1.05,4.5)--(cu1.west);
     \draw (1.05,1.8)--(cu7.west);
-    \draw[dashed,->] (cu1)--node[above, font=\scriptsize]{incluye}(cu2);
-    \draw[dashed,->] (cu7)--(cu1);
-    \draw (12.95,4.5)--(cu3.east);
+    \draw[dashed,->] (cu1)--node[above, pos=0.5, font=\scriptsize]{incluye}(cu2);
+    \draw[dashed,->] (cu7.west)--(2.2,2.2)--(2.2,5.2)--(cu1.west);
     \draw (12.95,4.5)--(cu4.east);
+    \draw[dashed,->] (cu4)--node[above, pos=0.5, font=\scriptsize]{incluye}(cu3);
     \draw (12.95,1.8)--(cu5.east);
     \draw (12.95,1.8)--(cu6.east);
 \end{tikzpicture}
+}
 \caption{Diagrama UML general de casos de uso. Fuente: elaboración propia.}
 \label{fig:casos-uso-general}
 \end{figure}
@@ -176,10 +205,10 @@ Las tablas \ref{tabla:casos-uso-operacion} y \ref{tabla:casos-uso-administracion
 \begin{tabularx}{\textwidth}{l p{2.4cm} X X}
 \textbf{Caso} & \textbf{Actor / precondición} & \textbf{Flujo principal} & \textbf{Resultado} \\
 \hline
-CU-01 Registrar & Usuario interno; portal o API disponible. & Introduce tipo, título, descripción y correo; la API valida los datos. & Solicitud persistida con identificador \texttt{SOL-XXX}. \\
-CU-02 Clasificar & Sistema; solicitud válida. & Evalúa reglas de tipo, categoría y prioridad y genera una recomendación. & Clasificación trazable incluida en la respuesta. \\
-CU-03 Consultar & Equipo TI; token Bearer válido. & Solicita el listado y aplica filtros o paginación. & Lista protegida de solicitudes coincidentes. \\
-CU-04 Métricas & Equipo TI; token Bearer válido. & Consulta agregados por estado, prioridad y tipo. & Resumen operativo con marca temporal. \\
+CU-01 Registrar & Usuario interno; portal o API disponible. & Selecciona servicio, activo y entorno e introduce los datos de la petición. & Solicitud persistida con identificador \texttt{SOL-XXX}. \\
+CU-02 Clasificar & Sistema; solicitud válida. & Evalúa reglas, calcula impacto, asigna propietario y determina si requiere aprobación. & Clasificación y contexto trazables en la respuesta. \\
+CU-03 Gestionar & Equipo TI; token Bearer válido. & Filtra, asigna, aprueba, rechaza, escala o cambia el estado de una solicitud. & Cambio persistido con actor, fecha y detalle. \\
+CU-04 Centro operativo & Equipo TI; token Bearer válido. & Consulta carga, alertas, SLA y distribución por servicio o exporta el CSV. & Resumen operativo e informe descargable. \\
 \end{tabularx}
 \caption{Casos de uso de operación y consulta}
 \label{tabla:casos-uso-operacion}

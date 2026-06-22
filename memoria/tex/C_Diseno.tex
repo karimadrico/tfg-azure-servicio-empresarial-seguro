@@ -156,15 +156,15 @@ POL-09 & Planificación observable. & Sprints y tablero Kanban en Zube. \\
 El flujo principal del sistema es:
 
 \begin{enumerate}
-    \item Recepción de solicitudes operativas TI por portal web o API REST.
-    \item Validación de campos obligatorios.
-    \item Clasificación automática mediante reglas de negocio.
-    \item Generación de recomendaciones de actuación operativa.
-    \item Persistencia de solicitudes en Blob Storage o fichero local.
-    \item Respuesta JSON con identificador, prioridad, tipo, recomendación, confianza y objetivo SLA.
-    \item Gestión posterior mediante asignación, transiciones de estado y notas de seguimiento.
-    \item Registro de cada actuación en el historial de la solicitud.
-    \item Verificación del despliegue mediante endpoint \texttt{/health}, portal web y pruebas HTTP.
+    \item Recepción de solicitudes operativas TI por portal, API REST o Logic App.
+    \item Validación de campos obligatorios y del contexto formado por servicio, activo y entorno.
+    \item Clasificación automática mediante reglas de negocio y cálculo del impacto empresarial.
+    \item Asignación del equipo propietario y del objetivo SLA.
+    \item Bloqueo en estado pendiente cuando la criticidad exige aprobación.
+    \item Persistencia de la solicitud y de su historial en Azure Blob Storage.
+    \item Gestión posterior mediante aprobación, rechazo, escalado, asignación y transiciones de estado.
+    \item Supervisión de carga, vencimientos y alertas desde el centro operativo.
+    \item Exportación del informe CSV y verificación del despliegue mediante pruebas HTTP.
 \end{enumerate}
 
 La figura \ref{fig:flujo-solicitud-ti} representa el flujo funcional seguido por una solicitud desde su entrada hasta la persistencia y la respuesta al usuario o sistema externo.
@@ -216,8 +216,8 @@ La figura \ref{fig:logic-app-created-request} evidencia una ejecución correcta 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{../docs/evidencias/logic-app-created-request.png}
-\caption{Solicitud creada mediante Azure Logic Apps. Fuente: captura propia.}
+\includegraphics[width=0.82\textwidth]{powershell-solicitud-evidenciacreada-v2.png}
+\caption{Solicitud sensible creada mediante Azure Logic Apps y visible en la bandeja TI. Fuente: captura propia.}
 \label{fig:logic-app-created-request}
 \end{figure}
 La figura \ref{fig:seguridad-secretos} resume el modelo de seguridad aplicado para proteger secretos y accesos.
