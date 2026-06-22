@@ -328,7 +328,7 @@
 
   <footer>TFG - Cloud Computing en Microsoft Azure - Karima Drafli Rico</footer>
 
-  <script>
+  <script type="module">
     const state = { token: "", selectedId: null, catalog: [] };
     const $ = (id) => document.getElementById(id);
 
@@ -381,7 +381,11 @@
     }
 
     $("servicio").addEventListener("change", updateServiceSelection);
-    loadCatalog().catch((error) => showMessage($("resultado-alta"), error.message, "error"));
+    try {
+      await loadCatalog();
+    } catch (error) {
+      showMessage($("resultado-alta"), error.message, "error");
+    }
 
     document.querySelectorAll(".tab").forEach((button) => {
       button.addEventListener("click", () => {
