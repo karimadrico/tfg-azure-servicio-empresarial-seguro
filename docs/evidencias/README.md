@@ -76,6 +76,20 @@ Evidencia de `GET /metricas`, con agregados por estado, prioridad y tipo de soli
 
 Salida de `scripts/verify-azure.ps1`, que valida automáticamente `/`, `/health`, creación de solicitud, listado y métricas.
 
+### Funciones empresariales ampliadas
+
+Las capturas incorporadas el 22 de junio documentan el incremento funcional posterior al gestor inicial de solicitudes:
+
+- `portal-catalogo-servicios.png`: selección de servicio empresarial, activo afectado y entorno.
+- `portal-solicitud-impacto.png`: resultado de la evaluación de impacto y asignación automática.
+- `portal-solicitud-pendiente-aprobacion.png`: solicitud sensible detenida antes de su ejecución.
+- `portal-escalado-solicitud.png`: controles de aprobación y escalado disponibles para el equipo TI.
+- `portal-escalado-solicitud-aprobada.png`: decisión registrada con actor, fecha y trazabilidad.
+- `portal-centro-operativo-sla.png`: carga por responsable, distribución por servicio y alertas activas.
+- `portal-exportacion-csv.png`: exportación del informe operativo para su análisis externo.
+- `portal-solicitudes-22junio.png`: bandeja consolidada después de las pruebas funcionales.
+- `powershell-solicitud-evidenciacreada-v2.png`: detalle de una solicitud creada mediante el flujo automatizado.
+
 ## 2.1. Automatizacion con Logic App
 
 La Logic App `logic-tfg-solicitudes-dev` automatiza la entrada de solicitudes externas mediante un trigger HTTP y una llamada a la API desplegada en App Service. Las evidencias conservadas en esta carpeta son:
@@ -86,6 +100,9 @@ La Logic App `logic-tfg-solicitudes-dev` automatiza la entrada de solicitudes ex
 - `logic-app-run-history.png`: historial de ejecucion correcto al enviar una solicitud.
 - `logic-app-run-history-solicitud.png`: salida de la accion que crea la solicitud, con cabeceras sensibles ocultas.
 - `logic-app-run-history-respondercliente.png`: respuesta final devuelta por la Logic App.
+- `logic-app-workflow-final.png`: ejecución manual con un cuerpo que incluye servicio, activo y entorno.
+- `logic-app-workflow-final-ejecucion.png`: definición desplegada del flujo HTTP hacia la API.
+- `logic-app-request-evidencia.png`: solicitud automatizada visible en la bandeja del portal.
 
 Estas evidencias sirven para defender la automatizacion cloud del proceso empresarial. No deben mostrar firmas `sig`, claves Bearer ni valores de secretos.
 
@@ -104,9 +121,10 @@ Evidencias incorporadas para completar la observabilidad:
 
 Captura del Quality Gate aprobado en SonarCloud. Es la evidencia principal para el criterio de calidad interna.
 
-Evidencia final incorporada:
+Evidencias finales incorporadas:
 
 - `sonarcloud-quality-gate-final-20junio.png`: estado más reciente, con Quality Gate aprobado, seguridad A, cero issues de seguridad y ocho issues no bloqueantes de mantenibilidad.
+- `sonarcloud-quality-gate-final-22junio.png`: análisis posterior a la ampliación, con Quality Gate aprobado y cero issues abiertos.
 
 ![Issues SonarCloud](sonarcloud-issues.png)
 
