@@ -67,6 +67,7 @@
       border: 1px solid var(--line);
       border-radius: 6px;
     }
+    .panel-spaced { margin-top: 1rem; }
     .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
     .field-wide { grid-column: 1 / -1; }
     label { display: block; margin-bottom: 0.35rem; font-size: 0.85rem; font-weight: 600; }
@@ -158,6 +159,7 @@
   <nav aria-label="Vistas del portal">
     <button class="tab active" data-view="alta">Nueva solicitud</button>
     <button class="tab" data-view="gestion">Gestión del equipo TI</button>
+    <button class="tab" data-view="operaciones">Centro operativo</button>
   </nav>
 
   <main>
@@ -286,6 +288,42 @@
         </aside>
       </div>
     </section>
+
+    <section id="view-operaciones" hidden>
+      <h2>Centro operativo y SLA</h2>
+      <p class="intro">Supervisa aprobaciones, escalados, carga de los equipos y alertas de servicio.</p>
+      <div class="access-bar panel">
+        <div>
+          <label for="ops-api-key">Token de acceso</label>
+          <input id="ops-api-key" type="password" autocomplete="off" placeholder="Bearer token almacenado en Key Vault">
+        </div>
+        <div class="actions">
+          <button id="cargar-operaciones" type="button">Actualizar</button>
+          <button id="exportar-csv" class="secondary" type="button">Exportar CSV</button>
+        </div>
+      </div>
+      <div id="ops-metrics" class="metrics" hidden>
+        <div class="metric"><span>Aprobaciones pendientes</span><strong id="o-aprobaciones">0</strong></div>
+        <div class="metric"><span>Solicitudes escaladas</span><strong id="o-escaladas">0</strong></div>
+        <div class="metric"><span>Impacto crítico</span><strong id="o-criticas">0</strong></div>
+        <div class="metric"><span>Tiempo medio resolución</span><strong id="o-tiempo">0 h</strong></div>
+      </div>
+      <div class="workspace">
+        <div class="panel">
+          <h3>Carga por responsable</h3>
+          <div class="table-wrap"><table><thead><tr><th>Responsable</th><th>Solicitudes</th></tr></thead><tbody id="ops-responsables"></tbody></table></div>
+        </div>
+        <div class="panel">
+          <h3>Distribución por servicio</h3>
+          <div class="table-wrap"><table><thead><tr><th>Servicio</th><th>Solicitudes</th></tr></thead><tbody id="ops-servicios"></tbody></table></div>
+        </div>
+      </div>
+      <div class="panel panel-spaced">
+        <h3>Alertas activas</h3>
+        <div class="table-wrap"><table><thead><tr><th>Nivel</th><th>ID</th><th>Alerta</th><th>Servicio</th><th>Responsable</th></tr></thead><tbody id="ops-alertas"></tbody></table></div>
+      </div>
+      <output id="resultado-operaciones" class="message"></output>
+    </section>
   </main>
 
   <footer>TFG - Cloud Computing en Microsoft Azure - Karima Drafli Rico</footer>
@@ -351,6 +389,7 @@
         button.classList.add("active");
         $("view-alta").hidden = button.dataset.view !== "alta";
         $("view-gestion").hidden = button.dataset.view !== "gestion";
+        $("view-operaciones").hidden = button.dataset.view !== "operaciones";
       });
     });
 
@@ -429,7 +468,7 @@
         const listUrl = suffix ? `/solicitudes?${suffix}` : "/solicitudes";
         const [list, metrics] = await Promise.all([
           apiRequest(listUrl, { headers: authHeaders() }),
-          apiRequest("/metricas", { headers: authHeaders() }),
+          apiRequest("/operaciones", { headers: authHeaders() }),
         ]);
         renderRows(list.resultados);
         $("m-total").textContent = metrics.total_solicitudes;
@@ -562,6 +601,80 @@
         showMessage($("resultado-gestion"), `${state.selectedId} escalada correctamente.`, "success");
       } catch (error) {
         showMessage($("resultado-gestion"), error.message, "error");
+      }
+    });
+
+    function renderCountTable(body, values) {
+      body.replaceChildren();
+      const entries = Object.entries(values).sort((left, right) => right[1] - left[1]);
+      entries.forEach(([name, count]) => {
+        const row = body.insertRow();
+        row.insertCell().textContent = name;
+        row.insertCell().textContent = count;
+      });
+      if (!entries.length) {
+        const row = body.insertRow();
+        const cell = row.insertCell();
+        cell.colSpan = 2;
+        cell.textContent = "Sin datos operativos.";
+      }
+    }
+
+    async function loadOperations() {
+      const output = $("resultado-operaciones");
+      state.token = $("ops-api-key").value.trim() || state.token;
+      if (!state.token) {
+        showMessage(output, "Introduce el token del equipo TI.", "error");
+        return;
+      }
+      try {
+        const data = await apiRequest("/operaciones", { headers: authHeaders() });
+        $("o-aprobaciones").textContent = data.aprobaciones.pendientes;
+        $("o-escaladas").textContent = data.escaladas;
+        $("o-criticas").textContent = data.por_impacto.critico;
+        $("o-tiempo").textContent = `${data.tiempo_medio_resolucion_horas} h`;
+        renderCountTable($("ops-responsables"), data.por_responsable);
+        renderCountTable($("ops-servicios"), data.por_servicio);
+        const alerts = $("ops-alertas");
+        alerts.replaceChildren();
+        data.alertas.forEach((alert) => {
+          const row = alerts.insertRow();
+          row.insertCell().textContent = alert.nivel;
+          row.insertCell().textContent = alert.id;
+          row.insertCell().textContent = alert.tipo.replaceAll("_", " ");
+          row.insertCell().textContent = alert.servicio;
+          row.insertCell().textContent = alert.responsable;
+        });
+        if (!data.alertas.length) {
+          const row = alerts.insertRow();
+          const cell = row.insertCell();
+          cell.colSpan = 5;
+          cell.textContent = "No hay alertas activas.";
+        }
+        $("ops-metrics").hidden = false;
+        output.style.display = "none";
+      } catch (error) {
+        showMessage(output, error.message, "error");
+      }
+    }
+
+    $("cargar-operaciones").addEventListener("click", loadOperations);
+    $("exportar-csv").addEventListener("click", async () => {
+      state.token = $("ops-api-key").value.trim() || state.token;
+      if (!state.token) {
+        showMessage($("resultado-operaciones"), "Introduce el token del equipo TI.", "error");
+        return;
+      }
+      try {
+        const response = await fetch("/informes/solicitudes.csv", { headers: authHeaders() });
+        if (!response.ok) throw new Error("No se pudo generar el informe CSV.");
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(await response.blob());
+        link.download = "solicitudes-ti.csv";
+        link.click();
+        URL.revokeObjectURL(link.href);
+      } catch (error) {
+        showMessage($("resultado-operaciones"), error.message, "error");
       }
     });
   </script>

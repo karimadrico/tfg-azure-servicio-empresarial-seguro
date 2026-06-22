@@ -6,11 +6,12 @@ from functools import wraps
 from pathlib import Path
 from typing import Any, Callable
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, Response, jsonify, request, send_from_directory
 
 from catalog import catalog_as_list, default_selection, resolve_service_context
 from classifier import VALID_TIPOS, classify_solicitud
 from config import Config
+from operations import build_csv_report, build_operational_summary
 from request_workflow import (
     apply_approval_decision,
     apply_escalation,
@@ -342,12 +343,17 @@ def update_solicitud(solicitud_id: str) -> Any:
         message, status = validation_error
         return jsonify({"error": message}), status
 
+    previous_state = solicitud["estado"]
     changes = _apply_update_values(solicitud, values or {})
     if not changes:
         return jsonify({"error": "No se han indicado cambios"}), 400
 
     updated_at = _utc_now()
     solicitud["fecha_actualizacion"] = updated_at
+    if solicitud["estado"] == "cerrada" and previous_state != "cerrada":
+        solicitud["fecha_cierre"] = updated_at
+    elif previous_state == "cerrada" and solicitud["estado"] != "cerrada":
+        solicitud["fecha_cierre"] = None
     solicitud.setdefault("historial", []).append(
         {
             "fecha": updated_at,
@@ -521,6 +527,24 @@ def metricas() -> Any:
             "sla": sla,
             "timestamp": _utc_now(),
         }
+    )
+
+
+@app.get("/operaciones")
+@require_auth
+def operations_center() -> Any:
+    summary = build_operational_summary(storage.load())
+    summary["timestamp"] = _utc_now()
+    return jsonify(summary)
+
+
+@app.get("/informes/solicitudes.csv")
+@require_auth
+def export_requests_csv() -> Response:
+    return Response(
+        build_csv_report(storage.load()),
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=solicitudes-ti.csv"},
     )
 
 

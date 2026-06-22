@@ -346,6 +346,58 @@ class ApiTests(unittest.TestCase):
 
         self.assertEqual(api_app.storage.load(), expected)
 
+    def test_operations_center_reports_workload_alerts_and_resolution(self) -> None:
+        pending = self.client.post(
+            "/solicitudes",
+            json={
+                "tipo_solicitud": "acceso",
+                "titulo": "Acceso financiero pendiente",
+                "descripcion": "Acceso requerido para el entorno financiero de produccion",
+                "reportado_por": "control@empresa.com",
+                "servicio_id": "aplicacion-finanzas",
+                "activo_id": "api-finanzas",
+                "entorno": "produccion",
+            },
+        ).get_json()
+        regular = self.client.post(
+            "/solicitudes",
+            json={
+                "titulo": "Consulta operativa",
+                "descripcion": "Consulta general para probar el centro operativo",
+                "reportado_por": "soporte@empresa.com",
+            },
+        ).get_json()
+        self.client.patch(f"/solicitudes/{regular['id']}", json={"estado": "cerrada"})
+
+        response = self.client.get("/operaciones")
+        self.assertEqual(response.status_code, 200)
+        summary = response.get_json()
+        self.assertEqual(summary["total_solicitudes"], 2)
+        self.assertEqual(summary["aprobaciones"]["pendientes"], 1)
+        self.assertEqual(summary["por_impacto"]["critico"], 1)
+        self.assertGreaterEqual(len(summary["alertas"]), 2)
+        self.assertIn(pending["asignado_a"], summary["por_responsable"])
+        self.assertGreaterEqual(summary["tiempo_medio_resolucion_horas"], 0)
+
+    def test_csv_report_is_protected_and_prevents_formula_injection(self) -> None:
+        api_app.config.API_KEY = "token-pruebas"
+        self.client.post(
+            "/solicitudes",
+            json={
+                "titulo": "=SUM(1+1)",
+                "descripcion": "Contenido usado para validar una exportacion segura",
+                "reportado_por": "informe@empresa.com",
+            },
+        )
+        self.assertEqual(self.client.get("/informes/solicitudes.csv").status_code, 401)
+        response = self.client.get(
+            "/informes/solicitudes.csv",
+            headers={"Authorization": "Bearer token-pruebas"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("text/csv", response.content_type)
+        self.assertIn(b"'=SUM(1+1)", response.data)
+
 
 class ClassifierTests(unittest.TestCase):
     def test_security_classification(self) -> None:
