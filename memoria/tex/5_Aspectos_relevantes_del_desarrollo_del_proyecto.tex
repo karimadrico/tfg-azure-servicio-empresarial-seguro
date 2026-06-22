@@ -171,7 +171,7 @@ El despliegue reproducible se concentra en \texttt{scripts/deploy-azure.ps1}. El
 
 La Logic App actúa como capa de orquestación para integrar la plataforma con otros sistemas de la empresa. En el prototipo, un sistema externo puede enviar una petición HTTP a la Logic App y esta invoca de forma controlada el endpoint \texttt{POST /solicitudes} de la API desplegada en App Service. La API conserva la responsabilidad de validar datos, clasificar la solicitud, generar la recomendación y persistir el registro en Azure Blob Storage.
 
-Este flujo resulta útil para un escenario empresarial realista: un formulario corporativo, una herramienta de soporte, un buzón automatizado o un sistema de atención interna podrían crear solicitudes sin acceder manualmente al portal. La Logic App no sustituye al equipo de TI ni al backend, sino que automatiza la entrada de trabajo. La asignación, el seguimiento y el cierre se realizan en la bandeja operativa del portal.
+Este flujo resulta útil para un escenario empresarial realista: un formulario corporativo, una herramienta de soporte, un buzón automatizado o un sistema de atención interna podrían crear solicitudes sin acceder manualmente al portal. La Logic App no sustituye al equipo de TI ni al backend, sino que automatiza la entrada de trabajo. Si la API determina que el servicio, el activo y el entorno requieren aprobación, el flujo registra la notificación al aprobador y la solicitud permanece bloqueada hasta recibir una decisión. La asignación, el escalado, el seguimiento y el cierre se realizan en la bandeja operativa del portal.
 \section{Seguridad y gestión de secretos}
 
 La autenticación de la API utiliza un token Bearer almacenado en Azure Key Vault. La App Service accede al secreto mediante Managed Identity, evitando credenciales embebidas en el código fuente. El almacenamiento de solicitudes reside en un contenedor Blob con acceso privado.
@@ -203,9 +203,9 @@ La información utilizada en las evidencias es ficticia. Aun así, una explotaci
 
 \section{Validación del prototipo}
 
-La validación se organizó en tres capas. La primera ejecuta catorce pruebas automáticas con almacenamiento temporal local; permite repetir casos sin modificar los datos desplegados. La segunda utiliza \texttt{verify-azure.ps1} contra la URL pública y comprueba el recorrido real por App Service, Key Vault y Blob Storage. La tercera conserva capturas del portal, Logic App, Azure Portal, Application Insights, Zube y SonarCloud para relacionar el resultado técnico con los recursos observados.
+La validación se organizó en tres capas. La primera ejecuta veintiuna pruebas automáticas con almacenamiento temporal local y dobles de prueba para Azure; permite repetir casos sin modificar los datos desplegados. La segunda utiliza \texttt{verify-azure.ps1} y pruebas HTTP contra la URL pública para comprobar el recorrido real por App Service, Key Vault, Blob Storage y Logic Apps. La tercera conserva capturas del portal, Azure Portal, Application Insights, Zube y SonarCloud para relacionar el resultado técnico con los recursos observados.
 
-Las pruebas automáticas cubren creación, consulta, autenticación, validaciones de entrada, filtros, paginación, ciclo de vida, historial, persistencia local, métricas y reglas de clasificación. Se incluyen caminos negativos: token incorrecto, campos vacíos, correo no válido, prioridad desconocida, paginación fuera de rango, transición no permitida e identificador inexistente. Probar únicamente respuestas correctas habría dejado sin verificar buena parte de las decisiones de seguridad y consistencia.
+Las pruebas automáticas cubren creación, consulta, autenticación, validaciones de entrada, filtros, paginación, ciclo de vida, historial, persistencia, métricas y reglas de clasificación. La ampliación añade catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV y consistencia entre procesos de App Service. Se incluyen caminos negativos: token incorrecto, campos vacíos, correo no válido, prioridad desconocida, paginación fuera de rango, transición no permitida e identificador inexistente.
 
 \begin{table}[ht]
 \centering
@@ -213,10 +213,10 @@ Las pruebas automáticas cubren creación, consulta, autenticación, validacione
 \begin{tabularx}{\textwidth}{l X X}
 \textbf{Nivel} & \textbf{Comprobación} & \textbf{Resultado observado} \\
 \hline
-Unidad e integración local & Catorce pruebas sobre API, almacenamiento y clasificador. & Todas finalizan correctamente con datos temporales. \\
+Unidad e integración local & Veintiuna pruebas sobre API, almacenamiento, flujos y clasificador. & Todas finalizan correctamente con datos temporales. \\
 Despliegue público & Página raíz, portal y \texttt{/health}. & Servicio accesible por HTTPS y almacenamiento en modo Azure. \\
-Proceso empresarial & Alta, listado, detalle, actualización, historial y métricas. & Solicitud persistida y gestionada con identificador estable. \\
-Automatización & Trigger HTTP de Logic App hacia \texttt{POST /solicitudes}. & Ejecución correcta y respuesta de solicitud creada. \\
+Proceso empresarial & Catálogo, alta, impacto, aprobación, escalado, SLA e informe CSV. & Solicitud persistida y gestionada con trazabilidad completa. \\
+Flujo externo & Trigger HTTP de Logic App, alta en API y notificación de aprobación. & Ejecución correcta y respuesta de solicitud creada. \\
 Seguridad & Token Bearer, Key Vault, Managed Identity y blob privado. & Consultas protegidas y secreto fuera del repositorio. \\
 Observabilidad & Application Insights, Azure Monitor y endpoint de salud. & Telemetría y métricas disponibles para inspección. \\
 Calidad estática & Revisión del repositorio en SonarCloud. & Duplicación nula y análisis externo documentado. \\

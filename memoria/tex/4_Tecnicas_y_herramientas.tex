@@ -19,7 +19,7 @@ La selección tecnológica se realizó atendiendo al alcance, al tipo de carga y
 \begin{table}[ht]
 \centering
 \scriptsize
-\begin{tabularx}{\textwidth}{p{2.6cm} p{2.7cm} X X}
+\begin{tabularx}{\textwidth}{p{3cm} p{2.3cm} X X}
 \textbf{Necesidad} & \textbf{Elección} & \textbf{Alternativa considerada} & \textbf{Justificación en el proyecto} \\
 \hline
 API y portal web & Flask & Django & Django aporta ORM, administración y una estructura extensa, útiles en aplicaciones con dominio relacional complejo. Flask reduce componentes no utilizados y permite concentrar el prototipo en API, reglas de negocio e integración con Azure \cite{django_overview}. \\
@@ -88,7 +88,9 @@ SonarCloud & Análisis de calidad del código. & Métricas externas de mantenibi
 
 \section{Automatización del despliegue}
 
-El despliegue se automatiza mediante el script \texttt{scripts/deploy-azure.ps1}, que utiliza Azure CLI para configurar App Service, Storage, Key Vault, Managed Identity y publicación ZIP de la aplicación. Esta decisión permite reproducir el despliegue desde un equipo local y documentar de forma explícita cada paso técnico aplicado sobre Azure.
+\begin{sloppypar}
+El despliegue se automatiza mediante el script \path{scripts/deploy-azure.ps1}, que utiliza Azure CLI para configurar App Service, Storage, Key Vault, Managed Identity y publicación ZIP de la aplicación. Esta decisión permite reproducir el despliegue desde un equipo local y documentar de forma explícita cada paso técnico aplicado sobre Azure.
+\end{sloppypar}
 
 El script automatiza:
 
