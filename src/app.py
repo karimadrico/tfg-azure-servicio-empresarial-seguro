@@ -37,6 +37,7 @@ TRANSICIONES_ESTADO = {
 SLA_HORAS = {"alta": 4, "media": 24, "baja": 72}
 UTC_OFFSET = "+00:00"
 PRIORIDAD_INVALIDA = "Prioridad inválida"
+SOLICITUD_NO_ENCONTRADA = "Solicitud no encontrada"
 
 
 @app.after_request
@@ -128,6 +129,16 @@ def require_auth(handler: Callable[..., Any]) -> Callable[..., Any]:
     return wrapper
 
 
+def _validate_required_fields(titulo: str, descripcion: str, reportado_por: str) -> str | None:
+    if not titulo or len(titulo) > 200:
+        return "El título es obligatorio (1-200 caracteres)"
+    if len(descripcion) < 10 or len(descripcion) > 2000:
+        return "La descripción debe tener entre 10 y 2000 caracteres"
+    if not _is_valid_email(reportado_por):
+        return "reportado_por debe ser un email válido"
+    return None
+
+
 def _validate_solicitud_payload(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
     titulo = (payload.get("titulo") or "").strip()
     descripcion = (payload.get("descripcion") or "").strip()
@@ -140,12 +151,9 @@ def _validate_solicitud_payload(payload: dict[str, Any]) -> tuple[dict[str, Any]
     asset_id = (payload.get("activo_id") or default_asset).strip()
     environment = (payload.get("entorno") or default_environment).strip()
 
-    if not titulo or len(titulo) > 200:
-        return None, "El título es obligatorio (1-200 caracteres)"
-    if len(descripcion) < 10 or len(descripcion) > 2000:
-        return None, "La descripción debe tener entre 10 y 2000 caracteres"
-    if not _is_valid_email(reportado_por):
-        return None, "reportado_por debe ser un email válido"
+    required_error = _validate_required_fields(titulo, descripcion, reportado_por)
+    if required_error:
+        return None, required_error
     if prioridad_manual and prioridad_manual not in VALID_PRIORIDADES:
         return None, PRIORIDAD_INVALIDA
     if tipo_solicitud not in VALID_TIPOS:
@@ -265,7 +273,7 @@ def create_solicitud() -> Any:
 def get_solicitud(solicitud_id: str) -> Any:
     solicitud = _find_solicitud(storage.load(), solicitud_id)
     if solicitud is None:
-        return jsonify({"error": "Solicitud no encontrada"}), 404
+        return jsonify({"error": SOLICITUD_NO_ENCONTRADA}), 404
     return jsonify(solicitud)
 
 
@@ -336,7 +344,7 @@ def update_solicitud(solicitud_id: str) -> Any:
     incidencias = storage.load()
     solicitud = _find_solicitud(incidencias, solicitud_id)
     if solicitud is None:
-        return jsonify({"error": "Solicitud no encontrada"}), 404
+        return jsonify({"error": SOLICITUD_NO_ENCONTRADA}), 404
 
     values, validation_error = _validate_update_payload(payload, solicitud)
     if validation_error:
@@ -377,7 +385,7 @@ def decide_approval(solicitud_id: str) -> Any:
     payload = request.get_json(silent=True) or {}
     records, solicitud = _workflow_record(solicitud_id)
     if solicitud is None:
-        return jsonify({"error": "Solicitud no encontrada"}), 404
+        return jsonify({"error": SOLICITUD_NO_ENCONTRADA}), 404
 
     decided_at = _utc_now()
     _, error = apply_approval_decision(
@@ -402,7 +410,7 @@ def escalate_solicitud(solicitud_id: str) -> Any:
     payload = request.get_json(silent=True) or {}
     records, solicitud = _workflow_record(solicitud_id)
     if solicitud is None:
-        return jsonify({"error": "Solicitud no encontrada"}), 404
+        return jsonify({"error": SOLICITUD_NO_ENCONTRADA}), 404
 
     escalated_at = _utc_now()
     _, error = apply_escalation(
@@ -423,7 +431,7 @@ def escalate_solicitud(solicitud_id: str) -> Any:
 def notify_approval(solicitud_id: str) -> Any:
     records, solicitud = _workflow_record(solicitud_id)
     if solicitud is None:
-        return jsonify({"error": "Solicitud no encontrada"}), 404
+        return jsonify({"error": SOLICITUD_NO_ENCONTRADA}), 404
 
     error = mark_approval_notification(solicitud, "logic_app", _utc_now())
     if error:
