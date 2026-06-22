@@ -88,10 +88,23 @@ try {
 
     try {
         Write-Host "Publicando analisis y cobertura en SonarQube Cloud..." -ForegroundColor Cyan
-        & $ScannerExecutable
-        $scannerSucceeded = $?
-        if (-not $scannerSucceeded) {
-            throw "SonarScanner no ha finalizado correctamente."
+        $scannerWork = Join-Path $RepoRoot ".scannerwork"
+        if (Test-Path $scannerWork) {
+            Remove-Item -LiteralPath $scannerWork -Recurse -Force
+        }
+
+        $scannerProcess = Start-Process `
+            -FilePath "cmd.exe" `
+            -ArgumentList @("/d", "/c", "`"$ScannerExecutable`"") `
+            -WorkingDirectory $RepoRoot `
+            -NoNewWindow `
+            -Wait `
+            -PassThru
+        if ($scannerProcess.ExitCode -ne 0) {
+            throw "SonarScanner finalizo con codigo $($scannerProcess.ExitCode)."
+        }
+        if (-not (Test-Path (Join-Path $scannerWork "report-task.txt"))) {
+            throw "SonarScanner termino sin generar el comprobante de subida."
         }
     }
     finally {
