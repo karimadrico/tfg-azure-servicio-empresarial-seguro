@@ -79,7 +79,6 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
             secureData: {
               properties: [
                 'inputs'
-                'outputs'
               ]
             }
           }
@@ -113,7 +112,6 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
                 secureData: {
                   properties: [
                     'inputs'
-                    'outputs'
                   ]
                 }
               }
@@ -141,6 +139,13 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
                       aprobador: '@{body(\'crear_solicitud\')?[\'aprobador\']}'
                     }
                   }
+                  runtimeConfiguration: {
+                    secureData: {
+                      properties: [
+                        'inputs'
+                      ]
+                    }
+                  }
                 }
               }
               else: {
@@ -152,6 +157,8 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
               runAfter: {
                 notificar_si_requiere_aprobacion: [
                   'Succeeded'
+                  'Failed'
+                  'TimedOut'
                 ]
               }
               inputs: {
@@ -162,18 +169,9 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
                 secureData: {
                   properties: [
                     'inputs'
-                    'outputs'
                   ]
                 }
               }
-            }
-          }
-          runtimeConfiguration: {
-            secureData: {
-              properties: [
-                'inputs'
-                'outputs'
-              ]
             }
           }
         }
@@ -192,25 +190,16 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
                 statusCode: 502
                 body: {
                   error: 'No se pudo registrar la solicitud en la API.'
-                  detalle: '@result(\'intentar_crear_solicitud\')'
+                  detalle: 'Consulte el historial de ejecucion para diagnosticar el error.'
                 }
               }
               runtimeConfiguration: {
                 secureData: {
                   properties: [
                     'inputs'
-                    'outputs'
                   ]
                 }
               }
-            }
-          }
-          runtimeConfiguration: {
-            secureData: {
-              properties: [
-                'inputs'
-                'outputs'
-              ]
             }
           }
         }

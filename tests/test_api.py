@@ -4,6 +4,8 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -345,6 +347,21 @@ class ApiTests(unittest.TestCase):
         api_app.storage._incidencias = None
 
         self.assertEqual(api_app.storage.load(), expected)
+
+    def test_azure_storage_refreshes_data_on_each_load(self) -> None:
+        config = SimpleNamespace(
+            STORAGE_MODE="azure",
+            AZURE_STORAGE_CONNECTION_STRING="UseDevelopmentStorage=true",
+        )
+        storage = api_app.IncidenciaStorage(config)
+        first = [{"id": "SOL-001"}]
+        updated = [*first, {"id": "SOL-002"}]
+
+        with patch.object(storage, "_load_from_azure", side_effect=[first, updated]) as loader:
+            self.assertEqual(storage.load(), first)
+            self.assertEqual(storage.load(), updated)
+
+        self.assertEqual(loader.call_count, 2)
 
     def test_operations_center_reports_workload_alerts_and_resolution(self) -> None:
         pending = self.client.post(

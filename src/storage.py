@@ -14,13 +14,14 @@ class IncidenciaStorage:
         self._incidencias: list[dict[str, Any]] | None = None
 
     def load(self) -> list[dict[str, Any]]:
+        if self.config.STORAGE_MODE == "azure" and self.config.AZURE_STORAGE_CONNECTION_STRING:
+            self._incidencias = self._load_from_azure()
+            return self._incidencias
+
         if self._incidencias is not None:
             return self._incidencias
 
-        if self.config.STORAGE_MODE == "azure" and self.config.AZURE_STORAGE_CONNECTION_STRING:
-            self._incidencias = self._load_from_azure()
-        else:
-            self._incidencias = self._load_from_local()
+        self._incidencias = self._load_from_local()
 
         return self._incidencias
 
