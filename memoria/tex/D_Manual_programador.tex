@@ -128,7 +128,7 @@ El proyecto utiliza SonarCloud como servicio gestionado de SonarQube:
     \item \texttt{docs/calidad/sonarcloud.md}: documenta el resultado observado y las evidencias que deben guardarse.
 \end{itemize}
 
-Como evidencia se conserva una captura del análisis del 22 de junio, posterior a la ampliación funcional. El Quality Gate está aprobado y las calificaciones de seguridad, fiabilidad y mantenibilidad son A, sin issues abiertos ni hotspots pendientes. La configuración fija Python 3.11 y la versión del proveedor Azure de Terraform para evitar análisis ambiguos.
+Como evidencia se conserva una captura del análisis del 22 de junio. Tras incorporar la ampliación funcional, el análisis automático mantiene cero errores de fiabilidad, cero 	extit{hotspots} y duplicación nula, pero requiere revisar cuatro alertas limitadas a los contenedores 	exttt{Scope} y las acciones 	exttt{Response} de Logic Apps. Sonar solicita propiedades 	exttt{secureData} que Azure rechaza en esos elementos durante el despliegue; las acciones HTTP internas sí protegen entradas y salidas. Estas excepciones deben quedar aceptadas con su justificación técnica antes de obtener la captura definitiva del 	extit{Quality Gate}. La configuración fija Python 3.11 y la versión 3.100.0 del proveedor Azure de Terraform para evitar análisis ambiguos.
 
 
 \begin{figure}[h]
