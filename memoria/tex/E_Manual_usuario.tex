@@ -77,15 +77,15 @@ La respuesta indica si el servicio está operativo y si utiliza almacenamiento l
 
 \subsection{Crear solicitud desde el portal}
 
-El usuario puede abrir el portal web, seleccionar el tipo de solicitud, introducir título, descripción y correo del solicitante, y enviar el formulario. La API devolverá un identificador, prioridad, clasificación y recomendación operativa.
+El usuario puede abrir el portal web, seleccionar el tipo de solicitud, el servicio empresarial, el activo afectado y el entorno, introducir título, descripción y correo del solicitante, y enviar el formulario. La API devuelve un identificador, prioridad, clasificación, impacto y recomendación operativa. El catálogo evita escribir nombres libres y permite relacionar cada petición con un responsable técnico.
 
-La figura \ref{fig:portal-solicitud-registrada} muestra el resultado de una ejecución real. La solicitud crítica se registró como \texttt{SOL-007}, recibió prioridad alta y quedó asignada inicialmente al equipo cloud.
+Cuando el servicio y el entorno tienen una criticidad elevada, la respuesta informa del impacto calculado y del aprobador responsable, como se observa en la figura \ref{fig:portal-solicitud-impacto}.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.95\textwidth]{../docs/evidencias/solicitud-portal-registrada.png}
-\caption{Solicitud registrada correctamente desde el portal desplegado. Fuente: captura propia.}
-\label{fig:portal-solicitud-registrada}
+\includegraphics[width=0.95\textwidth]{portal-solicitud-impacto.png}
+\caption{Solicitud registrada con impacto crítico y aprobación requerida. Fuente: captura propia.}
+\label{fig:portal-solicitud-impacto}
 \end{figure}
 
 \subsection{Gestionar solicitudes desde el portal}
@@ -94,14 +94,28 @@ El equipo TI selecciona la pestaña \textit{Gestión del equipo TI}, introduce e
 
 Al seleccionar una fila se abre el detalle con solicitante, descripción, clasificación, recomendación y fecha objetivo. El operador puede cambiar el estado, la prioridad o el responsable y añadir una nota. Cada actuación queda incorporada al historial; el token se mantiene únicamente en memoria durante la sesión del navegador y no se guarda en almacenamiento local.
 
-La figura \ref{fig:portal-gestion-ti} evidencia el acceso autenticado a la bandeja. El token aparece oculto, se muestran las métricas operativas y el filtro permite localizar la incidencia crítica creada previamente sin exponer la credencial.
+\subsection{Aprobar o escalar una solicitud sensible}
+
+Las solicitudes sensibles permanecen en estado \texttt{pendiente\_aprobacion} hasta que el responsable indicado toma una decisión. El equipo TI comprueba servicio, activo, entorno e impacto y utiliza los botones \textit{Aprobar} o \textit{Rechazar}. También puede escalar el caso si aumenta su impacto o se acerca el vencimiento del SLA. La decisión conserva actor, fecha y motivo en el historial, como muestra la figura \ref{fig:portal-aprobacion-registrada}.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.95\textwidth]{../docs/evidencias/solicitud-portal-gestionTI-tokenkeyvault.png}
-\caption{Bandeja de gestión del equipo TI con métricas y solicitud prioritaria. Fuente: captura propia.}
-\label{fig:portal-gestion-ti}
+\includegraphics[width=0.95\textwidth]{portal-escalado-solicitud-aprobada.png}
+\caption{Aprobación registrada con trazabilidad de la decisión. Fuente: captura propia.}
+\label{fig:portal-aprobacion-registrada}
 \end{figure}
+
+\subsection{Supervisar SLA y exportar el informe}
+
+La pestaña \textit{Centro operativo} reúne aprobaciones pendientes, solicitudes escaladas, casos de impacto crítico, tiempo medio de resolución, carga por responsable y alertas activas. El botón \textit{Exportar CSV} descarga el inventario operativo para su revisión externa sin modificar los datos almacenados. La figura \ref{fig:portal-centro-operativo-sla} muestra esta vista consolidada.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{portal-centro-operativo-sla.png}
+\caption{Centro operativo con carga de equipos y alertas de SLA. Fuente: captura propia.}
+\label{fig:portal-centro-operativo-sla}
+\end{figure}
+\FloatBarrier
 
 \subsection{Crear solicitud desde API}
 
@@ -114,7 +128,10 @@ Content-Type: application/json
   "titulo": "Acceso VPN",
   "descripcion": "Necesito acceso VPN al entorno cloud",
   "reportado_por": "usuario@empresa.com",
-  "prioridad": "media"
+  "prioridad": "media",
+  "servicio_id": "vpn",
+  "activo_id": "gateway-vpn",
+  "entorno": "produccion"
 }
 \end{verbatim}
 
@@ -123,8 +140,10 @@ El sistema clasificará automáticamente la solicitud y devolverá prioridad, ca
 \subsection{Consultar solicitudes}
 
 \begin{verbatim}
-GET /solicitudes?estado=abierta&prioridad=alta&tipo_solicitud=acceso
+GET /solicitudes
 Authorization: Bearer <token>
+Filtros: estado=abierta, prioridad=alta,
+         tipo_solicitud=acceso
 \end{verbatim}
 
 Si se accede a esta URL directamente desde el navegador sin cabecera de autorización, la API responde \texttt{\{"error":"No autenticado"\}}, que es el comportamiento esperado para proteger el listado.
@@ -142,4 +161,8 @@ La respuesta incluye agregados por estado, prioridad y tipo, además de solicitu
 La Logic App permite automatizar la entrada de solicitudes desde un sistema externo. El usuario o sistema integrador envía un JSON al trigger HTTP de la Logic App y el flujo invoca internamente \texttt{POST /solicitudes}. La respuesta final mantiene el mismo formato que la API, incluyendo identificador, prioridad, clasificación y recomendación.
 
 Esta opción está pensada para integraciones empresariales, por ejemplo formularios internos, herramientas de soporte o procesos automáticos que necesiten registrar una solicitud sin acceder manualmente al portal.
+
+Si la solicitud creada requiere aprobación, el mismo flujo registra una notificación para el responsable correspondiente antes de responder al sistema llamante. La gestión continúa en la bandeja TI; la Logic App no sustituye al portal, sino que ofrece un canal automático de entrada y evita duplicar las reglas de validación, clasificación y persistencia de la API.
+
+La URL del trigger contiene una firma de acceso y se obtiene desde Azure Portal únicamente al configurar la integración; no se guarda en el repositorio ni se presenta completa en las evidencias. El diseño conceptual del flujo se recoge en el anexo de diseño y la ejecución real se conserva en \texttt{docs/evidencias/}.
 

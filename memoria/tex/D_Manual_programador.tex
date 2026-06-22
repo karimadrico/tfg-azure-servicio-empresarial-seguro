@@ -88,7 +88,7 @@ La figura \ref{fig:despliegue-azure} resume el proceso de despliegue y verificac
 python -m unittest discover -s tests -p "test_*.py"
 \end{verbatim}
 
-La batería contiene catorce pruebas que verifican endpoints, autenticación, creación, consulta y actualización de solicitudes, persistencia local, historial, transiciones inválidas, filtros, paginación, portal, métricas con SLA y clasificación automática. Los escenarios del clasificador incluyen entradas representativas de seguridad, infraestructura, soporte y categoría general.
+La batería contiene veintiuna pruebas que verifican endpoints, autenticación, creación, consulta y actualización de solicitudes, persistencia, historial, transiciones inválidas, filtros, paginación, portal, clasificación y métricas con SLA. También cubre catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV y refresco de Blob Storage entre procesos de App Service.
 
 La tabla \ref{tabla:pruebas_realizadas} resume las pruebas principales aplicadas durante la validación del prototipo.
 
@@ -103,6 +103,10 @@ Creación de solicitud & Validar entrada, clasificación y persistencia. & Respu
 Portal web & Verificar acceso a la interfaz de usuario. & HTML del portal cargado correctamente. \\
 Métricas & Comprobar agregación de solicitudes. & Totales por estado, prioridad y tipo. \\
 Gestión de solicitud & Validar asignación, estado, prioridad e historial. & Actualización persistida y trazable. \\
+Catálogo e impacto & Relacionar servicio, activo y entorno con una solicitud. & Propietario e impacto calculados de forma coherente. \\
+Aprobación y escalado & Comprobar el flujo de decisiones sensibles. & Estado, aprobador, nivel de escalado e historial actualizados. \\
+Centro operativo y CSV & Validar carga, alertas y exportación. & Agregados correctos e informe descargable sin fórmulas ejecutables. \\
+Consistencia Azure & Simular lecturas sucesivas desde Blob Storage. & Cada proceso obtiene la versión más reciente de los datos. \\
 Validaciones de gestión & Rechazar estados desconocidos y recursos inexistentes. & Respuestas 400 y 404 según el caso. \\
 Clasificación de seguridad & Validar detección de incidencias críticas. & Categoría seguridad y prioridad alta. \\
 Escenarios de reglas & Ejecutar cuatro entradas con coincidencias y valores de respaldo. & Tipo, categoría y prioridad coinciden con las reglas documentadas. \\
@@ -113,22 +117,23 @@ SonarCloud & Revisar calidad externa del código. & Quality Gate aprobado y dupl
 \caption{Pruebas realizadas sobre el prototipo}
 \label{tabla:pruebas_realizadas}
 \end{table}
+\FloatBarrier
 
 \section{Análisis de calidad}
 
 El proyecto utiliza SonarCloud como servicio gestionado de SonarQube:
 
 \begin{itemize}
-    \item Panel del proyecto: \url{https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro}.
+    \item \href{https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro}{Panel público del proyecto en SonarCloud}.
     \item \texttt{docs/calidad/sonarcloud.md}: documenta el resultado observado y las evidencias que deben guardarse.
 \end{itemize}
 
-Como evidencia se conserva una captura del análisis final del 20 de junio. El Quality Gate está aprobado y las calificaciones de seguridad, fiabilidad y mantenibilidad son A, sin issues abiertos ni hotspots pendientes. La configuración fija Python 3.11 y la versión del proveedor Azure de Terraform para evitar análisis ambiguos.
+Como evidencia se conserva una captura del análisis del 22 de junio, posterior a la ampliación funcional. El Quality Gate está aprobado y las calificaciones de seguridad, fiabilidad y mantenibilidad son A, sin issues abiertos ni hotspots pendientes. La configuración fija Python 3.11 y la versión del proveedor Azure de Terraform para evitar análisis ambiguos.
 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{../docs/evidencias/sonarcloud-quality-gate-final20junio-v2.png}
+\includegraphics[width=0.9\textwidth]{sonarcloud-quality-gate-final-22junio.png}
 \caption{Análisis final de SonarCloud: Quality Gate aprobado y cero issues abiertos. Fuente: captura propia.}
 \label{fig:sonarcloud-quality-gate-final}
 \end{figure}
@@ -155,6 +160,7 @@ Las figuras \ref{fig:application-insights-overview} y \ref{fig:azure-monitor-met
 \caption{Métricas del servicio en Azure Monitor. Fuente: captura propia.}
 \label{fig:azure-monitor-metrics}
 \end{figure}
+\FloatBarrier
 \section{Mantenimiento operativo}
 
 El mantenimiento del prototipo se organiza alrededor de los siguientes puntos:
