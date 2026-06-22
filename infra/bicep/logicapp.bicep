@@ -87,7 +87,7 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
       }
       actions: {
         // Azure no admite secureData en Scope; las acciones HTTP internas protegen entradas y salidas.
-        intentar_crear_solicitud: { // NOSONAR
+        intentar_crear_solicitud: { //NOSONAR
           type: 'Scope'
           actions: {
             crear_solicitud: {
@@ -185,7 +185,7 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
           }
         }
         // Este Scope no contiene datos y devuelve un error generico sin resultados internos.
-        capturar_error: { // NOSONAR
+        capturar_error: { //NOSONAR
           type: 'Scope'
           runAfter: {
             intentar_crear_solicitud: [
