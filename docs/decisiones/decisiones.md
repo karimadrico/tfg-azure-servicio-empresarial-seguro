@@ -58,7 +58,7 @@ Consecuencia: las desviaciones de fechas y las tarjetas retiradas se documentan 
 
 ## SonarCloud y pruebas
 
-SonarCloud aporta una revisión externa del repositorio sin mantener una instancia propia de SonarQube. Las siete pruebas unitarias verifican el comportamiento funcional, mientras que SonarCloud revisa seguridad, fiabilidad, mantenibilidad y duplicación.
+SonarCloud aporta una revisión externa del repositorio sin mantener una instancia propia de SonarQube. Las catorce pruebas automáticas verifican el comportamiento funcional, mientras que SonarCloud revisa seguridad, fiabilidad, mantenibilidad y duplicación.
 
 Consecuencia: ninguna de las dos herramientas sustituye a la otra y ambas forman parte de la evidencia de calidad.
 

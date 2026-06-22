@@ -1,6 +1,6 @@
 # SonarCloud / SonarQube Cloud
 
-El proyecto utiliza SonarCloud como herramienta de revision de calidad interna del codigo. El analisis se ejecuta mediante SonarScanner CLI para incorporar el informe de cobertura generado por las pruebas Python.
+El proyecto utiliza SonarCloud como herramienta de revision de calidad interna del codigo. El proyecto esta vinculado al repositorio de GitHub y el analisis se gestiona desde la interfaz web de SonarCloud, sin mantener un escaner local ni un workflow de pago.
 
 ## Enlace del proyecto
 
@@ -18,7 +18,6 @@ https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresa
 | Seguridad | A |
 | Issues de seguridad | 0 |
 | Security Hotspots pendientes | 0 |
-| Cobertura local | 88% sobre el codigo Python incluido |
 
 ## Evidencia para la entrega
 
@@ -31,15 +30,9 @@ Para UBUVirtual y defensa conviene guardar:
 
 ## Interpretacion
 
-SonarCloud aporta una medicion externa de mantenibilidad, fiabilidad, seguridad, duplicidad y cobertura. El analisis supera la puerta de calidad, no presenta issues abiertos ni hotspots pendientes y mantiene la duplicacion en 0,0%. Las catorce pruebas generan un informe XML con un 88% de cobertura local.
+SonarCloud aporta una medicion externa de mantenibilidad, fiabilidad, seguridad y duplicacion. Esta revision se complementa con las catorce pruebas automaticas del repositorio, que se ejecutan localmente antes de publicar cambios relevantes.
 
-## Ejecucion manual
+## Revision desde la web
 
-El analisis se publica sin GitHub Actions para evitar depender de facturacion o runners externos. Desde PowerShell se ejecuta:
-
-```powershell
-.\scripts\run-sonar-coverage.ps1
-```
-
-El script instala las dependencias de desarrollo, ejecuta las pruebas, genera `coverage.xml`, descarga SonarScanner CLI en `.tools/` y solicita el token de SonarQube Cloud de forma oculta. El token solo permanece en memoria durante el analisis.
+El panel se consulta directamente en SonarCloud después de sincronizar los cambios con GitHub. Las pruebas funcionales se ejecutan por separado mediante `unittest`, por lo que el repositorio no depende de GitHub Actions, runners facturables ni instalaciones locales de SonarScanner.
 
