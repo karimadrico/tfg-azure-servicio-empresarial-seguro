@@ -70,7 +70,14 @@ try {
         throw "Las pruebas no han finalizado correctamente."
     }
     & $Python -m coverage report
+    if (-not $?) {
+        throw "No se pudo generar el resumen de cobertura."
+    }
     & $Python -m coverage xml
+    if (-not $? -or -not (Test-Path "coverage.xml")) {
+        throw "No se pudo generar coverage.xml."
+    }
+    Write-Host "Informe generado: $RepoRoot\coverage.xml" -ForegroundColor DarkGray
 
     $previousToken = $env:SONAR_TOKEN
     if (-not $env:SONAR_TOKEN) {
