@@ -54,16 +54,19 @@ Install-SonarScanner
 
 Push-Location $RepoRoot
 try {
+    Write-Host "Python: $Python" -ForegroundColor DarkGray
     Write-Host "Instalando dependencias de pruebas..." -ForegroundColor Cyan
     & $Python -m pip install -r requirements-dev.txt
-    if ($LASTEXITCODE -ne 0) {
+    $pipSucceeded = $?
+    if (-not $pipSucceeded) {
         throw "No se pudieron instalar las dependencias."
     }
 
     Write-Host "Ejecutando 14 pruebas y generando coverage.xml..." -ForegroundColor Cyan
     & $Python -m coverage erase
     & $Python -m coverage run -m unittest discover -s tests -p "test_*.py"
-    if ($LASTEXITCODE -ne 0) {
+    $testsSucceeded = $?
+    if (-not $testsSucceeded) {
         throw "Las pruebas no han finalizado correctamente."
     }
     & $Python -m coverage report
@@ -79,8 +82,9 @@ try {
     try {
         Write-Host "Publicando analisis y cobertura en SonarQube Cloud..." -ForegroundColor Cyan
         & $ScannerExecutable
-        if ($LASTEXITCODE -ne 0) {
-            throw "SonarScanner finalizo con codigo $LASTEXITCODE."
+        $scannerSucceeded = $?
+        if (-not $scannerSucceeded) {
+            throw "SonarScanner no ha finalizado correctamente."
         }
     }
     finally {
