@@ -236,6 +236,8 @@ AzureCLI.msi
 *.ind
 
 .terraform/
+.tools/
+.scannerwork/
 *.tfstate
 *.backup
 *.exe

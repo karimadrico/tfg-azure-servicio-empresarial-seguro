@@ -1,6 +1,6 @@
 # SonarCloud / SonarQube Cloud
 
-El proyecto utiliza SonarCloud como herramienta de revision de calidad interna del codigo. El analisis se realiza desde la interfaz web de SonarCloud conectada al repositorio de GitHub.
+El proyecto utiliza SonarCloud como herramienta de revision de calidad interna del codigo. El analisis se ejecuta mediante SonarScanner CLI para incorporar el informe de cobertura generado por las pruebas Python.
 
 ## Enlace del proyecto
 
@@ -12,13 +12,13 @@ https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresa
 |---------|-----------|
 | Puerta de calidad | Aprobada |
 | Duplicacion | 0,0% |
-| Lineas analizadas | 1,8k aprox. |
+| Lineas analizadas | 2,3k aprox. |
 | Fiabilidad | A |
-| Mantenibilidad | A, con 8 issues abiertos no bloqueantes |
+| Mantenibilidad | A, sin issues abiertos |
 | Seguridad | A |
 | Issues de seguridad | 0 |
 | Security Hotspots pendientes | 0 |
-| Cobertura | No configurada |
+| Cobertura local | 88% sobre el codigo Python incluido |
 
 ## Evidencia para la entrega
 
@@ -31,7 +31,15 @@ Para UBUVirtual y defensa conviene guardar:
 
 ## Interpretacion
 
-SonarCloud aporta una medicion externa de mantenibilidad, fiabilidad, seguridad y duplicidad. El análisis del 20 de junio supera la puerta de calidad, no presenta problemas de seguridad ni fiabilidad y mantiene la duplicación en 0,0%. Los ocho issues abiertos pertenecen a mantenibilidad y no bloquean el Quality Gate. La cobertura permanece sin datos porque todavía no se importa el informe de las pruebas Python.
+SonarCloud aporta una medicion externa de mantenibilidad, fiabilidad, seguridad, duplicidad y cobertura. El analisis supera la puerta de calidad, no presenta issues abiertos ni hotspots pendientes y mantiene la duplicacion en 0,0%. Las catorce pruebas generan un informe XML con un 88% de cobertura local.
 
-Los dos warnings del análisis no corresponden a defectos del código. SonarCloud solicitaba las versiones objetivo de Python y del proveedor Azure de Terraform. El fichero `sonar-project.properties` fija Python 3.11 y `azurerm` 3.100.0; el aviso debería desaparecer después del siguiente análisis del commit que incorpora esta configuración.
+## Ejecucion manual
+
+El analisis se publica sin GitHub Actions para evitar depender de facturacion o runners externos. Desde PowerShell se ejecuta:
+
+```powershell
+.\scripts\run-sonar-coverage.ps1
+```
+
+El script instala las dependencias de desarrollo, ejecuta las pruebas, genera `coverage.xml`, descarga SonarScanner CLI en `.tools/` y solicita el token de SonarQube Cloud de forma oculta. El token solo permanece en memoria durante el analisis.
 
