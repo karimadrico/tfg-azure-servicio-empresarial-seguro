@@ -54,9 +54,17 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
               }
             }
           }
+          runtimeConfiguration: {
+            secureData: {
+              properties: [
+                'inputs'
+                'outputs'
+              ]
+            }
+          }
         }
       }
-      actions: {
+      actions: { // NOSONAR: responder_decision gestiona Succeeded, Failed y TimedOut sin exponer detalles internos.
         actualizar_aprobacion: {
           type: 'Http'
           inputs: {
@@ -72,8 +80,16 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
               comentario: '@{coalesce(triggerBody()?[\'comentario\'], \'\')}'
             }
           }
+          runtimeConfiguration: {
+            secureData: {
+              properties: [
+                'inputs'
+                'outputs'
+              ]
+            }
+          }
         }
-        responder_decision: {
+        responder_decision: { // NOSONAR: Azure Response admite secure inputs, pero rechaza secure outputs en el despliegue.
           type: 'Response'
           runAfter: {
             actualizar_aprobacion: [
@@ -85,6 +101,13 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
           inputs: {
             statusCode: '@outputs(\'actualizar_aprobacion\')?[\'statusCode\']'
             body: '@body(\'actualizar_aprobacion\')'
+          }
+          runtimeConfiguration: {
+            secureData: {
+              properties: [
+                'inputs'
+              ]
+            }
           }
         }
       }

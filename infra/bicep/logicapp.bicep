@@ -79,13 +79,14 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
             secureData: {
               properties: [
                 'inputs'
+                'outputs'
               ]
             }
           }
         }
       }
       actions: {
-        intentar_crear_solicitud: {
+        intentar_crear_solicitud: { // NOSONAR: los Scope no admiten secureData; las acciones HTTP internas protegen entradas y salidas.
           type: 'Scope'
           actions: {
             crear_solicitud: {
@@ -112,6 +113,7 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
                 secureData: {
                   properties: [
                     'inputs'
+                    'outputs'
                   ]
                 }
               }
@@ -143,13 +145,19 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
                     secureData: {
                       properties: [
                         'inputs'
+                        'outputs'
                       ]
                     }
                   }
                 }
               }
               else: {
-                actions: {}
+                actions: {
+                  continuar_sin_aprobacion: {
+                    type: 'Compose'
+                    inputs: 'La solicitud no requiere aprobacion.'
+                  }
+                }
               }
             }
             responder_cliente: {
@@ -175,7 +183,7 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
             }
           }
         }
-        capturar_error: {
+        capturar_error: { // NOSONAR: el Scope no contiene datos; su respuesta de error es generica y no expone resultados internos.
           type: 'Scope'
           runAfter: {
             intentar_crear_solicitud: [
