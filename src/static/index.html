@@ -114,7 +114,7 @@
     .metric strong { display: block; margin-top: 0.2rem; font-size: 1.45rem; }
     .metric span { color: var(--muted); font-size: 0.8rem; }
     .workspace { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.8fr); gap: 1rem; }
-    .filters { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 0.6rem; margin-bottom: 1rem; align-items: end; }
+    .filters { display: grid; grid-template-columns: repeat(3, minmax(130px, 1fr)); gap: 0.6rem; margin-bottom: 1rem; align-items: end; }
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
     th, td { padding: 0.7rem 0.55rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
@@ -180,6 +180,18 @@
             <label for="email">Solicitante</label>
             <input id="email" name="reportado_por" type="email" required placeholder="usuario@empresa.com">
           </div>
+          <div>
+            <label for="servicio">Servicio empresarial</label>
+            <select id="servicio" name="servicio_id" required></select>
+          </div>
+          <div>
+            <label for="activo">Activo afectado</label>
+            <select id="activo" name="activo_id" required></select>
+          </div>
+          <div>
+            <label for="entorno">Entorno</label>
+            <select id="entorno" name="entorno" required></select>
+          </div>
           <div class="field-wide">
             <label for="titulo">Título</label>
             <input id="titulo" name="titulo" required maxlength="200" placeholder="Acceso VPN para el equipo financiero">
@@ -227,12 +239,20 @@
               <label for="f-tipo">Tipo</label>
               <select id="f-tipo"><option value="">Todos</option><option value="acceso">Acceso</option><option value="entorno">Entorno</option><option value="aplicacion">Aplicación</option><option value="configuracion">Configuración</option><option value="incidencia">Incidencia</option></select>
             </div>
+            <div>
+              <label for="f-servicio">Servicio</label>
+              <select id="f-servicio"><option value="">Todos</option></select>
+            </div>
+            <div>
+              <label for="f-impacto">Impacto</label>
+              <select id="f-impacto"><option value="">Todos</option><option value="critico">Crítico</option><option value="alto">Alto</option><option value="medio">Medio</option><option value="bajo">Bajo</option></select>
+            </div>
             <button id="filtrar" class="secondary" type="button">Aplicar</button>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>ID</th><th>Solicitud</th><th>Prioridad</th><th>Estado</th><th>Responsable</th></tr></thead>
-              <tbody id="solicitudes-body"><tr><td colspan="5">Introduce el token para cargar las solicitudes.</td></tr></tbody>
+              <thead><tr><th>ID</th><th>Solicitud</th><th>Servicio</th><th>Impacto</th><th>Prioridad</th><th>Estado</th><th>Responsable</th></tr></thead>
+              <tbody id="solicitudes-body"><tr><td colspan="7">Introduce el token para cargar las solicitudes.</td></tr></tbody>
             </table>
           </div>
           <output id="resultado-gestion" class="message"></output>
@@ -264,7 +284,7 @@
   <footer>TFG - Cloud Computing en Microsoft Azure - Karima Drafli Rico</footer>
 
   <script>
-    const state = { token: "", selectedId: null };
+    const state = { token: "", selectedId: null, catalog: [] };
     const $ = (id) => document.getElementById(id);
 
     function showMessage(element, text, type = "") {
@@ -283,6 +303,40 @@
       if (!response.ok) throw new Error(data.error || `Error HTTP ${response.status}`);
       return data;
     }
+
+    function fillSelect(select, values, labelKey = "nombre") {
+      select.replaceChildren();
+      values.forEach((value) => {
+        const option = document.createElement("option");
+        option.value = value.id || value;
+        option.textContent = value[labelKey] || value;
+        select.appendChild(option);
+      });
+    }
+
+    function updateServiceSelection() {
+      const service = state.catalog.find((item) => item.id === $("servicio").value);
+      if (!service) return;
+      fillSelect($("activo"), service.activos);
+      fillSelect($("entorno"), service.entornos);
+    }
+
+    async function loadCatalog() {
+      const data = await apiRequest("/catalogo");
+      state.catalog = data.servicios;
+      fillSelect($("servicio"), state.catalog);
+      updateServiceSelection();
+      const filter = $("f-servicio");
+      state.catalog.forEach((service) => {
+        const option = document.createElement("option");
+        option.value = service.id;
+        option.textContent = service.nombre;
+        filter.appendChild(option);
+      });
+    }
+
+    $("servicio").addEventListener("change", updateServiceSelection);
+    loadCatalog().catch((error) => showMessage($("resultado-alta"), error.message, "error"));
 
     document.querySelectorAll(".tab").forEach((button) => {
       button.addEventListener("click", () => {
@@ -307,10 +361,14 @@
             titulo: form.titulo.value.trim(),
             descripcion: form.descripcion.value.trim(),
             reportado_por: form.reportado_por.value.trim(),
+            servicio_id: form.servicio_id.value,
+            activo_id: form.activo_id.value,
+            entorno: form.entorno.value,
           }),
         });
         showMessage(output, `${data.id} registrada. Prioridad ${data.prioridad}; asignada a ${data.asignado_a}.`, "success");
         form.reset();
+        updateServiceSelection();
       } catch (error) {
         showMessage(output, error.message, "error");
       }
@@ -321,6 +379,8 @@
       if ($("f-estado").value) params.set("estado", $("f-estado").value);
       if ($("f-prioridad").value) params.set("prioridad", $("f-prioridad").value);
       if ($("f-tipo").value) params.set("tipo_solicitud", $("f-tipo").value);
+      if ($("f-servicio").value) params.set("servicio_id", $("f-servicio").value);
+      if ($("f-impacto").value) params.set("impacto", $("f-impacto").value);
       return params.toString();
     }
 
@@ -330,7 +390,7 @@
       if (!items.length) {
         const row = body.insertRow();
         const cell = row.insertCell();
-        cell.colSpan = 5;
+        cell.colSpan = 7;
         cell.textContent = "No hay solicitudes para los filtros seleccionados.";
         return;
       }
@@ -339,6 +399,8 @@
         row.tabIndex = 0;
         row.insertCell().textContent = item.id;
         row.insertCell().textContent = item.titulo;
+        row.insertCell().textContent = item.servicio || "Servicio TI general";
+        row.insertCell().textContent = item.impacto || "bajo";
         const priorityCell = row.insertCell();
         const badge = document.createElement("span");
         badge.className = `badge ${item.prioridad}`;
@@ -385,6 +447,8 @@
         [
           ["Solicitante", item.reportado_por],
           ["Descripción", item.descripcion],
+          ["Servicio / activo", `${item.servicio || "Servicio TI general"} / ${item.activo || "Puesto de usuario"}`],
+          ["Entorno e impacto", `${item.entorno || "corporativo"} / ${item.impacto || "bajo"}`],
           ["Clasificación", `${item.tipo_solicitud} / ${item.clasificacion} (${item.confianza_clasificacion})`],
           ["Objetivo SLA", item.fecha_objetivo_sla],
           ["Recomendación", item.recomendacion],

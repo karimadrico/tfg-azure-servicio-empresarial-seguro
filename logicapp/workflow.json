@@ -37,6 +37,15 @@
             },
             "prioridad": {
               "type": "string"
+            },
+            "servicio_id": {
+              "type": "string"
+            },
+            "activo_id": {
+              "type": "string"
+            },
+            "entorno": {
+              "type": "string"
             }
           }
         }
@@ -67,7 +76,10 @@
           "titulo": "@{triggerBody()?['titulo']}",
           "descripcion": "@{triggerBody()?['descripcion']}",
           "reportado_por": "@{triggerBody()?['reportado_por']}",
-          "prioridad": "@{triggerBody()?['prioridad']}"
+          "prioridad": "@{triggerBody()?['prioridad']}",
+          "servicio_id": "@{coalesce(triggerBody()?['servicio_id'], 'general')}",
+          "activo_id": "@{coalesce(triggerBody()?['activo_id'], 'puesto-usuario')}",
+          "entorno": "@{coalesce(triggerBody()?['entorno'], 'corporativo')}"
         }
       },
       "runtimeConfiguration": {

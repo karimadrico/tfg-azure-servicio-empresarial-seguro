@@ -8,6 +8,7 @@ from typing import Any, Callable
 
 from flask import Flask, jsonify, request, send_from_directory
 
+from catalog import catalog_as_list, default_selection, resolve_service_context
 from classifier import VALID_TIPOS, classify_solicitud
 from config import Config
 from storage import IncidenciaStorage
@@ -118,13 +119,17 @@ def require_auth(handler: Callable[..., Any]) -> Callable[..., Any]:
     return wrapper
 
 
-def _validate_solicitud_payload(payload: dict[str, Any]) -> tuple[dict[str, str] | None, str | None]:
+def _validate_solicitud_payload(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
     titulo = (payload.get("titulo") or "").strip()
     descripcion = (payload.get("descripcion") or "").strip()
     reportado_por = (payload.get("reportado_por") or "").strip()
     prioridad_manual = payload.get("prioridad")
     tipo_solicitud = (payload.get("tipo_solicitud") or "incidencia").strip()
     categoria = (payload.get("categoria") or "soporte").strip()
+    default_service, default_asset, default_environment = default_selection()
+    service_id = (payload.get("servicio_id") or default_service).strip()
+    asset_id = (payload.get("activo_id") or default_asset).strip()
+    environment = (payload.get("entorno") or default_environment).strip()
 
     if not titulo or len(titulo) > 200:
         return None, "El título es obligatorio (1-200 caracteres)"
@@ -144,10 +149,13 @@ def _validate_solicitud_payload(payload: dict[str, Any]) -> tuple[dict[str, str]
         "prioridad_manual": prioridad_manual,
         "tipo_solicitud": tipo_solicitud,
         "categoria": categoria,
+        "servicio_id": service_id,
+        "activo_id": asset_id,
+        "entorno": environment,
     }, None
 
 
-def _create_solicitud_record(validated: dict[str, str]) -> dict[str, Any]:
+def _create_solicitud_record(validated: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
     incidencias = storage.load()
     classification = classify_solicitud(
         validated["titulo"],
@@ -155,6 +163,14 @@ def _create_solicitud_record(validated: dict[str, str]) -> dict[str, Any]:
         validated.get("prioridad_manual"),
         validated["tipo_solicitud"],
     )
+    service_context, service_error = resolve_service_context(
+        validated["servicio_id"],
+        validated["activo_id"],
+        validated["entorno"],
+        classification.prioridad,
+    )
+    if service_error:
+        return None, service_error
 
     created_at = _utc_now()
     nueva = {
@@ -173,7 +189,7 @@ def _create_solicitud_record(validated: dict[str, str]) -> dict[str, Any]:
         "fecha_creacion": created_at,
         "fecha_actualizacion": created_at,
         "fecha_objetivo_sla": _sla_deadline(created_at, classification.prioridad),
-        "asignado_a": "equipo_cloud",
+        "asignado_a": service_context["propietario_servicio"],
         "historial": [
             {
                 "fecha": created_at,
@@ -184,9 +200,10 @@ def _create_solicitud_record(validated: dict[str, str]) -> dict[str, Any]:
         ],
     }
 
+    nueva.update(service_context)
     incidencias.append(nueva)
     storage.save(incidencias)
-    return nueva
+    return nueva, None
 
 
 @app.get("/")
@@ -330,12 +347,19 @@ def update_solicitud(solicitud_id: str) -> Any:
     return jsonify(solicitud)
 
 
+@app.get("/catalogo")
+def catalogo() -> Any:
+    return jsonify({"servicios": catalog_as_list()})
+
+
 @app.get("/incidencias")
 @require_auth
 def list_incidencias() -> Any:
     estado = request.args.get("estado")
     prioridad = request.args.get("prioridad")
     tipo = request.args.get("tipo_solicitud")
+    servicio = request.args.get("servicio_id")
+    impacto = request.args.get("impacto")
     limit = request.args.get("limit", default=50, type=int)
     offset = request.args.get("offset", default=0, type=int)
 
@@ -345,6 +369,8 @@ def list_incidencias() -> Any:
             return jsonify({"error": PRIORIDAD_INVALIDA}), 400
     if tipo and tipo not in VALID_TIPOS:
         return jsonify({"error": "tipo_solicitud inválido"}), 400
+    if impacto and impacto not in {"bajo", "medio", "alto", "critico"}:
+        return jsonify({"error": "impacto inválido"}), 400
     if limit < 1 or limit > 100 or offset < 0:
         return jsonify({"error": "Parámetros de paginación inválidos"}), 400
 
@@ -355,6 +381,10 @@ def list_incidencias() -> Any:
         incidencias = [item for item in incidencias if item.get("prioridad") == prioridad]
     if tipo:
         incidencias = [item for item in incidencias if item.get("tipo_solicitud") == tipo]
+    if servicio:
+        incidencias = [item for item in incidencias if item.get("servicio_id") == servicio]
+    if impacto:
+        incidencias = [item for item in incidencias if item.get("impacto") == impacto]
 
     total = len(incidencias)
     resultados = incidencias[offset : offset + limit]
@@ -368,7 +398,9 @@ def create_incidencia() -> Any:
     if error:
         return jsonify({"error": error}), 400
 
-    nueva = _create_solicitud_record(validated)
+    nueva, service_error = _create_solicitud_record(validated)
+    if service_error:
+        return jsonify({"error": service_error}), 400
     return jsonify(nueva), 201
 
 

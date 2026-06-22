@@ -85,6 +85,46 @@ class ApiTests(unittest.TestCase):
         self.assertIn(b"Portal de Solicitudes TI", response.data)
         response.close()
 
+    def test_service_catalog_endpoint(self) -> None:
+        response = self.client.get("/catalogo")
+        self.assertEqual(response.status_code, 200)
+        services = response.get_json()["servicios"]
+        self.assertGreaterEqual(len(services), 6)
+        self.assertIn("vpn", {service["id"] for service in services})
+
+    def test_request_links_service_asset_and_impact(self) -> None:
+        response = self.client.post(
+            "/solicitudes",
+            json={
+                "tipo_solicitud": "acceso",
+                "titulo": "Acceso a la aplicacion financiera",
+                "descripcion": "Necesito acceso operativo al portal financiero de produccion",
+                "reportado_por": "finanzas@empresa.com",
+                "servicio_id": "aplicacion-finanzas",
+                "activo_id": "portal-finanzas",
+                "entorno": "produccion",
+            },
+        )
+        self.assertEqual(response.status_code, 201)
+        created = response.get_json()
+        self.assertEqual(created["servicio_id"], "aplicacion-finanzas")
+        self.assertEqual(created["activo_id"], "portal-finanzas")
+        self.assertEqual(created["impacto"], "critico")
+        self.assertEqual(created["asignado_a"], "equipo_aplicaciones")
+
+        invalid = self.client.post(
+            "/solicitudes",
+            json={
+                "titulo": "Activo incorrecto",
+                "descripcion": "El activo no pertenece al servicio seleccionado",
+                "reportado_por": "usuario@empresa.com",
+                "servicio_id": "vpn",
+                "activo_id": "portal-finanzas",
+                "entorno": "corporativo",
+            },
+        )
+        self.assertEqual(invalid.status_code, 400)
+
     def test_metricas(self) -> None:
         self.client.post(
             "/incidencias",
