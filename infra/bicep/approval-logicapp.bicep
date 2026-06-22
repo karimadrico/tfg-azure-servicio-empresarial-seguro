@@ -64,7 +64,8 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
           }
         }
       }
-      actions: { // NOSONAR: responder_decision gestiona Succeeded, Failed y TimedOut sin exponer detalles internos.
+      // responder_decision gestiona Succeeded, Failed y TimedOut sin exponer detalles internos.
+      actions: { // NOSONAR
         actualizar_aprobacion: {
           type: 'Http'
           inputs: {
@@ -89,7 +90,8 @@ resource workflow 'Microsoft.Logic/workflows@2019-05-01' = {
             }
           }
         }
-        responder_decision: { // NOSONAR: Azure Response admite secure inputs, pero rechaza secure outputs en el despliegue.
+        // Azure Response admite secure inputs, pero rechaza secure outputs durante el despliegue.
+        responder_decision: { // NOSONAR
           type: 'Response'
           runAfter: {
             actualizar_aprobacion: [
