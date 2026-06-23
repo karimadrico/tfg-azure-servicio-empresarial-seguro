@@ -36,6 +36,7 @@ TRANSICIONES_ESTADO = {
 }
 SLA_HORAS = {"alta": 4, "media": 24, "baja": 72}
 APP_VERSION = "1.2.0-rc1"
+PORTAL_FILE = "index.html"
 UTC_OFFSET = "+00:00"
 PRIORIDAD_INVALIDA = "Prioridad inválida"
 SOLICITUD_NO_ENCONTRADA = "Solicitud no encontrada"
@@ -244,17 +245,17 @@ def root() -> Any:
 
 @app.get("/portal")
 def portal() -> Any:
-    return send_from_directory(Path(app.static_folder), "index.html")
+    return send_from_directory(Path(app.static_folder), PORTAL_FILE)
 
 
 @app.get("/ayuda")
 def help_page() -> Any:
-    return send_from_directory(Path(app.static_folder), "index.html")
+    return send_from_directory(Path(app.static_folder), PORTAL_FILE)
 
 
 @app.get("/acerca")
 def about_page() -> Any:
-    return send_from_directory(Path(app.static_folder), "index.html")
+    return send_from_directory(Path(app.static_folder), PORTAL_FILE)
 
 
 @app.get("/docs")

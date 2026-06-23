@@ -530,8 +530,8 @@
     document.querySelectorAll("[data-open-view]").forEach((button) => {
       button.addEventListener("click", () => openView(button.dataset.openView));
     });
-    if (window.location.pathname === "/ayuda") openView("ayuda");
-    if (window.location.pathname === "/acerca") openView("acerca");
+    if (globalThis.location.pathname === "/ayuda") openView("ayuda");
+    if (globalThis.location.pathname === "/acerca") openView("acerca");
 
     $("form-solicitud").addEventListener("submit", async (event) => {
       event.preventDefault();
