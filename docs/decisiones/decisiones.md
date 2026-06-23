@@ -10,7 +10,7 @@ Consecuencia: toda la arquitectura utiliza servicios gestionados de Azure y una 
 
 ## Flask para la API
 
-La aplicación necesita pocas rutas, validación JSON y una interfaz web pequeña. Flask permite mantener esas responsabilidades visibles y no obliga a incorporar un ORM o un panel de administración. Django sería más adecuado si el sistema tuviera un dominio relacional amplio, usuarios propios y administración de datos.
+La aplicación necesita una API REST acotada, validación JSON y una interfaz web integrada. Flask permite mantener esas responsabilidades visibles y no obliga a incorporar un ORM o un panel de administración. Django sería más adecuado si el sistema tuviera un dominio relacional amplio, usuarios propios y administración de datos.
 
 Consecuencia: la estructura se reparte entre `app.py`, `classifier.py`, `storage.py` y `config.py`.
 
@@ -58,7 +58,7 @@ Consecuencia: las desviaciones de fechas y las tarjetas retiradas se documentan 
 
 ## SonarCloud y pruebas
 
-SonarCloud aporta una revisión externa del repositorio sin mantener una instancia propia de SonarQube. Las catorce pruebas automáticas verifican el comportamiento funcional, mientras que SonarCloud revisa seguridad, fiabilidad, mantenibilidad y duplicación.
+SonarCloud aporta una revisión externa del repositorio sin mantener una instancia propia de SonarQube. Las 26 pruebas automáticas verifican el comportamiento funcional, mientras que SonarCloud revisa seguridad, fiabilidad, mantenibilidad y duplicación.
 
 Consecuencia: ninguna de las dos herramientas sustituye a la otra y ambas forman parte de la evidencia de calidad.
 

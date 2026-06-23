@@ -36,7 +36,7 @@ Para UBUVirtual y defensa conviene guardar:
 
 ## Interpretacion
 
-SonarCloud aporta una medicion externa de mantenibilidad, fiabilidad, seguridad y duplicacion. Esta revision se complementa con las veintiuna pruebas automaticas del repositorio, que se ejecutan localmente antes de publicar cambios relevantes.
+SonarCloud aporta una medicion externa de mantenibilidad, fiabilidad, seguridad y duplicacion. Esta revision se complementa con las 26 pruebas automaticas del repositorio, que se ejecutan localmente antes de publicar cambios relevantes.
 
 ## Revision desde la web
 

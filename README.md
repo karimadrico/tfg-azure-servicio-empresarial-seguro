@@ -5,7 +5,7 @@
 
 ## Resumen
 
-Este repositorio contiene el prototipo funcional del TFG: una plataforma cloud desplegada en Microsoft Azure para registrar, clasificar y consultar solicitudes internas de TI. La solucion incluye un portal web, una API Flask, clasificacion automatica ligera, una Logic App de automatizacion, persistencia en Azure Blob Storage, gestion segura de secretos con Azure Key Vault y despliegue reproducible mediante script PowerShell y Azure CLI.
+Este repositorio contiene el prototipo funcional del TFG: una plataforma cloud desplegada en Microsoft Azure para gestionar el ciclo completo de solicitudes internas de TI. La solucion registra y clasifica peticiones, las vincula con servicios y activos, controla aprobaciones y escalados, vigila el SLA, exporta informes y recoge la satisfaccion tras el cierre. Incluye portal web, API Flask, Logic App, Azure Blob Storage, Key Vault, Managed Identity y Application Insights.
 
 El objetivo es demostrar una solucion completa y evaluable: analisis del problema empresarial, diseno cloud, implementacion, pruebas, despliegue real, seguimiento de tareas en Zube y control de calidad con SonarCloud.
 
@@ -17,9 +17,11 @@ El objetivo es demostrar una solucion completa y evaluable: analisis del problem
 | Portal desplegado | https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/portal |
 | API desplegada | https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net |
 | Estado de la API | https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/health |
+| Guia de uso | https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/ayuda |
+| Documentacion OpenAPI | https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/docs |
 | Zube (sprints y Kanban) | https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban |
 | SonarCloud (calidad de codigo) | https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro |
-| Release v1.0.0 | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.0.0 |
+| Release v1.1.0 | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.1.0 |
 
 ## Arquitectura entregada
 
@@ -30,7 +32,7 @@ Usuario / Tribunal
 Portal web en Azure App Service
         |
         v
-API Flask: solicitudes, incidencias, metricas y health check
+API Flask: solicitudes, catalogo, aprobaciones, SLA e informes
         |
         +--> Clasificador ligero de solicitudes TI
         |
@@ -109,6 +111,8 @@ Desde la raiz del repositorio:
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
+La bateria actual contiene 26 pruebas de API, almacenamiento, clasificacion, seguridad, flujo empresarial, SLA, exportacion, demostracion y satisfaccion.
+
 ## Despliegue en Azure
 
 El despliegue real utilizado para el TFG se realiza desde PowerShell con Azure CLI:
@@ -154,10 +158,22 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 |--------|------|-------------|
 | GET | `/` | Informacion basica del servicio |
 | GET | `/portal` | Portal web empresarial |
+| GET | `/ayuda` | Guia de uso integrada |
+| GET | `/acerca` | Version, arquitectura y enlaces verificables |
+| GET | `/docs` | Documentacion OpenAPI interactiva |
+| GET | `/openapi.json` | Contrato OpenAPI 3.0 |
 | GET | `/health` | Estado tecnico del sistema |
+| GET | `/catalogo` | Catalogo de servicios, activos y entornos |
 | POST | `/solicitudes` | Crear solicitud TI |
 | GET | `/solicitudes` | Listar solicitudes, protegido con Bearer token |
+| GET/PATCH | `/solicitudes/<id>` | Consultar y gestionar una solicitud |
+| POST | `/solicitudes/<id>/aprobacion` | Aprobar o rechazar una solicitud sensible |
+| POST | `/solicitudes/<id>/escalar` | Escalar una solicitud activa |
+| POST | `/solicitudes/<id>/valoracion` | Valorar una solicitud cerrada |
 | GET | `/metricas` | Metricas agregadas, protegido con Bearer token |
+| GET | `/operaciones` | Carga, alertas, SLA y satisfaccion |
+| GET | `/informes/solicitudes.csv` | Exportacion CSV protegida |
+| POST | `/demo/cargar` | Preparar escenario de demostracion protegido |
 
 ## Estructura
 
@@ -183,6 +199,7 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 | `docs/evidencias/` | Capturas finales de Azure, portal, API, Logic App, Monitor, Zube, SonarCloud y GitHub. | Recoge pruebas visuales del producto y del proceso. |
 | `docs/sprints/` | Capturas y resumen de sprints en Zube. | Evidencia la planificacion agil y el seguimiento. |
 | `anexos/` | Indice auxiliar de anexos tecnicos. | Orienta hacia los anexos oficiales generados en `memoria/anexos.pdf`. |
+| `CHANGELOG.md` | Evolucion funcional por versiones. | Permite seguir los incrementos entregados y la candidata final. |
 
 ## Entregables TFG
 
