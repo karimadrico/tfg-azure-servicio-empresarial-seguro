@@ -49,16 +49,6 @@ La figura \ref{fig:arquitectura-cloud-azure} muestra el esquema general de la so
 \label{fig:arquitectura-cloud-azure}
 \end{figure}
 
-La figura \ref{fig:azure-resource-group} recoge una evidencia del grupo de recursos utilizado durante el despliegue del prototipo.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{../docs/arquitectura/resourcegroup.png}
-\caption{Grupo de recursos del proyecto en Azure Portal. Fuente: captura propia.}
-\label{fig:azure-resource-group}
-\end{figure}
-
-
 \section{Gobernanza cloud aplicada}
 
 Aunque el alcance del TFG no incluye una zona de aterrizaje corporativa completa, se ha aplicado una gobernanza ligera para que el prototipo sea defendible como solución empresarial. Esta gobernanza se centra en cuatro aspectos: nomenclatura consistente, etiquetado de recursos, separación de responsabilidades y controles básicos de seguridad y operación.
@@ -230,35 +220,7 @@ La figura \ref{fig:seguridad-secretos} resume el modelo de seguridad aplicado pa
 \label{fig:seguridad-secretos}
 \end{figure}
 
-Las figuras \ref{fig:azure-app-service}, \ref{fig:azure-key-vault}, \ref{fig:azure-managed-identity} y \ref{fig:azure-storage} muestran evidencias de los principales servicios utilizados.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{../docs/arquitectura/app-service.png}
-\caption{Azure App Service utilizado para alojar la API Flask y el portal web. Fuente: captura propia.}
-\label{fig:azure-app-service}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{../docs/arquitectura/key-vault.png}
-\caption{Azure Key Vault utilizado para almacenar el secreto de autenticación. Fuente: captura propia.}
-\label{fig:azure-key-vault}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{../docs/arquitectura/app-service-identity.png}
-\caption{Identidad administrada habilitada en Azure App Service. Fuente: captura propia.}
-\label{fig:azure-managed-identity}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{../docs/arquitectura/storage-account.png}
-\caption{Storage Account utilizado para persistir solicitudes en Blob Storage. Fuente: captura propia.}
-\label{fig:azure-storage}
-\end{figure}
+Las capturas individuales de App Service, Key Vault, Managed Identity y Storage Account se conservan en \path{docs/evidencias/}. En este anexo se priorizan el diagrama de arquitectura, las decisiones y los flujos para evitar repetir imágenes que no añaden información al diseño.
 
 \section{Diseño de datos}
 
