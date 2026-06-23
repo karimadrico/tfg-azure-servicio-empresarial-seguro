@@ -141,6 +141,10 @@
     .help-step p { margin: 0; color: var(--muted); }
     .role-list { margin: 0; padding-left: 1.2rem; color: var(--muted); }
     .role-list li { margin-bottom: 0.5rem; }
+    .resource-list { display: grid; gap: 0; margin: 0; }
+    .resource-list a { padding: 0.8rem 0; border-bottom: 1px solid var(--line); color: var(--brand-dark); font-weight: 600; text-decoration: none; }
+    .resource-list a:last-child { border-bottom: 0; }
+    .resource-list a:hover { text-decoration: underline; }
     footer { padding: 1rem 2rem; border-top: 1px solid var(--line); color: var(--muted); text-align: center; font-size: 0.78rem; }
     @media (max-width: 850px) {
       header, nav { padding-left: 1rem; padding-right: 1rem; }
@@ -170,6 +174,7 @@
     <button class="tab" data-view="gestion">Gestión del equipo TI</button>
     <button class="tab" data-view="operaciones">Centro operativo</button>
     <button class="tab" data-view="ayuda">Ayuda</button>
+    <button class="tab" data-view="acerca">Acerca de</button>
   </nav>
 
   <main>
@@ -409,6 +414,44 @@
         </form>
       </div>
     </section>
+
+    <section id="view-acerca" hidden>
+      <h2>Plataforma Cloud de Solicitudes TI</h2>
+      <p class="intro">Trabajo Fin de Grado de Ingeniería Informática, Universidad de Burgos.</p>
+      <div class="help-grid">
+        <div class="panel">
+          <h3>Proyecto</h3>
+          <ul class="detail-list">
+            <li><strong>Autora</strong>Karima Drafli Rico</li>
+            <li><strong>Tutor</strong>José Ignacio Santos Martín</li>
+            <li><strong>Versión candidata</strong>1.2.0-rc1</li>
+            <li><strong>Licencia</strong>MIT</li>
+          </ul>
+          <p>La solución automatiza el ciclo de solicitudes internas de TI: registro, clasificación ligera, aprobación, asignación, escalado, control de SLA, cierre y valoración.</p>
+        </div>
+        <div class="panel">
+          <h3>Arquitectura desplegada</h3>
+          <ul class="role-list">
+            <li>Portal y API Flask en Azure App Service.</li>
+            <li>Persistencia privada en Azure Blob Storage.</li>
+            <li>Secreto de acceso en Key Vault mediante Managed Identity.</li>
+            <li>Entrada automatizada mediante Azure Logic Apps.</li>
+            <li>Telemetría con Application Insights y Azure Monitor.</li>
+            <li>Planificación en Zube y calidad externa en SonarCloud.</li>
+          </ul>
+        </div>
+        <div class="panel help-full">
+          <h3>Recursos verificables</h3>
+          <div class="resource-list">
+            <a href="/docs">Documentación interactiva de la API</a>
+            <a href="/health">Estado técnico del servicio</a>
+            <a href="https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro" target="_blank" rel="noopener noreferrer">Repositorio de código en GitHub</a>
+            <a href="https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro" target="_blank" rel="noopener noreferrer">Informe de calidad en SonarCloud</a>
+            <a href="https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban" target="_blank" rel="noopener noreferrer">Planificación y sprints en Zube</a>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>TFG - Cloud Computing en Microsoft Azure - Karima Drafli Rico</footer>
@@ -488,6 +531,7 @@
       button.addEventListener("click", () => openView(button.dataset.openView));
     });
     if (window.location.pathname === "/ayuda") openView("ayuda");
+    if (window.location.pathname === "/acerca") openView("acerca");
 
     $("form-solicitud").addEventListener("submit", async (event) => {
       event.preventDefault();

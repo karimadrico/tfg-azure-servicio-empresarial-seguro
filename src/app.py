@@ -35,6 +35,7 @@ TRANSICIONES_ESTADO = {
     "rechazada": set(),
 }
 SLA_HORAS = {"alta": 4, "media": 24, "baja": 72}
+APP_VERSION = "1.2.0-rc1"
 UTC_OFFSET = "+00:00"
 PRIORIDAD_INVALIDA = "Prioridad inválida"
 SOLICITUD_NO_ENCONTRADA = "Solicitud no encontrada"
@@ -233,7 +234,7 @@ def root() -> Any:
     return jsonify(
         {
             "mensaje": "Plataforma TFG — Automatización de Solicitudes TI en Azure",
-            "version": "2.0",
+            "version": APP_VERSION,
             "estado": "operacional",
             "portal": "/portal",
             "timestamp": _utc_now(),
@@ -248,6 +249,11 @@ def portal() -> Any:
 
 @app.get("/ayuda")
 def help_page() -> Any:
+    return send_from_directory(Path(app.static_folder), "index.html")
+
+
+@app.get("/acerca")
+def about_page() -> Any:
     return send_from_directory(Path(app.static_folder), "index.html")
 
 

@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Plataforma Cloud de Automatizacion de Solicitudes TI",
-    "version": "2.0.0",
+    "version": "1.2.0-rc1",
     "description": "Contrato REST del prototipo desplegado en Microsoft Azure."
   },
   "servers": [

@@ -39,6 +39,7 @@ class ApiTests(unittest.TestCase):
         payload = response.get_json()
         self.assertIn("mensaje", payload)
         self.assertEqual(payload["estado"], "operacional")
+        self.assertEqual(payload["version"], "1.2.0-rc1")
 
     def test_create_and_list_incidencia(self) -> None:
         create_response = self.client.post(
@@ -92,6 +93,13 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Gu\xc3\xada de uso", response.data)
         self.assertIn(b"Cargar demostraci\xc3\xb3n", response.data)
+        response.close()
+
+    def test_about_endpoint(self) -> None:
+        response = self.client.get("/acerca")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Arquitectura desplegada", response.data)
+        self.assertIn(b"Jos\xc3\xa9 Ignacio Santos Mart\xc3\xadn", response.data)
         response.close()
 
     def test_openapi_documentation_endpoints(self) -> None:
