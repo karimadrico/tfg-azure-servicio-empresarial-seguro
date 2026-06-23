@@ -135,7 +135,9 @@ La figura \ref{fig:grafico-esfuerzo-horas} representa visualmente la distribuci�
 
 El proyecto se ha desarrollado utilizando principalmente herramientas disponibles en versiones gratuitas, de código abierto o académicas, como GitHub, Zube y Microsoft Azure for Students. SonarCloud se utiliza como herramienta de análisis de calidad del código y su panel se aporta como evidencia de revisión externa.
 
-La mayor parte del coste corresponde al esfuerzo de desarrollo. Para estimar el coste de personal se ha considerado una dedicación aproximada de 300 horas y un coste de referencia de 18 euros/hora para un perfil junior de desarrollo cloud. Sobre este coste se añade una estimación del 32\% de costes empresariales asociados a Seguridad Social y otras aportaciones obligatorias. Esta cifra no representa una factura real, sino una estimación académica del valor del trabajo realizado.
+La mayor parte del coste corresponde al esfuerzo de desarrollo. Se ha considerado una dedicación aproximada de 300 horas y una hipótesis de 18 euros brutos por hora para un perfil técnico de programación. Como referencia sectorial se utiliza el XIX Convenio estatal de empresas de consultoría y tecnologías de la información, que publica tablas anuales por área, grupo y nivel; la cifra horaria es un valor redondeado y no una tarifa profesional obligatoria \cite{boe_convenio_tic_2025}.
+
+Sobre la remuneración se aplica una estimación empresarial del 32\%. Este porcentaje tampoco constituye un tipo legal único. Para un contrato indefinido, la información de Seguridad Social para 2026 recoge 23,60\% por contingencias comunes, 5,50\% por desempleo, 0,20\% por FOGASA, 0,60\% por formación profesional y 0,75\% por el Mecanismo de Equidad Intergeneracional: un subtotal del 30,65\%. La estimación se redondea al 32\% para incorporar aproximadamente la prima empresarial por accidentes de trabajo y enfermedades profesionales, cuyo tipo depende de la actividad \cite{seguridad_social_cotizacion_2026}. No representa una factura real, sino una valoración académica del trabajo realizado.
 
 \begin{table}[ht]
 \centering
@@ -172,7 +174,9 @@ En un entorno empresarial real también deberían considerarse costes de operaci
 
 \subsection{Viabilidad legal}
 
-Las herramientas utilizadas tienen licencias abiertas o modalidades gratuitas para uso académico. La validación empleó nombres y correos ficticios, sin cargar datos personales reales. Una puesta en producción exigiría definir conservación, acceso y tratamiento de la información antes de aceptar solicitudes de empleados.
+Las herramientas utilizadas tienen licencias abiertas o modalidades gratuitas para uso académico. La validación empleó nombres y correos ficticios, sin cargar datos personales reales. Sin embargo, el sistema está diseñado para tratar direcciones de correo, identidades de empleados, descripciones de incidencias, servicios afectados e historial de actuaciones. En una implantación real estos datos quedarían sujetos al Reglamento General de Protección de Datos y a la Ley Orgánica 3/2018 \cite{rgpd,lopdgdd}.
+
+Antes de una puesta en producción, la organización debería identificar al responsable y, en su caso, al encargado del tratamiento; determinar la base jurídica y la finalidad; informar a las personas usuarias; aplicar minimización y plazos de conservación; habilitar el ejercicio de derechos; y formalizar el tratamiento con el proveedor cloud. El token compartido del prototipo tendría que sustituirse por identidad individual y autorización por roles para limitar el acceso y atribuir cada actuación. También serían necesarios cifrado, copias de seguridad, registro de accesos, procedimiento de brechas y análisis de impacto cuando el riesgo del tratamiento lo exigiera. Estas medidas quedan fuera del alcance experimental, pero condicionan la viabilidad legal del producto empresarial.
 
 \begin{table}[h]
 \centering
