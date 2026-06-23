@@ -453,6 +453,52 @@ class ApiTests(unittest.TestCase):
         self.assertIn("text/csv", response.content_type)
         self.assertIn(b"'=SUM(1+1)", response.data)
 
+    def test_closed_request_can_be_rated_once_by_reporter(self) -> None:
+        created = self.client.post(
+            "/solicitudes",
+            json={
+                "titulo": "Consulta resuelta para valorar",
+                "descripcion": "Solicitud general que se cerrara durante la prueba",
+                "reportado_por": "cliente@empresa.com",
+            },
+        ).get_json()
+        url = f"/solicitudes/{created['id']}"
+
+        open_rating = self.client.post(
+            f"{url}/valoracion",
+            json={"reportado_por": "cliente@empresa.com", "puntuacion": 5},
+        )
+        self.assertEqual(open_rating.status_code, 409)
+        self.assertEqual(self.client.patch(url, json={"estado": "cerrada"}).status_code, 200)
+
+        forbidden = self.client.post(
+            f"{url}/valoracion",
+            json={"reportado_por": "otra@empresa.com", "puntuacion": 5},
+        )
+        self.assertEqual(forbidden.status_code, 403)
+
+        rated = self.client.post(
+            f"{url}/valoracion",
+            json={
+                "reportado_por": "cliente@empresa.com",
+                "puntuacion": 5,
+                "comentario": "Resolucion clara y dentro del plazo.",
+            },
+        )
+        self.assertEqual(rated.status_code, 201)
+        self.assertEqual(rated.get_json()["puntuacion"], 5)
+        self.assertEqual(
+            self.client.post(
+                f"{url}/valoracion",
+                json={"reportado_por": "cliente@empresa.com", "puntuacion": 4},
+            ).status_code,
+            409,
+        )
+
+        operations = self.client.get("/operaciones").get_json()
+        self.assertEqual(operations["satisfaccion"]["respuestas"], 1)
+        self.assertEqual(operations["satisfaccion"]["promedio"], 5.0)
+
 
 class ClassifierTests(unittest.TestCase):
     def test_security_classification(self) -> None:

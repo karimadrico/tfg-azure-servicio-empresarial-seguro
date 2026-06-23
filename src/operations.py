@@ -52,6 +52,12 @@ def build_operational_summary(
         "aprobaciones": {"pendientes": 0, "aprobadas": 0, "rechazadas": 0},
         "escaladas": 0,
         "tiempo_medio_resolucion_horas": 0.0,
+        "satisfaccion": {
+            "respuestas": 0,
+            "promedio": 0.0,
+            "total_puntos": 0,
+            "distribucion": {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0},
+        },
         "alertas": [],
     }
     resolution_hours: list[float] = []
@@ -65,6 +71,7 @@ def build_operational_summary(
         _update_approval_metrics(summary, item)
         _update_sla_metrics(summary, item, current)
         _append_alerts(summary["alertas"], item, current)
+        _update_satisfaction(summary["satisfaccion"], item)
         if int(item.get("nivel_escalado", 0)) > 0:
             summary["escaladas"] += 1
         resolution = _resolution_time(item)
@@ -75,10 +82,25 @@ def build_operational_summary(
         summary["tiempo_medio_resolucion_horas"] = round(
             sum(resolution_hours) / len(resolution_hours), 2
         )
+    satisfaction = summary["satisfaccion"]
+    if satisfaction["respuestas"]:
+        satisfaction["promedio"] = round(
+            satisfaction["total_puntos"] / satisfaction["respuestas"], 2
+        )
+    satisfaction.pop("total_puntos")
     summary["alertas"].sort(key=lambda alert: (alert["orden"], alert["id"]))
     for alert in summary["alertas"]:
         alert.pop("orden", None)
     return summary
+
+
+def _update_satisfaction(satisfaction: dict[str, Any], item: dict[str, Any]) -> None:
+    rating = item.get("valoracion", {}).get("puntuacion")
+    if not isinstance(rating, int) or isinstance(rating, bool) or rating not in range(1, 6):
+        return
+    satisfaction["respuestas"] += 1
+    satisfaction["total_puntos"] += rating
+    satisfaction["distribucion"][str(rating)] += 1
 
 
 def _increment(values: dict[str, int], key: str) -> None:

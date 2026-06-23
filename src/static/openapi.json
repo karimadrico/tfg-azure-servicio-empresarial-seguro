@@ -176,6 +176,34 @@
         "responses": {"200": {"description": "Notificacion registrada"}}
       }
     },
+    "/solicitudes/{solicitud_id}/valoracion": {
+      "post": {
+        "tags": ["Flujo empresarial"],
+        "summary": "Valorar una solicitud cerrada",
+        "parameters": [{"$ref": "#/components/parameters/SolicitudId"}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["reportado_por", "puntuacion"],
+                "properties": {
+                  "reportado_por": {"type": "string", "format": "email"},
+                  "puntuacion": {"type": "integer", "minimum": 1, "maximum": 5},
+                  "comentario": {"type": "string", "maxLength": 500}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Valoracion registrada"},
+          "403": {"description": "El correo no coincide"},
+          "409": {"description": "Solicitud no cerrada o ya valorada"}
+        }
+      }
+    },
     "/metricas": {
       "get": {
         "tags": ["Operacion"],

@@ -579,6 +579,45 @@ def notify_approval(solicitud_id: str) -> Any:
     return jsonify(solicitud)
 
 
+@app.post("/solicitudes/<solicitud_id>/valoracion")
+def rate_solicitud(solicitud_id: str) -> Any:
+    payload = request.get_json(silent=True) or {}
+    records, solicitud = _workflow_record(solicitud_id)
+    if solicitud is None:
+        return jsonify({"error": SOLICITUD_NO_ENCONTRADA}), 404
+    if solicitud.get("estado") != "cerrada":
+        return jsonify({"error": "Solo se pueden valorar solicitudes cerradas"}), 409
+    if solicitud.get("valoracion"):
+        return jsonify({"error": "La solicitud ya ha sido valorada"}), 409
+
+    reporter = (payload.get("reportado_por") or "").strip().lower()
+    score = payload.get("puntuacion")
+    comment = (payload.get("comentario") or "").strip()
+    if reporter != str(solicitud.get("reportado_por", "")).lower():
+        return jsonify({"error": "El correo no coincide con la solicitud"}), 403
+    if isinstance(score, bool) or not isinstance(score, int) or score not in range(1, 6):
+        return jsonify({"error": "puntuacion debe ser un entero entre 1 y 5"}), 400
+    if len(comment) > 500:
+        return jsonify({"error": "El comentario no puede superar 500 caracteres"}), 400
+
+    rated_at = _utc_now()
+    solicitud["valoracion"] = {
+        "puntuacion": score,
+        "comentario": comment,
+        "fecha": rated_at,
+    }
+    solicitud.setdefault("historial", []).append(
+        {
+            "fecha": rated_at,
+            "accion": "valoracion",
+            "actor": reporter,
+            "detalle": f"Valoracion del usuario: {score}/5.",
+        }
+    )
+    storage.save(records)
+    return jsonify(solicitud["valoracion"]), 201
+
+
 @app.get("/catalogo")
 def catalogo() -> Any:
     return jsonify({"servicios": catalog_as_list()})
