@@ -246,6 +246,11 @@ def portal() -> Any:
     return send_from_directory(Path(app.static_folder), "index.html")
 
 
+@app.get("/ayuda")
+def help_page() -> Any:
+    return send_from_directory(Path(app.static_folder), "index.html")
+
+
 @app.get("/health")
 def health() -> Any:
     return jsonify(

@@ -87,6 +87,13 @@ class ApiTests(unittest.TestCase):
         self.assertIn(b"Portal de Solicitudes TI", response.data)
         response.close()
 
+    def test_help_endpoint(self) -> None:
+        response = self.client.get("/ayuda")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Gu\xc3\xada de uso", response.data)
+        self.assertIn(b"Cargar demostraci\xc3\xb3n", response.data)
+        response.close()
+
     def test_service_catalog_endpoint(self) -> None:
         response = self.client.get("/catalogo")
         self.assertEqual(response.status_code, 200)

@@ -133,11 +133,19 @@
     .history { max-height: 220px; overflow-y: auto; margin: 1rem 0 0; padding-left: 1rem; border-left: 2px solid var(--line); }
     .history article { margin-bottom: 0.9rem; font-size: 0.83rem; }
     .history time { display: block; color: var(--muted); font-size: 0.74rem; }
+    .help-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .help-step { padding: 1rem 0; border-bottom: 1px solid var(--line); }
+    .help-step:last-child { border-bottom: 0; }
+    .help-step h3 { margin-bottom: 0.35rem; }
+    .help-step p { margin: 0; color: var(--muted); }
+    .role-list { margin: 0; padding-left: 1.2rem; color: var(--muted); }
+    .role-list li { margin-bottom: 0.5rem; }
     footer { padding: 1rem 2rem; border-top: 1px solid var(--line); color: var(--muted); text-align: center; font-size: 0.78rem; }
     @media (max-width: 850px) {
       header, nav { padding-left: 1rem; padding-right: 1rem; }
       main { padding: 1rem; }
       .workspace, .grid { grid-template-columns: 1fr; }
+      .help-grid { grid-template-columns: 1fr; }
       .metrics { grid-template-columns: repeat(2, 1fr); }
       .filters { grid-template-columns: 1fr 1fr; }
       .field-wide { grid-column: auto; }
@@ -160,6 +168,7 @@
     <button class="tab active" data-view="alta">Nueva solicitud</button>
     <button class="tab" data-view="gestion">Gestión del equipo TI</button>
     <button class="tab" data-view="operaciones">Centro operativo</button>
+    <button class="tab" data-view="ayuda">Ayuda</button>
   </nav>
 
   <main>
@@ -327,6 +336,47 @@
       </div>
       <output id="resultado-operaciones" class="message"></output>
     </section>
+
+    <section id="view-ayuda" hidden>
+      <h2>Guía de uso</h2>
+      <p class="intro">Recorrido breve por las tareas habituales de solicitantes, responsables y equipo TI.</p>
+      <div class="help-grid">
+        <div class="panel">
+          <h3>Flujo de una solicitud</h3>
+          <div class="help-step">
+            <h3>1. Registrar</h3>
+            <p>Selecciona tipo, servicio, activo y entorno. Describe la necesidad y conserva el identificador SOL generado.</p>
+          </div>
+          <div class="help-step">
+            <h3>2. Revisar y aprobar</h3>
+            <p>El equipo TI carga la bandeja con su token. Los accesos y cambios sensibles quedan pendientes de decisión.</p>
+          </div>
+          <div class="help-step">
+            <h3>3. Resolver o escalar</h3>
+            <p>Actualiza responsable, prioridad y estado. Si aumenta el impacto, registra el motivo y escala la solicitud.</p>
+          </div>
+          <div class="help-step">
+            <h3>4. Medir</h3>
+            <p>Consulta alertas, vencimientos SLA, carga por equipo y tiempos de resolución en el centro operativo.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Perfiles y acceso</h3>
+          <ul class="role-list">
+            <li><strong>Empleado:</strong> registra solicitudes sin manejar credenciales internas.</li>
+            <li><strong>Aprobador:</strong> autoriza o rechaza peticiones que afectan a servicios sensibles.</li>
+            <li><strong>Equipo TI:</strong> consulta, asigna, escala, cierra y exporta la información operativa.</li>
+          </ul>
+          <h3>Demostración</h3>
+          <p class="intro">En Gestión del equipo TI, introduce el token y pulsa <strong>Cargar demostración</strong>. El sistema prepara cinco casos sin duplicarlos al repetir la operación.</p>
+          <div class="actions">
+            <button type="button" data-open-view="alta">Crear solicitud</button>
+            <button type="button" class="secondary" data-open-view="gestion">Abrir gestión TI</button>
+            <button type="button" class="secondary" data-open-view="operaciones">Ver operaciones</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>TFG - Cloud Computing en Microsoft Azure - Karima Drafli Rico</footer>
@@ -390,15 +440,22 @@
       showMessage($("resultado-alta"), error.message, "error");
     }
 
-    document.querySelectorAll(".tab").forEach((button) => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll(".tab").forEach((tab) => tab.classList.remove("active"));
-        button.classList.add("active");
-        $("view-alta").hidden = button.dataset.view !== "alta";
-        $("view-gestion").hidden = button.dataset.view !== "gestion";
-        $("view-operaciones").hidden = button.dataset.view !== "operaciones";
+    function openView(view) {
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.classList.toggle("active", tab.dataset.view === view);
       });
+      document.querySelectorAll("main > section").forEach((section) => {
+        section.hidden = section.id !== `view-${view}`;
+      });
+    }
+
+    document.querySelectorAll(".tab").forEach((button) => {
+      button.addEventListener("click", () => openView(button.dataset.view));
     });
+    document.querySelectorAll("[data-open-view]").forEach((button) => {
+      button.addEventListener("click", () => openView(button.dataset.openView));
+    });
+    if (window.location.pathname === "/ayuda") openView("ayuda");
 
     $("form-solicitud").addEventListener("submit", async (event) => {
       event.preventDefault();
