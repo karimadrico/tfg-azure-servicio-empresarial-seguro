@@ -379,6 +379,130 @@ def _workflow_record(solicitud_id: str) -> tuple[list[dict[str, Any]], dict[str,
     return records, _find_solicitud(records, solicitud_id)
 
 
+def _demo_payloads() -> tuple[dict[str, str], ...]:
+    return (
+        {
+            "tipo_solicitud": "acceso",
+            "titulo": "[DEMO] Acceso VPN para consultora externa",
+            "descripcion": "Acceso temporal a la VPN corporativa para una consultora durante la auditoria.",
+            "reportado_por": "auditoria@empresa.com",
+            "servicio_id": "vpn",
+            "activo_id": "grupo-acceso-vpn",
+            "entorno": "produccion",
+        },
+        {
+            "tipo_solicitud": "incidencia",
+            "titulo": "[DEMO] Servicio financiero no disponible",
+            "descripcion": "El portal financiero de produccion no responde y bloquea el cierre contable.",
+            "reportado_por": "finanzas@empresa.com",
+            "servicio_id": "aplicacion-finanzas",
+            "activo_id": "portal-finanzas",
+            "entorno": "produccion",
+            "prioridad": "alta",
+        },
+        {
+            "tipo_solicitud": "configuracion",
+            "titulo": "[DEMO] Ajuste de configuracion en preproduccion",
+            "descripcion": "Actualizar la configuracion de App Service antes de la validacion funcional.",
+            "reportado_por": "cloud@empresa.com",
+            "servicio_id": "plataforma-cloud",
+            "activo_id": "app-service",
+            "entorno": "preproduccion",
+        },
+        {
+            "tipo_solicitud": "incidencia",
+            "titulo": "[DEMO] Incidencia de correo resuelta",
+            "descripcion": "Un buzon compartido no sincronizaba los mensajes del equipo comercial.",
+            "reportado_por": "comercial@empresa.com",
+            "servicio_id": "correo",
+            "activo_id": "buzon-usuario",
+            "entorno": "corporativo",
+        },
+        {
+            "tipo_solicitud": "incidencia",
+            "titulo": "[DEMO] Degradacion del gateway VPN",
+            "descripcion": "La latencia del gateway VPN afecta a varios usuarios que trabajan en remoto.",
+            "reportado_por": "operaciones@empresa.com",
+            "servicio_id": "vpn",
+            "activo_id": "gateway-vpn",
+            "entorno": "corporativo",
+        },
+    )
+
+
+def _prepare_demo_records(records: list[dict[str, Any]]) -> None:
+    now = datetime.now(timezone.utc).replace(microsecond=0)
+    by_title = {item["titulo"]: item for item in records}
+
+    overdue = by_title["[DEMO] Servicio financiero no disponible"]
+    overdue["fecha_creacion"] = (now - timedelta(hours=10)).isoformat().replace(
+        UTC_OFFSET, "Z"
+    )
+    overdue["fecha_inicio_sla"] = overdue["fecha_creacion"]
+    overdue["fecha_objetivo_sla"] = (now - timedelta(hours=6)).isoformat().replace(
+        UTC_OFFSET, "Z"
+    )
+
+    in_progress = by_title["[DEMO] Ajuste de configuracion en preproduccion"]
+    in_progress["estado"] = "en_proceso"
+    in_progress["estado_aprobacion"] = "aprobada"
+    in_progress["fecha_decision"] = _utc_now()
+    in_progress.setdefault("historial", []).append(
+        {
+            "fecha": _utc_now(),
+            "accion": "asignacion",
+            "actor": "equipo_cloud",
+            "detalle": "Cambio aprobado y asignado al equipo cloud.",
+        }
+    )
+
+    closed = by_title["[DEMO] Incidencia de correo resuelta"]
+    closed["estado"] = "cerrada"
+    closed["fecha_cierre"] = _utc_now()
+    closed.setdefault("historial", []).append(
+        {
+            "fecha": _utc_now(),
+            "accion": "cierre",
+            "actor": "equipo_colaboracion",
+            "detalle": "Sincronizacion restablecida y validada con el usuario.",
+        }
+    )
+
+    escalated = by_title["[DEMO] Degradacion del gateway VPN"]
+    apply_escalation(
+        escalated,
+        "centro_operaciones",
+        "Afectacion simultanea a varios usuarios",
+        _utc_now(),
+    )
+
+    for record in records:
+        record["es_demo"] = True
+
+
+@app.post("/demo/cargar")
+@require_auth
+def load_demo_data() -> Any:
+    records = storage.load()
+    existing = [item for item in records if item.get("es_demo")]
+    if existing:
+        return jsonify({"creadas": 0, "existentes": len(existing), "solicitudes": existing})
+
+    for payload in _demo_payloads():
+        validated, error = _validate_solicitud_payload(payload)
+        if error or validated is None:
+            return jsonify({"error": error or "Datos de demostracion invalidos"}), 500
+        record, service_error = _create_solicitud_record(validated)
+        if service_error or record is None:
+            return jsonify({"error": service_error or "No se pudo crear la demostracion"}), 500
+
+    records = storage.load()
+    demo_records = [item for item in records if item.get("titulo", "").startswith("[DEMO]")]
+    _prepare_demo_records(demo_records)
+    storage.save(records)
+    return jsonify({"creadas": len(demo_records), "existentes": 0, "solicitudes": demo_records}), 201
+
+
 @app.post("/solicitudes/<solicitud_id>/aprobacion")
 @require_auth
 def decide_approval(solicitud_id: str) -> Any:

@@ -396,6 +396,23 @@ class ApiTests(unittest.TestCase):
         self.assertIn(pending["asignado_a"], summary["por_responsable"])
         self.assertGreaterEqual(summary["tiempo_medio_resolucion_horas"], 0)
 
+    def test_demo_data_creates_complete_and_idempotent_scenario(self) -> None:
+        first = self.client.post("/demo/cargar")
+        self.assertEqual(first.status_code, 201)
+        payload = first.get_json()
+        self.assertEqual(payload["creadas"], 5)
+        records = payload["solicitudes"]
+        self.assertTrue(all(item["es_demo"] for item in records))
+        self.assertIn("pendiente_aprobacion", {item["estado"] for item in records})
+        self.assertIn("en_proceso", {item["estado"] for item in records})
+        self.assertIn("cerrada", {item["estado"] for item in records})
+        self.assertTrue(any(item["nivel_escalado"] == 1 for item in records))
+
+        second = self.client.post("/demo/cargar")
+        self.assertEqual(second.status_code, 200)
+        self.assertEqual(second.get_json()["creadas"], 0)
+        self.assertEqual(second.get_json()["existentes"], 5)
+
     def test_csv_report_is_protected_and_prevents_formula_injection(self) -> None:
         api_app.config.API_KEY = "token-pruebas"
         self.client.post(
