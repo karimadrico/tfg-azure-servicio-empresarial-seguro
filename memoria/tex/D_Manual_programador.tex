@@ -11,6 +11,10 @@ Este anexo describe la estructura técnica del repositorio y los pasos para ejec
     \item \texttt{src/classifier.py}: clasificador automático de incidencias.
     \item \texttt{src/storage.py}: persistencia local o en Azure Blob Storage.
     \item \texttt{src/config.py}: configuración por variables de entorno.
+    \item \texttt{src/catalog.py}: catálogo de servicios, activos y responsables.
+    \item \texttt{src/request\_workflow.py}: reglas de impacto, aprobación y SLA.
+    \item \texttt{src/operations.py}: métricas operativas, exportación y valoraciones.
+    \item \texttt{src/static/openapi.json}: contrato OpenAPI 3.0 de la API.
     \item \texttt{src/requirements.txt}: dependencias Python.
     \item \texttt{tests/test\_api.py}: pruebas unitarias.
     \item \texttt{logicapp/}: definición del flujo de automatización HTTP.
@@ -88,7 +92,7 @@ La figura \ref{fig:despliegue-azure} resume el proceso de despliegue y verificac
 python -m unittest discover -s tests -p "test_*.py"
 \end{verbatim}
 
-La batería contiene veintiuna pruebas que verifican endpoints, autenticación, creación, consulta y actualización de solicitudes, persistencia, historial, transiciones inválidas, filtros, paginación, portal, clasificación y métricas con SLA. También cubre catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV y refresco de Blob Storage entre procesos de App Service.
+La batería contiene veintiséis pruebas que verifican endpoints, autenticación, creación, consulta y actualización de solicitudes, persistencia, historial, transiciones inválidas, filtros, paginación, portal, clasificación y métricas con SLA. También cubre catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV, escenario de demostración, contrato OpenAPI, valoración tras el cierre y refresco de Blob Storage entre procesos de App Service.
 
 La tabla \ref{tabla:pruebas_realizadas} resume las pruebas principales aplicadas durante la validación del prototipo.
 
@@ -106,13 +110,16 @@ Gestión de solicitud & Validar asignación, estado, prioridad e historial. & Ac
 Catálogo e impacto & Relacionar servicio, activo y entorno con una solicitud. & Propietario e impacto calculados de forma coherente. \\
 Aprobación y escalado & Comprobar el flujo de decisiones sensibles. & Estado, aprobador, nivel de escalado e historial actualizados. \\
 Centro operativo y CSV & Validar carga, alertas y exportación. & Agregados correctos e informe descargable sin fórmulas ejecutables. \\
+Escenario de demostración & Preparar cinco estados representativos sin duplicarlos. & Carga idempotente y bandeja lista para evaluación. \\
+OpenAPI y ayuda & Comprobar documentación navegable del producto. & Contrato 3.0 válido y páginas públicas accesibles. \\
+Valoración y satisfacción & Validar el feedback posterior al cierre. & Una valoración por solicitud y media agregada correcta. \\
 Consistencia Azure & Simular lecturas sucesivas desde Blob Storage. & Cada proceso obtiene la versión más reciente de los datos. \\
 Validaciones de gestión & Rechazar estados desconocidos y recursos inexistentes. & Respuestas 400 y 404 según el caso. \\
 Clasificación de seguridad & Validar detección de incidencias críticas. & Categoría seguridad y prioridad alta. \\
 Escenarios de reglas & Ejecutar cuatro entradas con coincidencias y valores de respaldo. & Tipo, categoría y prioridad coinciden con las reglas documentadas. \\
 Verificación Azure & Probar despliegue real con script. & Health check, creación, listado y métricas correctas. \\
 Logic App & Validar automatización externa de solicitudes. & Trigger HTTP invoca \texttt{POST /solicitudes} y devuelve una solicitud creada. \\
-SonarCloud & Revisar calidad externa del código. & Duplicación controlada y excepciones justificadas. \\
+SonarCloud & Revisar calidad externa del código. & Quality Gate aprobado y cero problemas abiertos. \\
 \end{tabularx}
 \caption{Pruebas realizadas sobre el prototipo}
 \label{tabla:pruebas_realizadas}
@@ -128,13 +135,13 @@ El proyecto utiliza SonarCloud como servicio gestionado de SonarQube:
     \item \texttt{docs/calidad/sonarcloud.md}: documenta el resultado observado y las evidencias que deben guardarse.
 \end{itemize}
 
-Como evidencia se conserva una captura del análisis del 22 de junio. Tras incorporar la ampliación funcional, el análisis automático mantiene cero errores de fiabilidad, cero \textit{hotspots} y duplicación nula, pero requiere revisar cuatro alertas limitadas a los contenedores \texttt{Scope} y las acciones \texttt{Response} de Logic Apps. Sonar solicita propiedades \texttt{secureData} que Azure rechaza en esos elementos durante el despliegue; las acciones HTTP internas sí protegen entradas y salidas. Estas excepciones deben quedar aceptadas con su justificación técnica antes de obtener la captura definitiva del \textit{Quality Gate}. La configuración fija Python 3.11 y la versión 3.100.0 del proveedor Azure de Terraform para evitar análisis ambiguos.
+El análisis final del 23 de junio se ejecutó después de incorporar el escenario de demostración, la documentación OpenAPI y la valoración de solicitudes. El panel público muestra el \textit{Quality Gate} aprobado, cero problemas abiertos, calificaciones A en seguridad, fiabilidad y mantenibilidad, cero \textit{security hotspots} y duplicación del 0,0\%. La captura conserva el resultado observado en la plataforma, mientras que las veintiséis pruebas automáticas aportan la validación funcional del repositorio.
 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{sonarcloud-quality-gate-final-22junio.png}
-\caption{Evidencia de un análisis aprobado de SonarCloud anterior a la última ampliación funcional. Fuente: captura propia.}
+\includegraphics[width=0.9\textwidth]{sonarcloud-quality-gate-final-23junio.png}
+\caption{Quality Gate final aprobado en SonarCloud el 23 de junio. Fuente: captura propia.}
 \label{fig:sonarcloud-quality-gate-final}
 \end{figure}
 La figura \ref{fig:observabilidad-monitor} resume la estrategia de observabilidad mediante App Service, Application Insights y Azure Monitor.
@@ -159,6 +166,17 @@ Las figuras \ref{fig:application-insights-overview} y \ref{fig:azure-monitor-met
 \includegraphics[width=0.9\textwidth]{../docs/evidencias/azure-monitor-metrics.png}
 \caption{Métricas del servicio en Azure Monitor. Fuente: captura propia.}
 \label{fig:azure-monitor-metrics}
+\end{figure}
+\FloatBarrier
+\section{Documentación interactiva de la API}
+
+El contrato disponible en \texttt{/openapi.json} describe rutas, parámetros, cuerpos y respuestas sin sustituir a las pruebas. La interfaz \texttt{/docs} permite explorar dicho contrato y ejecutar operaciones públicas. Para probar una operación protegida, el evaluador pulsa \textit{Authorize} e introduce el token recuperado de Key Vault; el valor no se incorpora a la URL ni a las capturas.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{documentacion-interactiva-de-API.png}
+\caption{Documentación OpenAPI interactiva publicada junto al servicio. Fuente: captura propia.}
+\label{fig:openapi-interactiva}
 \end{figure}
 \FloatBarrier
 \section{Mantenimiento operativo}

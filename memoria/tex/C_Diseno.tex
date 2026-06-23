@@ -164,7 +164,8 @@ El flujo principal del sistema es:
     \item Persistencia de la solicitud y de su historial en Azure Blob Storage.
     \item Gestión posterior mediante aprobación, rechazo, escalado, asignación y transiciones de estado.
     \item Supervisión de carga, vencimientos y alertas desde el centro operativo.
-    \item Exportación del informe CSV y verificación del despliegue mediante pruebas HTTP.
+    \item Cierre de la solicitud y valoración opcional del servicio por el solicitante.
+    \item Exportación del informe CSV y verificación mediante pruebas HTTP, escenario de demostración y contrato OpenAPI.
 \end{enumerate}
 
 La figura \ref{fig:flujo-solicitud-ti} representa el flujo funcional seguido por una solicitud desde su entrada hasta la persistencia y la respuesta al usuario o sistema externo.
@@ -283,6 +284,11 @@ fecha\_creacion & fecha & Fecha de creación de la solicitud. \\
 fecha\_actualizacion & fecha & Fecha de la última actuación registrada. \\
 fecha\_objetivo\_sla & fecha & Límite inicial calculado a partir de la prioridad. \\
 historial & lista & Actuaciones con fecha, actor y detalle del cambio. \\
+servicio, activo y entorno & texto & Contexto del catálogo empresarial asociado a la petición. \\
+impacto y aprobación & texto/objeto & Criticidad calculada y decisión del aprobador cuando procede. \\
+escalado & objeto & Nivel, motivo, actor y fecha del último escalado. \\
+valoracion & objeto & Puntuación, comentario y fecha registrados tras el cierre. \\
+es\_demo & booleano & Identifica los casos repetibles preparados para la demostración. \\
 \end{tabularx}
 \caption{Diccionario de datos de la solicitud}
 \end{table}

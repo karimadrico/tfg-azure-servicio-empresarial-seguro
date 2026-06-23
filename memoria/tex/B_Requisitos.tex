@@ -29,6 +29,9 @@ Los requisitos funcionales recogen las capacidades visibles del sistema para usu
     \item RF-12 Gestionar aprobación de solicitudes sensibles.
     \item RF-13 Supervisar escalados, carga de trabajo y alertas SLA.
     \item RF-14 Exportar un informe operativo en formato CSV.
+    \item RF-15 Preparar un escenario de demostración repetible.
+    \item RF-16 Publicar ayuda y documentación OpenAPI verificable.
+    \item RF-17 Recoger la valoración de solicitudes cerradas.
 \end{itemize}
 
 Los requisitos no funcionales recogen propiedades transversales necesarias para que el sistema sea evaluable, seguro y mantenible:
@@ -65,6 +68,9 @@ RF-11 & Funcional & Alta & Prueba del cálculo de impacto y propietario del serv
 RF-12 & Funcional & Alta & Pruebas y evidencias de aprobación, rechazo y notificación. \\
 RF-13 & Funcional & Alta & Pruebas del escalado y del endpoint de centro operativo. \\
 RF-14 & Funcional & Media & Prueba de exportación CSV y protección frente a fórmulas. \\
+RF-15 & Funcional & Media & Prueba de carga idempotente de los cinco casos de demostración. \\
+RF-16 & Funcional & Media & Acceso a \texttt{/ayuda}, \texttt{/docs}, \texttt{/openapi.json} y \texttt{/acerca}. \\
+RF-17 & Funcional & Media & Prueba de valoración única de una solicitud cerrada y agregado de satisfacción. \\
 RNF-01 & No funcional & Alta & Revisión de autenticación, secretos fuera del código y SonarCloud. \\
 RNF-02 & No funcional & Media & Uso de App Service y Blob Storage como servicios gestionados. \\
 RNF-03 & No funcional & Media & Endpoint \texttt{/health} y script \texttt{verify-azure.ps1}. \\
@@ -120,6 +126,15 @@ El equipo TI debe poder escalar solicitudes y consultar aprobaciones pendientes,
 
 \subsection{RF-14 Exportación de informe}
 El sistema debe generar un informe CSV de las solicitudes para su revisión externa. Los valores se neutralizan cuando comienzan por caracteres interpretables como fórmulas por una hoja de cálculo.
+
+\subsection{RF-15 Escenario de demostración}
+El equipo evaluador debe poder cargar de forma controlada cinco casos representativos: aprobación pendiente, SLA vencido, solicitud en proceso, solicitud cerrada y caso escalado. La operación debe ser idempotente para no duplicar los registros al repetir la demostración.
+
+\subsection{RF-16 Ayuda y contrato de la API}
+El sistema debe ofrecer una guía de uso, información verificable de versión y arquitectura, y un contrato OpenAPI 3.0 navegable. Las operaciones protegidas deben poder probarse desde Swagger UI mediante un token Bearer obtenido de Key Vault.
+
+\subsection{RF-17 Valoración del servicio}
+Una solicitud cerrada debe admitir una única valoración de uno a cinco puntos y un comentario opcional. El centro operativo debe agregar el número de respuestas y la satisfacción media sin permitir valoraciones sobre solicitudes todavía activas.
 
 \subsection{RNF-01 Seguridad}
 Autenticación Bearer, almacenamiento privado y gestión de secretos centralizada.
