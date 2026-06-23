@@ -15,3 +15,7 @@ Tablero: https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial
 Las capturas de Zube se conservan en `docs/sprints/` y permiten comprobar la evolución incremental del proyecto. El Sprint 5 permanece abierto porque agrupa las tareas finales de defensa y entrega oficial.
 
 El inventario de tarjetas, enlaces y decisiones de replanificación se encuentra en [`zube-detalle.md`](zube-detalle.md).
+
+## Estimación y gráficos
+
+Las tarjetas no recibieron puntos de historia antes de iniciar las iteraciones. En consecuencia, no existe un burndown de puntos válido y no se ha reconstruido de forma retroactiva. La decisión, sus limitaciones, la respuesta preparada para la defensa y el procedimiento recomendado se explican en [`criterio-estimacion.md`](criterio-estimacion.md).

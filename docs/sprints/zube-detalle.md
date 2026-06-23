@@ -86,4 +86,4 @@ Este documento conserva la planificación real observada en Zube. Las fechas de 
 
 ## Interpretación de puntos y tarjetas
 
-Zube muestra cero puntos porque no se utilizaron puntos de historia como unidad de estimación. La estimación y el coste se documentan mediante horas por fase en el Anexo A. Las tarjetas cerradas reflejan finalización de tareas; los cambios de alcance se conservan de forma explícita para no alterar retrospectivamente el historial del proyecto.
+Zube muestra cero puntos porque no se utilizaron puntos de historia como unidad de estimación antes de comenzar las iteraciones. Por ello no puede obtenerse un burndown de puntos representativo. No se han añadido estimaciones retrospectivas, ya que alterarían la evidencia del proceso real. La estimación económica se documenta mediante horas por fase en el Anexo A, mientras que el avance se acredita con fechas, tarjetas, commits e incrementos funcionales. El criterio completo y la respuesta para la defensa se recogen en [`criterio-estimacion.md`](criterio-estimacion.md).
