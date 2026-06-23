@@ -52,7 +52,8 @@ La tabla \ref{tabla:iac_comparativa} resume el papel de cada mecanismo utilizado
 
 \begin{table}[h]
 \centering
-\footnotesize
+\scriptsize
+\renewcommand{\arraystretch}{0.9}
 \begin{tabularx}{\textwidth}{l X X}
 \textbf{Mecanismo} & \textbf{Uso en el proyecto} & \textbf{Ventaja principal} \\
 \hline
@@ -94,7 +95,7 @@ python -m unittest discover -s tests -p "test_*.py"
 
 La batería contiene veintiséis pruebas que verifican endpoints, autenticación, creación, consulta y actualización de solicitudes, persistencia, historial, transiciones inválidas, filtros, paginación, portal, clasificación y métricas con SLA. También cubre catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV, escenario de demostración, contrato OpenAPI, valoración tras el cierre y refresco de Blob Storage entre procesos de App Service.
 
-La tabla \ref{tabla:pruebas_realizadas} resume las pruebas principales aplicadas durante la validación del prototipo.
+Las tablas \ref{tabla:pruebas_funcionales} y \ref{tabla:pruebas_tecnicas} resumen las comprobaciones principales aplicadas durante la validación del prototipo.
 
 \begin{table}[h]
 \centering
@@ -113,6 +114,18 @@ Centro operativo y CSV & Validar carga, alertas y exportación. & Agregados corr
 Escenario de demostración & Preparar cinco estados representativos sin duplicarlos. & Carga idempotente y bandeja lista para evaluación. \\
 OpenAPI y ayuda & Comprobar documentación navegable del producto. & Contrato 3.0 válido y páginas públicas accesibles. \\
 Valoración y satisfacción & Validar el feedback posterior al cierre. & Una valoración por solicitud y media agregada correcta. \\
+\end{tabularx}
+\caption{Pruebas funcionales realizadas sobre el prototipo}
+\label{tabla:pruebas_funcionales}
+\end{table}
+
+\begin{table}[h]
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{0.9}
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Prueba} & \textbf{Objetivo} & \textbf{Resultado esperado} \\
+\hline
 Consistencia Azure & Simular lecturas sucesivas desde Blob Storage. & Cada proceso obtiene la versión más reciente de los datos. \\
 Validaciones de gestión & Rechazar estados desconocidos y recursos inexistentes. & Respuestas 400 y 404 según el caso. \\
 Clasificación de seguridad & Validar detección de incidencias críticas. & Categoría seguridad y prioridad alta. \\
@@ -121,8 +134,8 @@ Verificación Azure & Probar despliegue real con script. & Health check, creaci�
 Logic App & Validar automatización externa de solicitudes. & Trigger HTTP invoca \texttt{POST /solicitudes} y devuelve una solicitud creada. \\
 SonarCloud & Revisar calidad externa del código. & Quality Gate aprobado y cero problemas abiertos. \\
 \end{tabularx}
-\caption{Pruebas realizadas sobre el prototipo}
-\label{tabla:pruebas_realizadas}
+\caption{Pruebas técnicas y de despliegue}
+\label{tabla:pruebas_tecnicas}
 \end{table}
 \FloatBarrier
 
