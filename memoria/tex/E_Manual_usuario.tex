@@ -14,6 +14,12 @@ Los siguientes enlaces permiten acceder directamente a los recursos principales 
 \begin{itemize}
     \item \textbf{Portal web desplegado}\\
     \url{https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/portal}
+    \item \textbf{Guía de uso integrada}\\
+    \url{https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/ayuda}
+    \item \textbf{Documentación OpenAPI interactiva}\\
+    \url{https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/docs}
+    \item \textbf{Información de versión y arquitectura}\\
+    \url{https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/acerca}
     \item \textbf{Repositorio GitHub}\\
     \url{https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro}
     \item \textbf{Tablero Zube utilizado para la planificación por sprints}\\
@@ -31,7 +37,7 @@ El usuario necesita:
 \begin{itemize}
     \item Cliente HTTP (navegador, Postman o curl).
     \item Conexión a Internet.
-    \item Token de autenticación Bearer únicamente para consultar solicitudes y métricas protegidas. El portal y la creación de solicitudes no requieren que el usuario introduzca el token.
+    \item Token de autenticación Bearer para la bandeja TI, el centro operativo, la demostración y las operaciones protegidas de OpenAPI. El portal y la creación de solicitudes no requieren que el usuario introduzca el token.
 \end{itemize}
 
 \section{Acceso al servicio}
@@ -94,6 +100,15 @@ El equipo TI selecciona la pestaña \textit{Gestión del equipo TI}, introduce e
 
 Al seleccionar una fila se abre el detalle con solicitante, descripción, clasificación, recomendación y fecha objetivo. El operador puede cambiar el estado, la prioridad o el responsable y añadir una nota. Cada actuación queda incorporada al historial; el token se mantiene únicamente en memoria durante la sesión del navegador y no se guarda en almacenamiento local.
 
+Para una evaluación repetible, el botón \textit{Cargar demostración} prepara cinco solicitudes identificadas como datos de prueba: una pendiente de aprobación, una con SLA vencido, una en proceso, una cerrada y una escalada. La operación es idempotente, por lo que volver a pulsarla no duplica los casos existentes. La figura \ref{fig:portal-demo-bandeja} muestra la bandeja resultante.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{portal-demo-bandeja.png}
+\caption{Bandeja TI preparada con los cinco casos de demostración. Fuente: captura propia.}
+\label{fig:portal-demo-bandeja}
+\end{figure}
+
 \subsection{Aprobar o escalar una solicitud sensible}
 
 Las solicitudes sensibles permanecen en estado \texttt{pendiente\_aprobacion} hasta que el responsable indicado toma una decisión. El equipo TI comprueba servicio, activo, entorno e impacto y utiliza los botones \textit{Aprobar} o \textit{Rechazar}. También puede escalar el caso si aumenta su impacto o se acerca el vencimiento del SLA. La decisión conserva actor, fecha y motivo en el historial, como muestra la figura \ref{fig:portal-aprobacion-registrada}.
@@ -107,12 +122,12 @@ Las solicitudes sensibles permanecen en estado \texttt{pendiente\_aprobacion} ha
 
 \subsection{Supervisar SLA y exportar el informe}
 
-La pestaña \textit{Centro operativo} reúne aprobaciones pendientes, solicitudes escaladas, casos de impacto crítico, tiempo medio de resolución, carga por responsable y alertas activas. El botón \textit{Exportar CSV} descarga el inventario operativo para su revisión externa sin modificar los datos almacenados. La figura \ref{fig:portal-centro-operativo-sla} muestra esta vista consolidada.
+La pestaña \textit{Centro operativo} reúne aprobaciones pendientes, solicitudes escaladas, casos de impacto crítico, tiempo medio de resolución, carga por responsable, alertas activas y satisfacción media. El botón \textit{Exportar CSV} descarga el inventario operativo para su revisión externa sin modificar los datos almacenados. La figura \ref{fig:portal-centro-operativo-sla} muestra esta vista consolidada.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.95\textwidth]{portal-centro-operativo-sla.png}
-\caption{Centro operativo con carga de equipos y alertas de SLA. Fuente: captura propia.}
+\includegraphics[width=0.95\textwidth]{portal-operaciones-satisfaccion.png}
+\caption{Centro operativo con SLA, carga de equipos y satisfacción agregada. Fuente: captura propia.}
 \label{fig:portal-centro-operativo-sla}
 \end{figure}
 \FloatBarrier
@@ -156,6 +171,17 @@ Authorization: Bearer <token>
 \end{verbatim}
 
 La respuesta incluye agregados por estado, prioridad y tipo, además de solicitudes en plazo, vencidas y cerradas.
+
+\subsection{Valorar una solicitud cerrada}
+
+Una vez cerrada la solicitud, el portal habilita una valoración de uno a cinco puntos y un comentario opcional. Cada solicitud admite una sola respuesta; un segundo intento se rechaza para no alterar la métrica. Las solicitudes activas tampoco pueden valorarse. El resultado se incorpora al historial y a los indicadores del centro operativo, como se observa en la figura \ref{fig:portal-valoracion-recibida}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{portal-valoracion-final-recibido.png}
+\caption{Valoración registrada y conservada en el historial de la solicitud. Fuente: captura propia.}
+\label{fig:portal-valoracion-recibida}
+\end{figure}
 \subsection{Crear solicitud mediante Logic App}
 
 La Logic App permite automatizar la entrada de solicitudes desde un sistema externo. El usuario o sistema integrador envía un JSON al trigger HTTP de la Logic App y el flujo invoca internamente \texttt{POST /solicitudes}. La respuesta final mantiene el mismo formato que la API, incluyendo identificador, prioridad, clasificación y recomendación.
@@ -165,4 +191,35 @@ Esta opción está pensada para integraciones empresariales, por ejemplo formula
 Si la solicitud creada requiere aprobación, el mismo flujo registra una notificación para el responsable correspondiente antes de responder al sistema llamante. La gestión continúa en la bandeja TI; la Logic App no sustituye al portal, sino que ofrece un canal automático de entrada y evita duplicar las reglas de validación, clasificación y persistencia de la API.
 
 La URL del trigger contiene una firma de acceso y se obtiene desde Azure Portal únicamente al configurar la integración; no se guarda en el repositorio ni se presenta completa en las evidencias. El diseño conceptual del flujo se recoge en el anexo de diseño y la ejecución real se conserva en \texttt{docs/evidencias/}.
+
+\FloatBarrier
+\section{Demostración recomendada para el tribunal}
+
+La demostración puede realizarse de forma estable en el siguiente orden:
+
+\begin{enumerate}
+    \item Abrir \texttt{/health} y comprobar que el estado es \texttt{ok} y el almacenamiento es \texttt{azure}.
+    \item Abrir \texttt{/portal}, registrar una solicitud y mostrar el identificador, la clasificación, el impacto, el responsable y el plazo objetivo devueltos.
+    \item Entrar en \textit{Gestión del equipo TI}, introducir el token recuperado de Key Vault y pulsar \textit{Cargar bandeja}. El secreto no debe pronunciarse, copiarse en el guion ni aparecer en la grabación.
+    \item Pulsar \textit{Cargar demostración}. Seleccionar sucesivamente los casos pendiente de aprobación, SLA vencido, en proceso, cerrado y escalado para explicar las diferencias.
+    \item Aprobar o escalar el caso sensible y enseñar que el actor, la fecha y el motivo aparecen en el historial.
+    \item Abrir \textit{Centro operativo} para mostrar alertas SLA, carga por responsable, distribución por servicio y exportación CSV.
+    \item Seleccionar el caso cerrado, registrar una valoración y comprobar el nuevo promedio de satisfacción.
+    \item Abrir \texttt{/docs} para enseñar el contrato OpenAPI. Si se ejecuta una operación protegida, usar \textit{Authorize} sin dejar el token visible en la captura.
+    \item Abrir \texttt{/acerca} y mostrar versión, arquitectura y enlaces públicos a GitHub, Zube y SonarCloud.
+    \item Como cierre opcional, invocar la Logic App con un cuerpo JSON válido y localizar la nueva solicitud en la bandeja TI.
+\end{enumerate}
+
+La página \texttt{/ayuda} conserva dentro del propio producto una versión abreviada de este recorrido. Si una integración o credencial no estuviera disponible durante la defensa, las capturas de \texttt{docs/evidencias/} permiten acreditar el resultado sin exponer secretos.
+
+\section{Material de apoyo a la defensa}
+
+El cartel A3 resume problema, arquitectura, flujo empresarial, seguridad, validación y resultados. Su fuente editable y el PDF se conservan en \path{docs/entrega/cartel-a3.tex} y \path{docs/entrega/cartel-a3.pdf}. La figura \ref{fig:cartel-a3-final} se incorpora al anexo como referencia visual, sin repetirla en la memoria principal.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.93\textwidth]{cartel-a3-final.png}
+\caption{Cartel A3 de apoyo a la presentación y defensa. Fuente: elaboración propia.}
+\label{fig:cartel-a3-final}
+\end{figure}
 
