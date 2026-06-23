@@ -111,6 +111,22 @@ Desde la raiz del repositorio:
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
+## Demostracion para el tribunal
+
+El recorrido recomendado dura pocos minutos y evita depender de datos creados anteriormente:
+
+1. Abrir `/health` y comprobar `status: ok` y `storage_mode: azure`.
+2. Abrir `/portal` y registrar una solicitud para mostrar clasificacion, impacto, responsable y SLA.
+3. En `Gestion del equipo TI`, introducir el token recuperado de Key Vault y cargar la bandeja.
+4. Pulsar `Cargar demostracion`: se preparan, sin duplicarlos, casos de aprobacion, SLA vencido, trabajo en proceso, cierre y escalado.
+5. Abrir un caso sensible, aprobarlo o escalarlo y revisar su historial.
+6. Consultar `Centro operativo`, exportar el CSV y mostrar carga, alertas y satisfaccion.
+7. Valorar el caso cerrado y comprobar que el promedio se actualiza.
+8. Abrir `/docs` para enseñar el contrato OpenAPI y `/acerca` para revisar version, arquitectura y enlaces.
+9. Como integracion externa, ejecutar la Logic App y localizar en la bandeja la solicitud creada.
+
+El token nunca debe incluirse en comandos versionados, documentos ni capturas. El manual detallado está en `memoria/tex/E_Manual_usuario.tex` y las pruebas visuales en `docs/evidencias/`.
+
 La bateria actual contiene 26 pruebas de API, almacenamiento, clasificacion, seguridad, flujo empresarial, SLA, exportacion, demostracion y satisfaccion.
 
 ## Despliegue en Azure
@@ -212,5 +228,6 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 - Capturas finales explicadas en `docs/evidencias/README.md`.
 - Base del PDF de enlaces en `docs/entrega/enlaces-tfg.md`.
 - Cartel A3 editable y compilado en `docs/entrega/cartel-a3.tex` y `docs/entrega/cartel-a3.pdf`.
+- Cartel A3 incorporado también como material de apoyo en `memoria/anexos.pdf`.
 - Licencia MIT en `LICENSE`.
 

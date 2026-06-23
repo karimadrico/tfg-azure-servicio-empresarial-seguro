@@ -90,6 +90,23 @@ Las capturas incorporadas el 22 de junio documentan el incremento funcional post
 - `portal-solicitudes-22junio.png`: bandeja consolidada después de las pruebas funcionales.
 - `powershell-solicitud-evidenciacreada-v2.png`: detalle de una solicitud creada mediante el flujo automatizado.
 
+### Demostración, ayuda y satisfacción
+
+Las capturas del 23 de junio completan la evidencia de uso sin sustituir a las pruebas automáticas:
+
+- `portal-demo-bandeja.png`: cinco casos idempotentes preparados para la demostración del tribunal.
+- `portal-ayuda-final.png`: guía integrada que explica el recorrido funcional desde el propio producto.
+- `documentacion-interactiva-de-API.png`: contrato OpenAPI navegable en Swagger UI.
+- `openapi-swagger-final-ejecucion.png`: ejecución controlada de una operación desde la documentación.
+- `documentacion-autorizacion-token.png` y `documentacion-autorizacion-despues-de-token.png`: autorización Bearer antes y después de introducir el token, siempre oculto.
+- `portal-valoracion-final-solicitud-cerrada.png`: formulario habilitado únicamente tras el cierre.
+- `portal-valoracion-final-recibido.png`: valoración aceptada y registrada en el historial.
+- `portal-valoracion-final-enviado.png`: rechazo esperado de una segunda valoración sobre la misma solicitud.
+- `portal-operaciones-satisfaccion.png`: agregado de respuestas y satisfacción media en el centro operativo.
+- `portal-acerca-final.png`: versión candidata, arquitectura y enlaces públicos del proyecto.
+
+La captura que contenía un comando generado con un token visible se descartó. Las evidencias versionadas no deben mostrar claves, firmas `sig` ni cadenas de conexión.
+
 ## 2.1. Automatizacion con Logic App
 
 La Logic App `logic-tfg-solicitudes-dev` automatiza la entrada de solicitudes externas mediante un trigger HTTP y una llamada a la API desplegada en App Service. Las evidencias conservadas en esta carpeta son:
@@ -125,6 +142,7 @@ Evidencias finales incorporadas:
 
 - `sonarcloud-quality-gate-final-20junio.png`: estado más reciente, con Quality Gate aprobado, seguridad A, cero issues de seguridad y ocho issues no bloqueantes de mantenibilidad.
 - `sonarcloud-quality-gate-final-22junio.png`: análisis posterior a la ampliación, con Quality Gate aprobado y cero issues abiertos.
+- `sonarcloud-quality-gate-final-23junio.png`: análisis final tras demostración, OpenAPI y satisfacción, con Quality Gate aprobado, cero problemas abiertos y calificaciones A.
 
 ![Issues SonarCloud](sonarcloud-issues.png)
 
@@ -154,11 +172,19 @@ Captura de la página principal del repositorio en GitHub, mostrando que el READ
 
 Evidencia del historial de commits y de la trazabilidad del desarrollo.
 
-![Release final GitHub](github-release-final.png)
+![Release histórica GitHub](github-release-final.png)
 
-Captura de la release final `v1.0.0`, utilizada para distribuir el estado entregado del repositorio.
+Captura de la release `v1.0.0`, conservada como evidencia histórica. La versión candidata actual se distribuye como `v1.1.0` y su enlace figura en el README principal.
 
-## 6. Capturas complementarias
+![Changelog GitHub](github-changelog-final.png)
+
+El changelog resume los incrementos funcionales que condujeron a la versión candidata.
+
+## 6. Material de defensa
+
+`cartel-a3-final.png` es la representación visual del cartel A3 compilado en `docs/entrega/cartel-a3.pdf`. Resume el problema, la arquitectura Azure, el flujo de solicitudes, la seguridad y la validación; también se incluye en los anexos oficiales.
+
+## 7. Capturas complementarias
 
 ![Web App](web-app.png)
 
