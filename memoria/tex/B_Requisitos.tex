@@ -221,7 +221,7 @@ Las tablas \ref{tabla:casos-uso-operacion} y \ref{tabla:casos-uso-administracion
 \centering
 \scriptsize
 \begin{tabularx}{\textwidth}{l p{2.4cm} X X}
-\textbf{Caso / actor} & \textbf{Precondición} & \textbf{Flujo principal} & \textbf{Postcondición} \\
+\textbf{Caso / actor} & \textbf{Precondición} & \textbf{Flujo principal} & \textbf{Postcond.} \\
 \hline
 CU-01 Registrar / usuario & Portal o API disponible y catálogo cargado. & Selecciona contexto e introduce los datos de la petición. & Solicitud persistida con identificador \texttt{SOL-XXX} e historial inicial. \\
 CU-02 Clasificar / sistema & Solicitud validada. & Evalúa reglas, calcula impacto, asigna propietario y determina aprobación. & Clasificación, recomendación, SLA y contexto incorporados al registro. \\
@@ -237,7 +237,7 @@ CU-08 Valorar / usuario & Solicitud cerrada y correo coincidente. & Envía puntu
 \centering
 \scriptsize
 \begin{tabularx}{\textwidth}{l p{2.4cm} X X}
-\textbf{Caso / actor} & \textbf{Precondición} & \textbf{Flujo principal} & \textbf{Postcondición} \\
+\textbf{Caso / actor} & \textbf{Precondición} & \textbf{Flujo principal} & \textbf{Postcond.} \\
 \hline
 CU-05 Validar / administrador & Despliegue publicado. & Ejecuta \texttt{/health} y el script de verificación. & Evidencia del estado, almacenamiento y endpoints principales. \\
 CU-06 Secretos / administrador & Acceso autorizado a Azure. & Crea o rota el secreto y mantiene la identidad administrada. & Secreto fuera del código; App Service recupera el valor autorizado. \\

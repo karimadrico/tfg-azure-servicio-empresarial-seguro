@@ -158,14 +158,7 @@ El flujo principal del sistema es:
     \item Exportación del informe CSV y verificación mediante pruebas HTTP, escenario de demostración y contrato OpenAPI.
 \end{enumerate}
 
-La figura \ref{fig:flujo-solicitud-ti} representa el flujo funcional seguido por una solicitud desde su entrada hasta la persistencia y la respuesta al usuario o sistema externo.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{flujo_solicitud_ti.png}
-\caption{Flujo de creación y clasificación de una solicitud TI. Fuente: elaboración propia.}
-\label{fig:flujo-solicitud-ti}
-\end{figure}
+La secuencia completa de validación y persistencia se detalla en la figura \ref{fig:secuencia-persistencia}, dentro del diseño de datos.
 
 \subsection{Tipos de solicitud soportados}
 
@@ -224,36 +217,201 @@ Las capturas individuales de App Service, Key Vault, Managed Identity y Storage 
 
 \section{Diseño de datos}
 
-La persistencia del prototipo utiliza un único blob JSON que contiene la colección de solicitudes. No existe una base de datos relacional, por lo que el modelo se describe como una colección documental adecuada al volumen de demostración. En un entorno con escrituras concurrentes sería necesario migrar a un almacén transaccional o aplicar control de concurrencia sobre el blob.
+Los datos son semiestructurados y se serializan como JSON. En Azure, un único blob contiene la colección completa de solicitudes; en ejecución local se utiliza un fichero con el mismo formato. La API es la única responsable de leer, validar y modificar esta colección. El portal consume la API y la Logic App envía peticiones HTTP, pero ninguno de los dos accede directamente a Storage. Esta frontera evita duplicar reglas entre canales y permite reutilizar el mismo modelo local y cloud.
 
-\begin{table}[h]
+No existe un esquema físico relacional. La figura \ref{fig:modelo-conceptual-datos} representa un modelo conceptual para explicar las relaciones lógicas que después se embeben o referencian dentro de cada documento JSON.
+
+\begin{figure}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    entity/.style={draw, rounded corners, align=left, font=\small, minimum width=3.1cm, minimum height=1.15cm, fill=blue!5},
+    relation/.style={->, >=stealth, line width=0.55pt},
+    label/.style={font=\scriptsize, fill=white, inner sep=1.5pt}
+]
+\node[entity] (servicio) at (0,3.2) {\textbf{Servicio}\\id, criticidad\\propietario, aprobador};
+\node[entity] (activo) at (0,0.5) {\textbf{Activo}\\id, nombre\\servicio asociado};
+\node[entity, minimum width=4.2cm, fill=green!7] (solicitud) at (5.3,1.85) {\textbf{Solicitud}\\datos de entrada y clasificación\\contexto, SLA y estado};
+\node[entity] (historial) at (10.7,4.2) {\textbf{Evento de historial}\\fecha, acción\\actor, detalle};
+\node[entity] (aprobacion) at (10.7,1.85) {\textbf{Aprobación / escalado}\\decisión, nivel\\actor y fechas};
+\node[entity] (valoracion) at (10.7,-0.5) {\textbf{Valoración}\\puntuación, comentario\\correo y fecha};
+\draw[relation] (servicio)--node[label, above]{1 valida N} (solicitud);
+\draw[relation] (servicio)--node[label, left]{1 contiene N} (activo);
+\draw[relation] (activo)--node[label, below]{1 contextualiza N} (solicitud);
+\draw[relation] (solicitud)--node[label, above]{1 incorpora N} (historial);
+\draw[relation] (solicitud)--node[label, above]{0..1} (aprobacion);
+\draw[relation] (solicitud)--node[label, below]{0..1 tras cierre} (valoracion);
+\end{tikzpicture}%
+}
+\caption{Modelo conceptual de los datos documentales. No representa tablas físicas. Fuente: elaboración propia.}
+\label{fig:modelo-conceptual-datos}
+\end{figure}
+
+\subsection{Catálogo de servicios y activos}
+
+El catálogo actúa como fuente de validación. Evita que cada usuario escriba libremente nombres distintos para el mismo servicio o relacione un activo con un entorno no admitido. En el prototipo contiene seis servicios y se define en \path{src/catalog.py}. La tabla \ref{tabla:estructura-catalogo} describe la estructura de cada entrada.
+
+\begin{table}[ht]
 \centering
 \small
 \begin{tabularx}{\textwidth}{l l X}
-\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\
+\textbf{Campo} & \textbf{Tipo} & \textbf{Finalidad} \\
 \hline
-id & texto & Identificador único de la solicitud. \\
-titulo & texto & Resumen de la petición enviada por el usuario. \\
-descripcion & texto & Detalle de la solicitud o incidencia. \\
-tipo\_solicitud & texto & Acceso, entorno, aplicación, configuración o incidencia. \\
-prioridad & texto & Prioridad calculada por el clasificador. \\
-categoria & texto & Área funcional detectada: infraestructura, seguridad, software u otra. \\
-estado & texto & Estado operativo de la solicitud. \\
-recomendacion & texto & Acción sugerida para el equipo TI. \\
-reportado\_por & texto & Correo o identificador del solicitante. \\
-asignado\_a & texto & Equipo o responsable encargado del seguimiento. \\
-fecha\_creacion & fecha & Fecha de creación de la solicitud. \\
-fecha\_actualizacion & fecha & Fecha de la última actuación registrada. \\
-fecha\_objetivo\_sla & fecha & Límite inicial calculado a partir de la prioridad. \\
-historial & lista & Actuaciones con fecha, actor y detalle del cambio. \\
-servicio, activo y entorno & texto & Contexto del catálogo empresarial asociado a la petición. \\
-impacto y aprobación & texto/objeto & Criticidad calculada y decisión del aprobador cuando procede. \\
-escalado & objeto & Nivel, motivo, actor y fecha del último escalado. \\
-valoracion & objeto & Puntuación, comentario y fecha registrados tras el cierre. \\
-es\_demo & booleano & Identifica los casos repetibles preparados para la demostración. \\
+identificador & texto & Clave estable utilizada por portal y API. \\
+nombre & texto & Denominación legible del servicio. \\
+descripción & texto & Alcance funcional para orientar la selección. \\
+criticidad & enumerado & Baja, media, alta o crítica; interviene en el impacto. \\
+propietario & texto & Equipo técnico asignado inicialmente a la solicitud. \\
+aprobador & texto & Responsable que decide cuando la petición es sensible. \\
+entornos & lista & Contextos permitidos, por ejemplo corporativo o producción. \\
+activos & lista de objetos & Identificador y nombre de los recursos pertenecientes al servicio. \\
 \end{tabularx}
-\caption{Diccionario de datos de la solicitud}
+\caption{Estructura de una entrada del catálogo de servicios}
+\label{tabla:estructura-catalogo}
 \end{table}
+
+\subsection{Diccionario de la solicitud}
+
+Las tablas \ref{tabla:datos-solicitud-principales} y \ref{tabla:datos-solicitud-flujo} incorporan el origen de cada dato. ``Usuario'' incluye tanto el portal como un sistema externo; ``regla'' identifica valores calculados; ``catálogo'' designa contexto validado; y ``sistema'' agrupa identificadores, fechas e historial generados por la API.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{l l l X}
+\textbf{Campo} & \textbf{Tipo} & \textbf{Origen} & \textbf{Descripción} \\
+\hline
+id & texto & Sistema & Identificador secuencial \texttt{SOL-XXX}. \\
+titulo, descripcion & texto & Usuario & Resumen y detalle de la petición. \\
+reportado\_por & texto & Usuario & Correo validado del solicitante. \\
+tipo\_solicitud & enumerado & Usuario/regla & Tipo indicado y normalizado por el clasificador. \\
+prioridad & enumerado & Usuario/regla & Valor manual válido o prioridad inferida. \\
+clasificacion, confianza & texto/decimal & Regla & Resultado y confianza del clasificador. \\
+categoria, recomendacion & texto & Regla & Área funcional y acción sugerida. \\
+servicio\_id, activo\_id, entorno & texto & Usuario + catálogo & Selección validada frente al catálogo. \\
+servicio, activo, criticidad & texto & Catálogo & Contexto descriptivo copiado al documento. \\
+propietario, aprobador & texto & Catálogo & Equipos responsables del servicio. \\
+impacto & enumerado & Regla & Resultado de combinar criticidad, entorno y prioridad. \\
+\end{tabularx}
+\caption{Datos principales y origen de la solicitud}
+\label{tabla:datos-solicitud-principales}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{l l l X}
+\textbf{Campo} & \textbf{Tipo} & \textbf{Origen} & \textbf{Descripción} \\
+\hline
+estado & enumerado & Regla/sistema & Situación actual del ciclo de vida. \\
+asignado\_a & texto & Catálogo/equipo TI & Responsable inicial o reasignado. \\
+fechas de creación y actualización & fecha & Sistema & Marcas temporales UTC de la solicitud. \\
+fecha\_objetivo\_sla & fecha & Regla & Límite calculado según prioridad. \\
+aprobación & campos/objeto & Regla/equipo TI & Requisito, estado, aprobador, decisión y fecha. \\
+escalado & campos/objeto & Equipo TI/sistema & Nivel, motivo, actor y fecha. \\
+fecha\_cierre & fecha opcional & Sistema & Momento de cierre o rechazo. \\
+valoracion & objeto opcional & Usuario/sistema & Puntuación, comentario, correo y fecha. \\
+historial & lista de objetos & Sistema & Eventos con fecha, acción, actor y detalle. \\
+es\_demo & booleano & Sistema & Distingue los casos repetibles de evaluación. \\
+\end{tabularx}
+\caption{Datos de flujo, trazabilidad y valoración}
+\label{tabla:datos-solicitud-flujo}
+\end{table}
+
+El historial se almacena dentro de cada solicitud. Cada evento contiene fecha, acción, actor y detalle, lo que permite reconstruir la evolución sin consultar una estructura externa y materializa los requisitos RF-09 y RNF-04.
+
+\subsection{Reglas de validación y cálculo}
+
+La colección JSON no impone restricciones por sí misma; las reglas de la tabla \ref{tabla:reglas-modelo-documental} completan el modelo desde la API.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Regla} & \textbf{Comprobación o cálculo} & \textbf{Efecto} \\
+\hline
+Identificador & Calcula el siguiente \texttt{SOL-XXX} sobre la colección leída. & Evita duplicados en uso secuencial; no garantiza unicidad concurrente. \\
+Entrada & Valida título, descripción, email, tipo y límites de longitud. & Rechaza el JSON completo con HTTP 400. \\
+Catálogo & Comprueba servicio, activo perteneciente y entorno permitido. & Impide contexto ambiguo o incoherente. \\
+Clasificación & Aplica reglas de texto y prioridad manual válida. & Completa tipo, categoría, confianza y recomendación. \\
+Impacto y SLA & Combina criticidad, prioridad y entorno; asigna 4, 24 o 72 horas. & Determina impacto y fecha objetivo. \\
+Aprobación & Exige decisión para acceso/configuración en contexto sensible. & Estado inicial pendiente; aprobación abre y rechazo finaliza. \\
+Ciclo de vida & Valida transiciones entre abierta, en proceso y cerrada. & Una transición incompatible devuelve HTTP 409. \\
+Escalado & Exige actor y motivo; aumenta nivel y prioridad. & Registra el evento y reasigna al propietario. \\
+Valoración & Solo admite una valoración tras cierre y correo coincidente. & Actualiza satisfacción sin alterar el flujo previo. \\
+Persistencia & La API serializa la colección y sobrescribe el blob completo. & Mantiene formato único local/cloud, con límite de concurrencia. \\
+\end{tabularx}
+\caption{Reglas que completan el modelo documental}
+\label{tabla:reglas-modelo-documental}
+\end{table}
+
+\subsection{Ciclo de vida}
+
+La figura \ref{fig:estados-solicitud} representa únicamente transiciones implementadas. La aprobación y el rechazo son operaciones específicas; la actualización general no puede sacar directamente una solicitud del estado pendiente.
+
+\begin{figure}[ht]
+\centering
+\resizebox{0.96\textwidth}{!}{%
+\begin{tikzpicture}[
+    state/.style={draw, rounded corners, minimum width=2.8cm, minimum height=0.9cm, align=center, font=\small, fill=blue!6},
+    terminal/.style={state, double, fill=gray!10},
+    flow/.style={->, >=stealth, line width=0.55pt},
+    note/.style={font=\scriptsize, fill=white, inner sep=1pt}
+]
+\node[circle, fill=black, inner sep=2.5pt] (inicio) at (0,2.2) {};
+\node[state] (pendiente) at (3.2,3.4) {Pendiente de\\aprobación};
+\node[state] (abierta) at (6.5,2.2) {Abierta};
+\node[state] (proceso) at (10,2.2) {En proceso};
+\node[terminal] (cerrada) at (13.5,2.2) {Cerrada};
+\node[terminal] (rechazada) at (3.2,0.3) {Rechazada};
+\draw[flow] (inicio)--node[note, above left]{sensible} (pendiente);
+\draw[flow] (inicio)--node[note, below]{sin aprobación} (abierta);
+\draw[flow] (pendiente)--node[note, above]{aprobar} (abierta);
+\draw[flow] (pendiente)--node[note, left]{rechazar} (rechazada);
+\draw[flow] (abierta) to[bend left=12] node[note, above]{iniciar} (proceso);
+\draw[flow] (proceso) to[bend left=12] node[note, below]{devolver} (abierta);
+\draw[flow] (abierta) to[bend left=18] node[note, above]{resolver} (cerrada);
+\draw[flow] (proceso)--node[note, above]{resolver} (cerrada);
+\draw[flow] (cerrada) to[bend left=28] node[note, below]{reabrir} (proceso);
+\path[flow] (proceso) edge[loop above] node[note]{escalar} (proceso);
+\end{tikzpicture}%
+}
+\caption{Diagrama de estados de una solicitud. Fuente: elaboración propia.}
+\label{fig:estados-solicitud}
+\end{figure}
+
+\subsection{Secuencia de creación y persistencia}
+
+La figura \ref{fig:secuencia-persistencia} muestra que todos los canales convergen en la API y que Blob Storage no se expone al portal ni a Logic Apps.
+
+\begin{figure}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[font=\scriptsize, msg/.style={->, >=stealth, line width=0.5pt}]
+\foreach \x/\name in {0/Usuario o sistema,3/Portal o Logic App,6/API Flask,9/Reglas y catálogo,12/Azure Blob Storage}{
+  \node[draw, rounded corners, fill=blue!5, minimum width=2.45cm, minimum height=0.65cm, align=center] (n\x) at (\x,7.5) {\name};
+  \draw[dashed, gray] (\x,7.15)--(\x,0.15);
+}
+\draw[msg] (0,6.7)--node[above]{datos de solicitud} (3,6.7);
+\draw[msg] (3,5.9)--node[above]{POST /solicitudes} (6,5.9);
+\draw[msg] (6,5.1)--node[above]{validar y clasificar} (9,5.1);
+\draw[msg] (9,4.5)--node[above]{contexto, impacto y flujo} (6,4.5);
+\draw[msg] (6,3.7)--node[above]{leer colección JSON} (12,3.7);
+\draw[msg] (12,3.1)--node[above]{versión actual} (6,3.1);
+\draw[msg] (6,2.3)--node[above]{añadir registro y sobrescribir blob} (12,2.3);
+\draw[msg] (12,1.7)--node[above]{confirmación} (6,1.7);
+\draw[msg] (6,1.1)--node[above]{HTTP 201 + SOL-XXX} (3,1.1);
+\draw[msg] (3,0.5)--node[above]{resultado} (0,0.5);
+\end{tikzpicture}%
+}
+\caption{Secuencia de creación y persistencia de una solicitud. Fuente: elaboración propia.}
+\label{fig:secuencia-persistencia}
+\end{figure}
+
+\subsection{Concurrencia y evolución}
+
+La implementación actual sigue un patrón de lectura, modificación en memoria y escritura completa con \texttt{overwrite=True}. No utiliza ETag, condición \texttt{If-Match}, transacción ni bloqueo distribuido. Si dos procesos leen la versión N, el primero guarda N+A y el segundo guarda después N+B, la segunda escritura puede sobrescribir la primera. También podrían calcular el mismo identificador. Un bloqueo en memoria no resolvería el problema entre varios trabajadores de Gunicorn o varias instancias de App Service.
+
+Esta decisión es aceptable para la demostración de bajo volumen, pero no para una plataforma ITSM con concurrencia real. La mejora mínima consistiría en descargar el ETag, realizar una escritura condicional y reintentar la operación cuando la versión haya cambiado. Una evolución más sólida separaría cada solicitud en un objeto o migraría a Azure Table Storage, Cosmos DB o Azure SQL, según las necesidades de consulta y transacción. La respuesta preparada para la defensa y las alternativas se conservan también en \path{docs/decisiones/concurrencia-blob.md}.
 
 \section{Calidad y observabilidad}
 
