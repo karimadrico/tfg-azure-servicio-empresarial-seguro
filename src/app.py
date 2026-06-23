@@ -251,6 +251,16 @@ def help_page() -> Any:
     return send_from_directory(Path(app.static_folder), "index.html")
 
 
+@app.get("/docs")
+def api_docs() -> Any:
+    return send_from_directory(Path(app.static_folder), "api-docs.html")
+
+
+@app.get("/openapi.json")
+def openapi_specification() -> Any:
+    return send_from_directory(Path(app.static_folder), "openapi.json")
+
+
 @app.get("/health")
 def health() -> Any:
     return jsonify(

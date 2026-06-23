@@ -1,0 +1,272 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Plataforma Cloud de Automatizacion de Solicitudes TI",
+    "version": "2.0.0",
+    "description": "Contrato REST del prototipo desplegado en Microsoft Azure."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Instancia actual"
+    }
+  ],
+  "tags": [
+    {"name": "Sistema"},
+    {"name": "Solicitudes"},
+    {"name": "Flujo empresarial"},
+    {"name": "Operacion"}
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["Sistema"],
+        "summary": "Consultar informacion del servicio",
+        "responses": {"200": {"description": "Servicio operativo"}}
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": ["Sistema"],
+        "summary": "Comprobar disponibilidad y almacenamiento",
+        "responses": {"200": {"description": "Estado tecnico"}}
+      }
+    },
+    "/catalogo": {
+      "get": {
+        "tags": ["Solicitudes"],
+        "summary": "Obtener servicios, activos y entornos",
+        "responses": {"200": {"description": "Catalogo empresarial"}}
+      }
+    },
+    "/solicitudes": {
+      "get": {
+        "tags": ["Solicitudes"],
+        "summary": "Listar y filtrar solicitudes",
+        "security": [{"BearerAuth": []}],
+        "parameters": [
+          {"name": "estado", "in": "query", "schema": {"type": "string"}},
+          {"name": "prioridad", "in": "query", "schema": {"type": "string", "enum": ["baja", "media", "alta"]}},
+          {"name": "tipo_solicitud", "in": "query", "schema": {"type": "string"}},
+          {"name": "servicio_id", "in": "query", "schema": {"type": "string"}},
+          {"name": "impacto", "in": "query", "schema": {"type": "string", "enum": ["bajo", "medio", "alto", "critico"]}},
+          {"name": "limit", "in": "query", "schema": {"type": "integer", "default": 50, "maximum": 100}},
+          {"name": "offset", "in": "query", "schema": {"type": "integer", "default": 0}}
+        ],
+        "responses": {
+          "200": {"description": "Listado paginado"},
+          "401": {"description": "Token ausente o invalido"}
+        }
+      },
+      "post": {
+        "tags": ["Solicitudes"],
+        "summary": "Registrar y clasificar una solicitud",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/NuevaSolicitud"},
+              "example": {
+                "tipo_solicitud": "acceso",
+                "titulo": "Acceso VPN para consultora",
+                "descripcion": "Se requiere acceso temporal a la VPN corporativa.",
+                "reportado_por": "usuario@empresa.com",
+                "servicio_id": "vpn",
+                "activo_id": "grupo-acceso-vpn",
+                "entorno": "produccion"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Solicitud creada y clasificada"},
+          "400": {"description": "Datos invalidos"}
+        }
+      }
+    },
+    "/solicitudes/{solicitud_id}": {
+      "parameters": [
+        {"$ref": "#/components/parameters/SolicitudId"}
+      ],
+      "get": {
+        "tags": ["Solicitudes"],
+        "summary": "Consultar detalle e historial",
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": {"description": "Detalle de la solicitud"},
+          "404": {"description": "Solicitud no encontrada"}
+        }
+      },
+      "patch": {
+        "tags": ["Flujo empresarial"],
+        "summary": "Actualizar estado, prioridad o responsable",
+        "security": [{"BearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ActualizacionSolicitud"}
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Solicitud actualizada"},
+          "409": {"description": "Transicion de estado no permitida"}
+        }
+      }
+    },
+    "/solicitudes/{solicitud_id}/aprobacion": {
+      "post": {
+        "tags": ["Flujo empresarial"],
+        "summary": "Aprobar o rechazar una solicitud sensible",
+        "security": [{"BearerAuth": []}],
+        "parameters": [{"$ref": "#/components/parameters/SolicitudId"}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["decision", "actor"],
+                "properties": {
+                  "decision": {"type": "string", "enum": ["aprobar", "rechazar"]},
+                  "actor": {"type": "string"},
+                  "comentario": {"type": "string", "maxLength": 500}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Decision registrada"},
+          "409": {"description": "La solicitud no admite la decision"}
+        }
+      }
+    },
+    "/solicitudes/{solicitud_id}/escalar": {
+      "post": {
+        "tags": ["Flujo empresarial"],
+        "summary": "Escalar una solicitud activa",
+        "security": [{"BearerAuth": []}],
+        "parameters": [{"$ref": "#/components/parameters/SolicitudId"}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["actor", "motivo"],
+                "properties": {
+                  "actor": {"type": "string"},
+                  "motivo": {"type": "string", "maxLength": 500}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"200": {"description": "Solicitud escalada"}}
+      }
+    },
+    "/solicitudes/{solicitud_id}/notificar-aprobacion": {
+      "post": {
+        "tags": ["Flujo empresarial"],
+        "summary": "Registrar la notificacion automatizada de aprobacion",
+        "security": [{"BearerAuth": []}],
+        "parameters": [{"$ref": "#/components/parameters/SolicitudId"}],
+        "responses": {"200": {"description": "Notificacion registrada"}}
+      }
+    },
+    "/metricas": {
+      "get": {
+        "tags": ["Operacion"],
+        "summary": "Consultar indicadores agregados",
+        "security": [{"BearerAuth": []}],
+        "responses": {"200": {"description": "Metricas de solicitudes y SLA"}}
+      }
+    },
+    "/operaciones": {
+      "get": {
+        "tags": ["Operacion"],
+        "summary": "Consultar carga, SLA y alertas",
+        "security": [{"BearerAuth": []}],
+        "responses": {"200": {"description": "Resumen operativo"}}
+      }
+    },
+    "/informes/solicitudes.csv": {
+      "get": {
+        "tags": ["Operacion"],
+        "summary": "Exportar informe operativo CSV",
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Informe CSV",
+            "content": {"text/csv": {"schema": {"type": "string"}}}
+          }
+        }
+      }
+    },
+    "/demo/cargar": {
+      "post": {
+        "tags": ["Operacion"],
+        "summary": "Preparar cinco solicitudes de demostracion",
+        "description": "Operacion idempotente protegida. No duplica los casos si ya existen.",
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "201": {"description": "Escenario creado"},
+          "200": {"description": "Escenario ya existente"}
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "API key almacenada en Azure Key Vault."
+      }
+    },
+    "parameters": {
+      "SolicitudId": {
+        "name": "solicitud_id",
+        "in": "path",
+        "required": true,
+        "schema": {"type": "string", "pattern": "^SOL-[0-9]+$"},
+        "example": "SOL-001"
+      }
+    },
+    "schemas": {
+      "NuevaSolicitud": {
+        "type": "object",
+        "required": ["titulo", "descripcion", "reportado_por"],
+        "properties": {
+          "tipo_solicitud": {
+            "type": "string",
+            "enum": ["acceso", "entorno", "aplicacion", "configuracion", "incidencia"]
+          },
+          "titulo": {"type": "string", "minLength": 1, "maxLength": 200},
+          "descripcion": {"type": "string", "minLength": 10, "maxLength": 2000},
+          "reportado_por": {"type": "string", "format": "email"},
+          "prioridad": {"type": "string", "enum": ["baja", "media", "alta"]},
+          "servicio_id": {"type": "string"},
+          "activo_id": {"type": "string"},
+          "entorno": {"type": "string"}
+        }
+      },
+      "ActualizacionSolicitud": {
+        "type": "object",
+        "properties": {
+          "estado": {
+            "type": "string",
+            "enum": ["pendiente_aprobacion", "abierta", "en_proceso", "cerrada", "rechazada"]
+          },
+          "prioridad": {"type": "string", "enum": ["baja", "media", "alta"]},
+          "asignado_a": {"type": "string", "maxLength": 100},
+          "comentario": {"type": "string", "maxLength": 500},
+          "actor": {"type": "string", "maxLength": 100}
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

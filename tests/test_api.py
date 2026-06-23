@@ -94,6 +94,20 @@ class ApiTests(unittest.TestCase):
         self.assertIn(b"Cargar demostraci\xc3\xb3n", response.data)
         response.close()
 
+    def test_openapi_documentation_endpoints(self) -> None:
+        specification = self.client.get("/openapi.json")
+        self.assertEqual(specification.status_code, 200)
+        payload = specification.get_json()
+        self.assertEqual(payload["openapi"], "3.0.3")
+        self.assertIn("/solicitudes/{solicitud_id}/aprobacion", payload["paths"])
+        self.assertIn("BearerAuth", payload["components"]["securitySchemes"])
+        specification.close()
+
+        documentation = self.client.get("/docs")
+        self.assertEqual(documentation.status_code, 200)
+        self.assertIn(b"SwaggerUIBundle", documentation.data)
+        documentation.close()
+
     def test_service_catalog_endpoint(self) -> None:
         response = self.client.get("/catalogo")
         self.assertEqual(response.status_code, 200)
