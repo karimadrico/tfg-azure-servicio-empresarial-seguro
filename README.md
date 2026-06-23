@@ -211,5 +211,6 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 - Guía de diagramas y diagramas textuales en `docs/diagramas/diagramas.md`.
 - Capturas finales explicadas en `docs/evidencias/README.md`.
 - Base del PDF de enlaces en `docs/entrega/enlaces-tfg.md`.
+- Cartel A3 editable y compilado en `docs/entrega/cartel-a3.tex` y `docs/entrega/cartel-a3.pdf`.
 - Licencia MIT en `LICENSE`.
 
