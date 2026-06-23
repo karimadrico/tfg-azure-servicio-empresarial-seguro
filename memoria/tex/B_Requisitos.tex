@@ -217,31 +217,31 @@ La figura \ref{fig:casos-uso-general} delimita las interacciones entre los usuar
 
 Las tablas \ref{tabla:casos-uso-operacion} y \ref{tabla:casos-uso-administracion} detallan actor, precondición, flujo y postcondición. La tabla \ref{tabla:excepciones-casos-uso} reúne las excepciones que pueden observarse al probar la API.
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
-\scriptsize
-\begin{tabularx}{\textwidth}{l p{2.4cm} X X}
-\textbf{Caso / actor} & \textbf{Precondición} & \textbf{Flujo principal} & \textbf{Postcond.} \\
+\footnotesize
+\begin{tabularx}{\textwidth}{p{3.3cm} X}
+\textbf{Caso de uso} & \textbf{Condiciones y comportamiento} \\
 \hline
-CU-01 Registrar / usuario & Portal o API disponible y catálogo cargado. & Selecciona contexto e introduce los datos de la petición. & Solicitud persistida con identificador \texttt{SOL-XXX} e historial inicial. \\
-CU-02 Clasificar / sistema & Solicitud validada. & Evalúa reglas, calcula impacto, asigna propietario y determina aprobación. & Clasificación, recomendación, SLA y contexto incorporados al registro. \\
-CU-03 Gestionar / equipo TI & Token Bearer válido y solicitud existente. & Filtra, asigna, aprueba, rechaza, escala o cambia el estado. & Cambio persistido con actor, fecha y detalle en el historial. \\
-CU-04 Centro operativo / equipo TI & Token Bearer válido. & Consulta carga, alertas, SLA, satisfacción o exporta el CSV. & Resumen calculado sin modificar solicitudes; informe descargable. \\
-CU-08 Valorar / usuario & Solicitud cerrada y correo coincidente. & Envía puntuación de 1 a 5 y comentario opcional. & Valoración única almacenada y media de satisfacción actualizada. \\
+CU-01 Registrar solicitud & \textbf{Actor:} usuario. \textbf{Precondición:} portal o API disponible y catálogo cargado. \textbf{Flujo:} selecciona contexto e introduce los datos de la petición. \textbf{Postcondición:} solicitud persistida con identificador \texttt{SOL-XXX} e historial inicial. \\
+CU-02 Clasificar solicitud & \textbf{Actor:} sistema. \textbf{Precondición:} solicitud validada. \textbf{Flujo:} evalúa reglas, calcula impacto, asigna propietario y determina aprobación. \textbf{Postcondición:} clasificación, recomendación, SLA y contexto incorporados al registro. \\
+CU-03 Gestionar solicitudes & \textbf{Actor:} equipo TI. \textbf{Precondición:} token Bearer válido y solicitud existente. \textbf{Flujo:} filtra, asigna, aprueba, rechaza, escala o cambia el estado. \textbf{Postcondición:} cambio persistido con actor, fecha y detalle en el historial. \\
+CU-04 Centro operativo y SLA & \textbf{Actor:} equipo TI. \textbf{Precondición:} token Bearer válido. \textbf{Flujo:} consulta carga, alertas, SLA, satisfacción o exporta el CSV. \textbf{Postcondición:} resumen calculado sin modificar solicitudes e informe descargable. \\
+CU-08 Valorar servicio & \textbf{Actor:} usuario. \textbf{Precondición:} solicitud cerrada y correo coincidente. \textbf{Flujo:} envía puntuación de 1 a 5 y comentario opcional. \textbf{Postcondición:} valoración única almacenada y media de satisfacción actualizada. \\
 \end{tabularx}
 \caption{Casos de uso de operación y consulta}
 \label{tabla:casos-uso-operacion}
 \end{table}
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
-\scriptsize
-\begin{tabularx}{\textwidth}{l p{2.4cm} X X}
-\textbf{Caso / actor} & \textbf{Precondición} & \textbf{Flujo principal} & \textbf{Postcond.} \\
+\footnotesize
+\begin{tabularx}{\textwidth}{p{3.3cm} X}
+\textbf{Caso de uso} & \textbf{Condiciones y comportamiento} \\
 \hline
-CU-05 Validar / administrador & Despliegue publicado. & Ejecuta \texttt{/health} y el script de verificación. & Evidencia del estado, almacenamiento y endpoints principales. \\
-CU-06 Secretos / administrador & Acceso autorizado a Azure. & Crea o rota el secreto y mantiene la identidad administrada. & Secreto fuera del código; App Service recupera el valor autorizado. \\
-CU-07 Automatizar / sistema externo & URL firmada y cuerpo JSON válido. & Logic App recibe la petición e invoca \texttt{POST /solicitudes}. & Solicitud registrada por el mismo flujo que el portal; respuesta propagada. \\
+CU-05 Validar despliegue & \textbf{Actor:} administrador cloud. \textbf{Precondición:} despliegue publicado. \textbf{Flujo:} ejecuta \texttt{/health} y el script de verificación. \textbf{Postcondición:} evidencia del estado, almacenamiento y endpoints principales. \\
+CU-06 Gestionar secretos & \textbf{Actor:} administrador cloud. \textbf{Precondición:} acceso autorizado a Azure. \textbf{Flujo:} crea o rota el secreto y mantiene la identidad administrada. \textbf{Postcondición:} secreto fuera del código y App Service recupera el valor autorizado. \\
+CU-07 Automatizar entrada & \textbf{Actor:} sistema externo. \textbf{Precondición:} URL firmada y cuerpo JSON válido. \textbf{Flujo:} Logic App recibe la petición e invoca \texttt{POST /solicitudes}. \textbf{Postcondición:} solicitud registrada por el mismo flujo que el portal y respuesta propagada. \\
 \end{tabularx}
 \caption{Casos de uso de administración y automatización}
 \label{tabla:casos-uso-administracion}

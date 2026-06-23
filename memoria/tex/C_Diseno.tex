@@ -200,7 +200,7 @@ La figura \ref{fig:logic-app-created-request} evidencia una ejecución correcta 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.82\textwidth]{powershell-solicitud-evidenciacreada-v2.png}
+\includegraphics[width=0.82\textwidth,height=0.68\textheight,keepaspectratio]{powershell-solicitud-evidenciacreada-v2.png}
 \caption{Solicitud sensible creada mediante Azure Logic Apps y visible en la bandeja TI. Fuente: captura propia.}
 \label{fig:logic-app-created-request}
 \end{figure}
@@ -221,7 +221,7 @@ Los datos son semiestructurados y se serializan como JSON. En Azure, un único b
 
 No existe un esquema físico relacional. La figura \ref{fig:modelo-conceptual-datos} representa un modelo conceptual para explicar las relaciones lógicas que después se embeben o referencian dentro de cada documento JSON.
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
@@ -229,18 +229,18 @@ No existe un esquema físico relacional. La figura \ref{fig:modelo-conceptual-da
     relation/.style={->, >=stealth, line width=0.55pt},
     label/.style={font=\scriptsize, fill=white, inner sep=1.5pt}
 ]
-\node[entity] (servicio) at (0,3.2) {\textbf{Servicio}\\id, criticidad\\propietario, aprobador};
-\node[entity] (activo) at (0,0.5) {\textbf{Activo}\\id, nombre\\servicio asociado};
-\node[entity, minimum width=4.2cm, fill=green!7] (solicitud) at (5.3,1.85) {\textbf{Solicitud}\\datos de entrada y clasificación\\contexto, SLA y estado};
-\node[entity] (historial) at (10.7,4.2) {\textbf{Evento de historial}\\fecha, acción\\actor, detalle};
-\node[entity] (aprobacion) at (10.7,1.85) {\textbf{Aprobación / escalado}\\decisión, nivel\\actor y fechas};
-\node[entity] (valoracion) at (10.7,-0.5) {\textbf{Valoración}\\puntuación, comentario\\correo y fecha};
-\draw[relation] (servicio)--node[label, above]{1 valida N} (solicitud);
-\draw[relation] (servicio)--node[label, left]{1 contiene N} (activo);
-\draw[relation] (activo)--node[label, below]{1 contextualiza N} (solicitud);
-\draw[relation] (solicitud)--node[label, above]{1 incorpora N} (historial);
-\draw[relation] (solicitud)--node[label, above]{0..1} (aprobacion);
-\draw[relation] (solicitud)--node[label, below]{0..1 tras cierre} (valoracion);
+\node[entity] (servicio) at (0,4) {\textbf{Servicio}\\id, criticidad\\propietario, aprobador};
+\node[entity] (activo) at (0,0) {\textbf{Activo}\\id, nombre\\servicio asociado};
+\node[entity, minimum width=4.2cm, fill=green!7] (solicitud) at (5.3,2) {\textbf{Solicitud}\\datos de entrada y clasificación\\contexto, SLA y estado};
+\node[entity] (historial) at (10.8,4.5) {\textbf{Evento de historial}\\fecha, acción\\actor, detalle};
+\node[entity] (aprobacion) at (10.8,2) {\textbf{Aprobación / escalado}\\decisión, nivel\\actor y fechas};
+\node[entity] (valoracion) at (10.8,-0.5) {\textbf{Valoración}\\puntuación, comentario\\correo y fecha};
+\draw[relation] (servicio.east)--node[label, above, sloped]{1 valida N} (solicitud.north west);
+\draw[relation] (servicio.south)--node[label, left]{1 contiene N} (activo.north);
+\draw[relation] (activo.east)--node[label, below, sloped]{1 contextualiza N} (solicitud.south west);
+\draw[relation] (solicitud.north east)--node[label, above, sloped]{1 incorpora N} (historial.west);
+\draw[relation] (solicitud.east)--node[label, above]{0..1} (aprobacion.west);
+\draw[relation] (solicitud.south east)--node[label, below, sloped]{0..1 tras cierre} (valoracion.west);
 \end{tikzpicture}%
 }
 \caption{Modelo conceptual de los datos documentales. No representa tablas físicas. Fuente: elaboración propia.}
@@ -251,7 +251,7 @@ No existe un esquema físico relacional. La figura \ref{fig:modelo-conceptual-da
 
 El catálogo actúa como fuente de validación. Evita que cada usuario escriba libremente nombres distintos para el mismo servicio o relacione un activo con un entorno no admitido. En el prototipo contiene seis servicios y se define en \path{src/catalog.py}. La tabla \ref{tabla:estructura-catalogo} describe la estructura de cada entrada.
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \small
 \begin{tabularx}{\textwidth}{l l X}
@@ -274,7 +274,7 @@ activos & lista de objetos & Identificador y nombre de los recursos pertenecient
 
 Las tablas \ref{tabla:datos-solicitud-principales} y \ref{tabla:datos-solicitud-flujo} incorporan el origen de cada dato. ``Usuario'' incluye tanto el portal como un sistema externo; ``regla'' identifica valores calculados; ``catálogo'' designa contexto validado; y ``sistema'' agrupa identificadores, fechas e historial generados por la API.
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \scriptsize
 \begin{tabularx}{\textwidth}{l l l X}
@@ -296,7 +296,7 @@ impacto & enumerado & Regla & Resultado de combinar criticidad, entorno y priori
 \label{tabla:datos-solicitud-principales}
 \end{table}
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \scriptsize
 \begin{tabularx}{\textwidth}{l l l X}
@@ -323,7 +323,7 @@ El historial se almacena dentro de cada solicitud. Cada evento contiene fecha, a
 
 La colección JSON no impone restricciones por sí misma; las reglas de la tabla \ref{tabla:reglas-modelo-documental} completan el modelo desde la API.
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \scriptsize
 \begin{tabularx}{\textwidth}{l X X}
@@ -348,7 +348,7 @@ Persistencia & La API serializa la colección y sobrescribe el blob completo. & 
 
 La figura \ref{fig:estados-solicitud} representa únicamente transiciones implementadas. La aprobación y el rechazo son operaciones específicas; la actualización general no puede sacar directamente una solicitud del estado pendiente.
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \centering
 \resizebox{0.96\textwidth}{!}{%
 \begin{tikzpicture}[
@@ -383,7 +383,7 @@ La figura \ref{fig:estados-solicitud} representa únicamente transiciones implem
 
 La figura \ref{fig:secuencia-persistencia} muestra que todos los canales convergen en la API y que Blob Storage no se expone al portal ni a Logic Apps.
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[font=\scriptsize, msg/.style={->, >=stealth, line width=0.5pt}]
