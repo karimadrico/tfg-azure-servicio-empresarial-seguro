@@ -46,15 +46,6 @@ La figura \ref{fig:arquitectura-general-memoria} representa este flujo dentro de
 \label{fig:arquitectura-general-memoria}
 \end{figure}
 
-La figura \ref{fig:infografia-arquitectura-azure} resume visualmente los servicios cloud utilizados y su relación con el proceso empresarial automatizado.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{infografia_de_arquitectura_Azure_v2.png}
-\caption{Infografía de arquitectura cloud del prototipo. Fuente: elaboración propia.}
-\label{fig:infografia-arquitectura-azure}
-\end{figure}
-
 \subsection{Límites y dependencias entre componentes}
 
 La API es el punto de aplicación de las reglas del negocio. Tanto el portal como la Logic App llaman a la misma operación de creación; de este modo, añadir un canal de entrada no duplica validaciones ni clasificación. El portal se entrega como contenido estático desde el mismo App Service, una decisión que simplifica el prototipo y evita desplegar un segundo alojamiento. Esta unión sería revisable si el frontend necesitara un ciclo de publicación independiente, distribución mediante CDN o un equipo de desarrollo separado.
@@ -69,31 +60,39 @@ La API desarrollada en \texttt{src/app.py} expone los siguientes endpoints:
 
 \begin{itemize}
     \item \texttt{GET /}: estado del servicio y versión.
-    \item \texttt{GET /portal}: portal web para solicitudes operativas TI.
+    \item \texttt{GET /portal}, \texttt{/ayuda} y \texttt{/acerca}: portal, guía de uso e información verificable del proyecto.
+    \item \texttt{GET /docs} y \texttt{/openapi.json}: documentación interactiva y contrato OpenAPI 3.0.
     \item \texttt{GET /health}: comprobación de salud y modo de almacenamiento.
+    \item \texttt{GET /catalogo}: servicios, activos, entornos y responsables.
     \item \texttt{POST /solicitudes}: creación de solicitudes con clasificación automática.
     \item \texttt{GET /solicitudes}: listado con filtros por estado, prioridad y tipo.
     \item \texttt{GET /solicitudes/<id>}: consulta detallada de una solicitud.
     \item \texttt{PATCH /solicitudes/<id>}: actualización de estado, prioridad, responsable y notas.
-    \item \texttt{GET /metricas}: métricas agregadas del sistema y seguimiento de SLA.
+    \item \path{POST /solicitudes/<id>/aprobacion}, \path{/escalar} y \path{/valoracion}: decisiones del flujo y feedback tras el cierre.
+    \item \texttt{GET /metricas}, \texttt{/operaciones} y \texttt{/informes/solicitudes.csv}: indicadores, alertas e informe operativo.
+    \item \texttt{POST /demo/cargar}: escenario idempotente con cinco casos de demostración.
 \end{itemize}
 
 La tabla \ref{tabla:endpoints_api} resume el contrato principal de la API, indicando el mecanismo de seguridad y la forma en que se ha validado cada operación.
 
 \begin{table}[h]
 \centering
-\small
-\begin{tabularx}{\textwidth}{l l X X}
+\scriptsize
+\begin{tabularx}{\textwidth}{l p{4.1cm} X X}
 \textbf{Método} & \textbf{Ruta} & \textbf{Seguridad} & \textbf{Validación realizada} \\
 \hline
 GET & \texttt{/} & Pública & Comprobación de estado general del servicio. \\
-GET & \texttt{/portal} & Pública & Acceso al portal web desplegado en App Service. \\
+GET & \texttt{/portal}, \texttt{/ayuda}, \texttt{/acerca} & Pública & Recorrido del portal y materiales de demostración. \\
+GET & \texttt{/docs}, \texttt{/openapi.json} & Pública & Revisión y ejecución del contrato REST. \\
 GET & \texttt{/health} & Pública & Verificación de estado y modo de almacenamiento. \\
+GET & \texttt{/catalogo} & Pública & Consulta de servicios, activos y entornos. \\
 POST & \texttt{/solicitudes} & Pública con validación de entrada & Creación de solicitud y clasificación automática. \\
 GET & \texttt{/solicitudes} & Token Bearer & Consulta protegida con filtros y paginación. \\
-GET & \texttt{/solicitudes/<id>} & Token Bearer & Consulta del detalle y del historial de una solicitud. \\
-PATCH & \texttt{/solicitudes/<id>} & Token Bearer & Cambio controlado de estado, prioridad, asignación y notas. \\
-GET & \texttt{/metricas} & Token Bearer & Revisión de métricas agregadas y cumplimiento de SLA. \\
+GET/PATCH & \path{/solicitudes/<id>} & Token Bearer & Detalle, historial y actualización controlada. \\
+POST & \path{/solicitudes/<id>/aprobacion} y \path{/escalar} & Token Bearer & Decisión y escalado con actor y motivo. \\
+POST & \path{/solicitudes/<id>/valoracion} & Correo del solicitante & Feedback único sobre una solicitud cerrada. \\
+GET & \texttt{/metricas}, \texttt{/operaciones}, CSV & Token Bearer & Métricas, alertas, SLA, satisfacción e informe. \\
+POST & \texttt{/demo/cargar} & Token Bearer & Preparación idempotente del escenario de evaluación. \\
 \end{tabularx}
 \caption{Endpoints principales de la API}
 \label{tabla:endpoints_api}
@@ -111,7 +110,24 @@ Los objetivos de cuatro, veinticuatro y setenta y dos horas no se presentan como
 
 Esta evolución aproxima el producto a una herramienta de trabajo diaria: el solicitante aporta el contexto inicial, el clasificador propone un tratamiento y el equipo conserva la decisión humana final. El sistema automático no cierra solicitudes ni asigna permisos; ayuda a ordenar información y deja trazabilidad sobre las acciones realizadas.
 
-\section{Componente de análisis automático basado en reglas}
+\subsection{Demostración y feedback}
+
+Para que la evaluación no dependa de preparar manualmente datos antes de cada demostración se incorporó \texttt{POST /demo/cargar}. La operación requiere el token del equipo TI y crea cinco situaciones diferenciadas: acceso sensible pendiente de aprobación, incidencia crítica con SLA vencido, cambio en proceso, solicitud cerrada y caso escalado. Cada registro queda marcado como demostración y una segunda ejecución devuelve los existentes sin duplicarlos. Esta propiedad permite repetir la defensa conservando identificadores y métricas comprensibles.
+
+El contrato se publica como OpenAPI 3.0 en \texttt{/openapi.json} y se presenta mediante Swagger UI en \texttt{/docs}. Desde esa vista se distinguen operaciones públicas y protegidas, se introduce temporalmente el Bearer token y se inspeccionan peticiones, respuestas y códigos HTTP. La documentación ejecutable reduce la distancia entre lo descrito y lo desplegado: los ejemplos llaman a la misma instancia de App Service que utiliza el portal.
+
+El cierre incorpora un mecanismo de feedback deliberadamente limitado. Solo se admite una valoración de uno a cinco puntos, la solicitud debe estar cerrada y el correo debe coincidir con el remitente original. El resultado se añade al historial y el centro operativo calcula número de respuestas y promedio. No se presenta como estudio estadístico, pues el conjunto de demostración es pequeño; su función es cerrar el proceso y mostrar cómo una medida de calidad percibida puede integrarse con SLA, carga y alertas.
+
+La figura \ref{fig:centro-operativo-satisfaccion-memoria} muestra el resultado conjunto después de recorrer el escenario de evaluación.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.82\textwidth]{portal-operaciones-satisfaccion.png}
+\caption{Centro operativo con SLA, carga, alertas y satisfacción tras la demostración. Fuente: captura propia.}
+\label{fig:centro-operativo-satisfaccion-memoria}
+\end{figure}
+
+\section{Clasificador basado en reglas}
 
 El clasificador de \texttt{src/classifier.py} utiliza palabras clave y reglas de negocio. Es un mecanismo determinista cercano a la inteligencia artificial simbólica, no un modelo entrenado. La distinción evita atribuirle capacidades que no tiene: el resultado puede explicarse siguiendo las puntuaciones, pero el sistema no aprende de nuevas solicitudes.
 
@@ -203,9 +219,9 @@ La información utilizada en las evidencias es ficticia. Aun así, una explotaci
 
 \section{Validación del prototipo}
 
-La validación se organizó en tres capas. La primera ejecuta veintiuna pruebas automáticas con almacenamiento temporal local y dobles de prueba para Azure; permite repetir casos sin modificar los datos desplegados. La segunda utiliza \texttt{verify-azure.ps1} y pruebas HTTP contra la URL pública para comprobar el recorrido real por App Service, Key Vault, Blob Storage y Logic Apps. La tercera conserva capturas del portal, Azure Portal, Application Insights, Zube y SonarCloud para relacionar el resultado técnico con los recursos observados.
+La validación se organizó en tres capas. La primera ejecuta veintiséis pruebas automáticas con almacenamiento temporal local y dobles de prueba para Azure; permite repetir casos sin modificar los datos desplegados. La segunda utiliza \texttt{verify-azure.ps1} y pruebas HTTP contra la URL pública para comprobar el recorrido real por App Service, Key Vault, Blob Storage y Logic Apps. La tercera conserva capturas del portal, Azure Portal, Application Insights, Zube y SonarCloud para relacionar el resultado técnico con los recursos observados.
 
-Las pruebas automáticas cubren creación, consulta, autenticación, validaciones de entrada, filtros, paginación, ciclo de vida, historial, persistencia, métricas y reglas de clasificación. La ampliación añade catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV y consistencia entre procesos de App Service. Se incluyen caminos negativos: token incorrecto, campos vacíos, correo no válido, prioridad desconocida, paginación fuera de rango, transición no permitida e identificador inexistente.
+Las pruebas automáticas cubren creación, consulta, autenticación, validaciones de entrada, filtros, paginación, ciclo de vida, historial, persistencia, métricas y reglas de clasificación. La ampliación añade catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV, demostración idempotente, OpenAPI, valoración y consistencia entre procesos de App Service. Se incluyen caminos negativos: token incorrecto, campos vacíos, correo no válido, prioridad desconocida, paginación fuera de rango, transición no permitida, valoración repetida e identificador inexistente.
 
 \begin{table}[ht]
 \centering
@@ -213,9 +229,10 @@ Las pruebas automáticas cubren creación, consulta, autenticación, validacione
 \begin{tabularx}{\textwidth}{l X X}
 \textbf{Nivel} & \textbf{Comprobación} & \textbf{Resultado observado} \\
 \hline
-Unidad e integración local & Veintiuna pruebas sobre API, almacenamiento, flujos y clasificador. & Todas finalizan correctamente con datos temporales. \\
+Unidad e integración local & Veintiséis pruebas sobre API, almacenamiento, flujos y clasificador. & Todas finalizan correctamente con datos temporales. \\
 Despliegue público & Página raíz, portal y \texttt{/health}. & Servicio accesible por HTTPS y almacenamiento en modo Azure. \\
-Proceso empresarial & Catálogo, alta, impacto, aprobación, escalado, SLA e informe CSV. & Solicitud persistida y gestionada con trazabilidad completa. \\
+Proceso empresarial & Catálogo, alta, impacto, aprobación, escalado, SLA, valoración e informe CSV. & Solicitud persistida y gestionada con trazabilidad completa. \\
+Demostración y contrato & Escenario idempotente y operaciones descritas en OpenAPI. & Cinco casos reproducibles y documentación interactiva accesible. \\
 Flujo externo & Trigger HTTP de Logic App, alta en API y notificación de aprobación. & Ejecución correcta y respuesta de solicitud creada. \\
 Seguridad & Token Bearer, Key Vault, Managed Identity y blob privado. & Consultas protegidas y secreto fuera del repositorio. \\
 Observabilidad & Application Insights, Azure Monitor y endpoint de salud. & Telemetría y métricas disponibles para inspección. \\

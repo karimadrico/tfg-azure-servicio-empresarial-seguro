@@ -1,6 +1,6 @@
 \capitulo{7}{Conclusiones y Líneas de trabajo futuras}
 
-El resultado del TFG es un flujo funcional y desplegado, no solo un diseño de arquitectura. Una solicitud puede entrar desde el portal o desde la Logic App, pasa por la misma validación y clasificación, se conserva en Blob Storage y queda disponible para las consultas protegidas y las métricas. El script de verificación recorre estas operaciones sobre la URL pública de Azure.
+El resultado del TFG es un flujo funcional y desplegado, no solo un diseño de arquitectura. Una solicitud puede entrar desde el portal, la documentación OpenAPI o la Logic App, pasa por la misma validación y clasificación, se conserva en Blob Storage y queda disponible para aprobación, asignación, escalado y seguimiento del SLA. Tras el cierre, el solicitante puede valorar la resolución y el centro operativo agrega la satisfacción junto con la carga y las alertas.
 
 Las decisiones más útiles surgieron al reducir el alcance. Flask encajó mejor que un framework completo porque la API tiene pocas rutas y no necesita un modelo relacional. Por la misma razón se eligió Blob Storage frente a SQLite o Azure SQL. El pipeline de GitHub Actions previsto al principio se descartó a favor de scripts PowerShell y Azure CLI que podían ejecutarse, revisar y demostrar desde el entorno disponible.
 
@@ -15,6 +15,8 @@ El trabajo permitió practicar de forma conjunta los siguientes ámbitos:
     \item Automatización de procesos.
     \item Arquitecturas escalables.
     \item Clasificación automática de información operativa.
+    \item Documentación y prueba interactiva de APIs mediante OpenAPI.
+    \item Seguimiento de SLA y evaluación de satisfacción.
 \end{itemize}
 
 El prototipo cumple los objetivos planteados, aunque mantiene límites claros. La autenticación Bearer protege consultas técnicas, pero no sustituye la identidad individual de usuarios; Blob Storage sirve para el volumen de prueba, pero no ofrece las consultas de una base de datos; y el clasificador es explicable y repetible, pero no aprende de casos anteriores. Estas limitaciones orientan las líneas de continuación.
@@ -25,7 +27,7 @@ Como líneas futuras se plantean:
     \item Evaluar un servicio de lenguaje solo cuando exista un conjunto de solicitudes etiquetadas con el que comparar su precisión frente a las reglas actuales.
     \item Incorporar autenticación de usuarios con Azure AD.
     \item Crear dashboards avanzados de monitorización y alertas operativas.
-    \item Ampliar el portal web con seguimiento de solicitudes para usuarios no técnicos.
+    \item Incorporar un área personal para que cada usuario consulte exclusivamente sus solicitudes.
     \item Migrar la persistencia a Azure SQL o Cosmos DB para consultas más complejas.
     \item Incorporar notificaciones automáticas por correo o Teams cuando cambie el estado de una solicitud.
 \end{itemize}
