@@ -177,7 +177,8 @@ La figura \ref{fig:casos-uso-general} delimita las interacciones entre los usuar
     \node[usecase] (cu4) at (9.7,3.7) {CU-04\\Centro operativo y SLA};
     \node[usecase] (cu7) at (4.3,2.2) {CU-07\\Automatizar entrada};
     \node[usecase] (cu5) at (9.7,2.2) {CU-05\\Validar despliegue};
-    \node[usecase] (cu6) at (7,0.75) {CU-06\\Gestionar secretos};
+    \node[usecase] (cu8) at (4.3,0.75) {CU-08\\Valorar servicio};
+    \node[usecase] (cu6) at (9.7,0.75) {CU-06\\Gestionar secretos};
 
     \coordinate (usuario) at (0.7,4.9);
     \draw (usuario) circle (0.16);
@@ -200,6 +201,7 @@ La figura \ref{fig:casos-uso-general} delimita las interacciones entre los usuar
     \node[actorlabel] at (13.3,0.65) {Administrador\\cloud};
 
     \draw (1.05,4.5)--(cu1.west);
+    \draw (1.05,4.5)--(1.6,4.5)--(1.6,0.75)--(cu8.west);
     \draw (1.05,1.8)--(cu7.west);
     \draw[dashed,->] (cu1)--node[above, pos=0.5, font=\scriptsize]{incluye}(cu2);
     \draw[dashed,->] (cu7.west)--(2.2,2.2)--(2.2,5.2)--(cu1.west);
@@ -213,18 +215,19 @@ La figura \ref{fig:casos-uso-general} delimita las interacciones entre los usuar
 \label{fig:casos-uso-general}
 \end{figure}
 
-Las tablas \ref{tabla:casos-uso-operacion} y \ref{tabla:casos-uso-administracion} detallan las condiciones y resultados esperados de cada interacción.
+Las tablas \ref{tabla:casos-uso-operacion} y \ref{tabla:casos-uso-administracion} detallan actor, precondición, flujo y postcondición. La tabla \ref{tabla:excepciones-casos-uso} reúne las excepciones que pueden observarse al probar la API.
 
 \begin{table}[ht]
 \centering
 \scriptsize
 \begin{tabularx}{\textwidth}{l p{2.4cm} X X}
-\textbf{Caso} & \textbf{Actor / precondición} & \textbf{Flujo principal} & \textbf{Resultado} \\
+\textbf{Caso / actor} & \textbf{Precondición} & \textbf{Flujo principal} & \textbf{Postcondición} \\
 \hline
-CU-01 Registrar & Usuario interno; portal o API disponible. & Selecciona servicio, activo y entorno e introduce los datos de la petición. & Solicitud persistida con identificador \texttt{SOL-XXX}. \\
-CU-02 Clasificar & Sistema; solicitud válida. & Evalúa reglas, calcula impacto, asigna propietario y determina si requiere aprobación. & Clasificación y contexto trazables en la respuesta. \\
-CU-03 Gestionar & Equipo TI; token Bearer válido. & Filtra, asigna, aprueba, rechaza, escala o cambia el estado de una solicitud. & Cambio persistido con actor, fecha y detalle. \\
-CU-04 Centro operativo & Equipo TI; token Bearer válido. & Consulta carga, alertas, SLA y distribución por servicio o exporta el CSV. & Resumen operativo e informe descargable. \\
+CU-01 Registrar / usuario & Portal o API disponible y catálogo cargado. & Selecciona contexto e introduce los datos de la petición. & Solicitud persistida con identificador \texttt{SOL-XXX} e historial inicial. \\
+CU-02 Clasificar / sistema & Solicitud validada. & Evalúa reglas, calcula impacto, asigna propietario y determina aprobación. & Clasificación, recomendación, SLA y contexto incorporados al registro. \\
+CU-03 Gestionar / equipo TI & Token Bearer válido y solicitud existente. & Filtra, asigna, aprueba, rechaza, escala o cambia el estado. & Cambio persistido con actor, fecha y detalle en el historial. \\
+CU-04 Centro operativo / equipo TI & Token Bearer válido. & Consulta carga, alertas, SLA, satisfacción o exporta el CSV. & Resumen calculado sin modificar solicitudes; informe descargable. \\
+CU-08 Valorar / usuario & Solicitud cerrada y correo coincidente. & Envía puntuación de 1 a 5 y comentario opcional. & Valoración única almacenada y media de satisfacción actualizada. \\
 \end{tabularx}
 \caption{Casos de uso de operación y consulta}
 \label{tabla:casos-uso-operacion}
@@ -234,14 +237,32 @@ CU-04 Centro operativo & Equipo TI; token Bearer válido. & Consulta carga, aler
 \centering
 \scriptsize
 \begin{tabularx}{\textwidth}{l p{2.4cm} X X}
-\textbf{Caso} & \textbf{Actor / precondición} & \textbf{Flujo principal} & \textbf{Resultado} \\
+\textbf{Caso / actor} & \textbf{Precondición} & \textbf{Flujo principal} & \textbf{Postcondición} \\
 \hline
-CU-05 Validar & Administrador cloud; despliegue publicado. & Ejecuta \texttt{/health} y el script de verificación sobre los endpoints. & Evidencia del estado y del modo de almacenamiento. \\
-CU-06 Secretos & Administrador cloud; acceso autorizado a Azure. & Crea o rota el secreto en Key Vault y mantiene la identidad administrada. & Secreto fuera del código y acceso controlado. \\
-CU-07 Automatizar & Sistema externo; URL y credencial configuradas. & Envía JSON al trigger; Logic App invoca \texttt{POST /solicitudes}. & Solicitud registrada mediante el mismo flujo central. \\
+CU-05 Validar / administrador & Despliegue publicado. & Ejecuta \texttt{/health} y el script de verificación. & Evidencia del estado, almacenamiento y endpoints principales. \\
+CU-06 Secretos / administrador & Acceso autorizado a Azure. & Crea o rota el secreto y mantiene la identidad administrada. & Secreto fuera del código; App Service recupera el valor autorizado. \\
+CU-07 Automatizar / sistema externo & URL firmada y cuerpo JSON válido. & Logic App recibe la petición e invoca \texttt{POST /solicitudes}. & Solicitud registrada por el mismo flujo que el portal; respuesta propagada. \\
 \end{tabularx}
 \caption{Casos de uso de administración y automatización}
 \label{tabla:casos-uso-administracion}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{l X X}
+\textbf{Caso} & \textbf{Excepción} & \textbf{Respuesta y efecto} \\
+\hline
+CU-01/02 & JSON incompleto, email inválido o catálogo incoherente. & HTTP 400; no se crea ni persiste ninguna solicitud. \\
+CU-03/04 & Cabecera ausente o token incorrecto. & HTTP 401; no se devuelve información ni se modifica el blob. \\
+CU-03 & Identificador inexistente. & HTTP 404; el almacenamiento permanece sin cambios. \\
+CU-03 & Campo desconocido o valor inválido. & HTTP 400; se rechaza la actualización completa. \\
+CU-03 & Transición de estado, aprobación o escalado incompatible. & HTTP 409; se conserva el estado anterior. \\
+CU-07 & Firma del trigger inválida, JSON incorrecto o API no disponible. & Logic App rechaza la entrada o propaga el error; no existe escritura directa en Storage. \\
+CU-08 & Solicitud activa, correo distinto o valoración repetida. & HTTP 403/409; no se altera la satisfacción ya registrada. \\
+\end{tabularx}
+\caption{Excepciones principales de los casos de uso}
+\label{tabla:excepciones-casos-uso}
 \end{table}
 
 
