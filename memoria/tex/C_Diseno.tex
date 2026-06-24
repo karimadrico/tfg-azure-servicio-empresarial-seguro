@@ -85,13 +85,13 @@ El etiquetado facilita reconocer el propósito de los recursos, su entorno y su 
 \texttt{ManagedBy} & Indicar si el recurso se documenta mediante Bicep, Terraform o scripts. \\
 \texttt{Owner} & Facilitar la responsabilidad operativa del recurso en un entorno empresarial. \\
 \end{tabularx}
-\caption{Etiquetas recomendadas para la gobernanza del prototipo}
+\caption{Etiquetas de gobernanza aplicadas al prototipo}
 \label{tabla:etiquetado_recursos}
 \end{table}
 
 La figura \ref{fig:gobernanza-cloud-azure} sintetiza la gobernanza aplicada al prototipo, relacionando controles técnicos, herramientas de seguimiento y servicios Azure.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{gobernanza_cloud_azure.png}
 \caption{Gobernanza cloud aplicada al prototipo Azure. Fuente: elaboración propia.}
@@ -198,15 +198,15 @@ La figura \ref{fig:logic-app-workflow} muestra el flujo de automatización incor
 
 La figura \ref{fig:logic-app-created-request} evidencia una ejecución correcta de la Logic App en la que se crea una solicitud real en la API del prototipo.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.82\textwidth,height=0.68\textheight,keepaspectratio]{powershell-solicitud-evidenciacreada-v2.png}
+\includegraphics[width=0.78\textwidth,height=0.6\textheight,keepaspectratio]{powershell-solicitud-evidenciacreada-v2.png}
 \caption{Solicitud sensible creada mediante Azure Logic Apps y visible en la bandeja TI. Fuente: captura propia.}
 \label{fig:logic-app-created-request}
 \end{figure}
 La figura \ref{fig:seguridad-secretos} resume el modelo de seguridad aplicado para proteger secretos y accesos.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{seguridad_secretos.png}
 \caption{Modelo de seguridad y gestión de secretos. Fuente: elaboración propia.}
@@ -411,7 +411,7 @@ La figura \ref{fig:secuencia-persistencia} muestra que todos los canales converg
 
 La implementación actual sigue un patrón de lectura, modificación en memoria y escritura completa con \texttt{overwrite=True}. No utiliza ETag, condición \texttt{If-Match}, transacción ni bloqueo distribuido. Si dos procesos leen la versión N, el primero guarda N+A y el segundo guarda después N+B, la segunda escritura puede sobrescribir la primera. También podrían calcular el mismo identificador. Un bloqueo en memoria no resolvería el problema entre varios trabajadores de Gunicorn o varias instancias de App Service.
 
-Esta decisión es aceptable para la demostración de bajo volumen, pero no para una plataforma ITSM con concurrencia real. La mejora mínima consistiría en descargar el ETag, realizar una escritura condicional y reintentar la operación cuando la versión haya cambiado. Una evolución más sólida separaría cada solicitud en un objeto o migraría a Azure Table Storage, Cosmos DB o Azure SQL, según las necesidades de consulta y transacción. La respuesta preparada para la defensa y las alternativas se conservan también en \path{docs/decisiones/concurrencia-blob.md}.
+Esta decisión es aceptable para la demostración de bajo volumen, pero no para una plataforma ITSM con concurrencia real. La mejora mínima consistiría en descargar el ETag, realizar una escritura condicional con \texttt{If-Match} y reintentar la operación cuando la versión haya cambiado \cite{azure_blob_concurrency}. Una evolución más sólida separaría cada solicitud en un objeto o migraría a Azure Table Storage, Cosmos DB o Azure SQL, según las necesidades de consulta y transacción. El análisis completo de la decisión se conserva también en \path{docs/decisiones/concurrencia-blob.md}.
 
 \section{Calidad y observabilidad}
 

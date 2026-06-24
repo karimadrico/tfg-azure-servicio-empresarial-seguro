@@ -187,7 +187,7 @@ El despliegue reproducible se concentra en \texttt{scripts/deploy-azure.ps1}. El
 
 \section{Automatización empresarial con Logic App}
 
-La Logic App actúa como capa de orquestación para integrar la plataforma con otros sistemas de la empresa. En el prototipo, un sistema externo puede enviar una petición HTTP a la Logic App y esta invoca de forma controlada el endpoint \texttt{POST /solicitudes} de la API desplegada en App Service. La API conserva la responsabilidad de validar datos, clasificar la solicitud, generar la recomendación y persistir el registro en Azure Blob Storage.
+La Logic App actúa como capa de orquestación para integrar la plataforma con otros sistemas de la empresa. En el prototipo, un sistema externo puede enviar una petición al trigger HTTP de la Logic App y esta invoca de forma controlada el endpoint \texttt{POST /solicitudes} de la API desplegada en App Service \cite{azure_logic_apps_http}. La API conserva la responsabilidad de validar datos, clasificar la solicitud, generar la recomendación y persistir el registro en Azure Blob Storage.
 
 Este flujo resulta útil para un escenario empresarial realista: un formulario corporativo, una herramienta de soporte, un buzón automatizado o un sistema de atención interna podrían crear solicitudes sin acceder manualmente al portal. La Logic App no sustituye al equipo de TI ni al backend, sino que automatiza la entrada de trabajo. Si la API determina que el servicio, el activo y el entorno requieren aprobación, el flujo registra la notificación al aprobador y la solicitud permanece bloqueada hasta recibir una decisión. La asignación, el escalado, el seguimiento y el cierre se realizan en la bandeja operativa del portal.
 \section{Seguridad y gestión de secretos}

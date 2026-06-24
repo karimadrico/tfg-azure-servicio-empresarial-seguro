@@ -16,7 +16,7 @@ El repositorio mantiene definiciones Terraform en `infra/terraform/` y plantilla
 | RBAC de Key Vault | Roles `Key Vault Secrets Officer` y `Key Vault Secrets User` |
 | Application Insights | Telemetría del App Service y apoyo a observabilidad |
 
-## Uso recomendado
+## Uso en el proyecto
 
 Terraform y Bicep se conservan como documentación reproducible y punto de partida para recrear la infraestructura. El despliegue operativo final del TFG se realiza con:
 

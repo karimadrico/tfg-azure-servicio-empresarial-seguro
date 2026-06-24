@@ -1,29 +1,19 @@
 # Concurrencia del almacenamiento documental
 
-## Situación actual
+## Decisión adoptada
 
-El prototipo almacena todas las solicitudes en un único blob JSON. La API descarga la colección, modifica una copia en memoria y vuelve a subir el documento completo con sobrescritura. Portal y Logic App nunca acceden directamente al blob.
+El prototipo almacena la colección de solicitudes en un único blob JSON. La API es el único componente que descarga, valida y modifica el documento; el portal y la Logic App siempre acceden a los datos mediante operaciones HTTP de la API.
 
-Esta solución reduce componentes, mantiene el mismo formato en local y Azure y facilita inspeccionar los datos durante una demostración. Su alcance es un prototipo de bajo volumen, no una plataforma ITSM de producción.
+Este diseño mantiene el mismo formato en ejecución local y en Azure, reduce el número de componentes y facilita inspeccionar el resultado durante la validación. Su alcance es una demostración de bajo volumen y no una plataforma ITSM destinada a carga concurrente de producción.
 
-## Riesgo
+## Comportamiento concurrente
 
-No existe control optimista mediante ETag, condición `If-Match`, transacción ni bloqueo distribuido. Si dos procesos leen la misma versión:
+La implementación sigue una secuencia de lectura, modificación en memoria y sobrescritura. No utiliza ETag, condición `If-Match`, transacción ni bloqueo distribuido. Si dos procesos leen la misma versión N, el primero puede guardar N+A y el segundo N+B; la segunda escritura puede eliminar el cambio de la primera. Los dos procesos también podrían calcular el mismo identificador secuencial `SOL-XXX`.
 
-1. A y B descargan la colección N.
-2. A incorpora su cambio y guarda N+A.
-3. B incorpora otro cambio sobre su copia antigua y guarda N+B.
-4. La escritura de B puede eliminar el cambio de A.
+Un bloqueo en memoria únicamente coordinaría un proceso. No resolvería el conflicto entre varios workers de Gunicorn o entre varias instancias de App Service. La API centraliza las reglas de escritura, pero esa frontera no proporciona por sí sola exclusión mutua.
 
-También podrían generarse identificadores iguales porque ambos procesos calculan el siguiente `SOL-XXX` sobre la misma colección. Un bloqueo local no es suficiente con varios workers o varias instancias.
+## Evolución del modelo
 
-## Respuesta preparada para la defensa
+La mejora mínima consiste en recuperar el ETag del blob, escribir con `If-Match` y reintentar la operación cuando la versión almacenada haya cambiado. Para un volumen mayor se separarían las solicitudes en objetos independientes o se utilizaría Azure Table Storage, Cosmos DB o Azure SQL, en función de las consultas y garantías transaccionales requeridas.
 
-> Elegí un único blob JSON porque el objetivo era validar el flujo cloud con poco volumen, un formato inspeccionable y el mismo comportamiento local y remoto. La API centraliza todas las escrituras, pero eso no elimina la concurrencia entre workers. Actualmente se aplica última escritura gana y existe riesgo de pérdida de actualización. Para producción usaría ETag e `If-Match` con reintentos como mejora mínima; si aumenta el volumen, separaría documentos o migraría a Table Storage, Cosmos DB o Azure SQL según las consultas y garantías transaccionales necesarias.
-
-## Evolución propuesta
-
-- Corto plazo: escritura condicional con ETag, reintentos y prueba de conflicto.
-- Medio plazo: un objeto por solicitud y generación de identificadores no secuenciales.
-- Producción: almacén con concurrencia y consultas nativas, índice por estado y servicio, control de acceso por identidad y política de retención.
-
+La decisión permite demostrar persistencia cloud y trazabilidad con una implementación acotada, a la vez que identifica de forma explícita el riesgo de última escritura ganadora y el límite de escalabilidad del prototipo.

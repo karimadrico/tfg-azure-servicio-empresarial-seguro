@@ -1,32 +1,20 @@
 # Diagramas del sistema
 
-Este documento recoge los diagramas que deben acompañar a la memoria y a los anexos del TFG. Los diagramas finales deben ser de elaboración propia y guardarse como PNG en `memoria/img/`, porque esa carpeta es la que se usa desde LaTeX para generar `memoria.pdf` y `anexos.pdf`.
+La documentación visual del proyecto combina diagramas exportados a `memoria/img/` y modelos nativos en LaTeX. Los primeros representan la arquitectura general y las evidencias del despliegue; los segundos describen requisitos, entidades, estados y secuencias sin perder legibilidad al ampliar el PDF.
 
-La recomendación es crearlos con diagrams.net/draw.io o con una herramienta de generación visual y revisarlos manualmente antes de incorporarlos al documento. No deben mostrar secretos, tokens, cadenas de conexión ni URLs de Logic App con firma `sig`.
+## Inventario
 
-## Diagramas finales a crear
+| Diagrama | Documento | Contenido |
+|----------|-----------|-----------|
+| `arquitectura_final_azure.png` | Memoria y Anexo C | Usuario, portal, App Service, API Flask, clasificador, Blob Storage, Key Vault, Managed Identity, Application Insights, Logic App, GitHub, Zube y SonarCloud. |
+| `flujo_solicitud_ti.png` | Anexo C | Validación, clasificación, cálculo de impacto, persistencia y respuesta `SOL-XXX`. |
+| `despliegue_azure.png` | Anexo D | Repositorio, PowerShell, Azure CLI, recursos de Azure y verificación de endpoints. |
+| `seguridad_secretos.png` | Memoria y Anexo C | Token en Key Vault, acceso mediante Managed Identity, HTTPS y endpoints protegidos. |
+| `calidad_planificacion.png` | Anexos A y D | Relación entre Zube, commits de GitHub, pruebas, SonarCloud y despliegue. |
+| `logic_app_workflow.png` | Anexos C y D | Trigger HTTP, llamada a `POST /solicitudes` y respuesta al sistema externo. |
+| `observabilidad_monitor.png` | Anexo D | Telemetría de App Service, Application Insights y Azure Monitor. |
 
-| Archivo final | Donde se usara | Contenido esperado |
-|----------------|----------------|--------------------|
-| `arquitectura_final_azure.png` | Memoria y Anexo C | Vista completa de la solución: usuario, portal, App Service, API Flask, clasificador ligero, Blob Storage, Key Vault, Managed Identity, Application Insights, Logic App, GitHub, Zube y SonarCloud. |
-| `flujo_solicitud_ti.png` | Anexo C y Manual de usuario | Flujo funcional: usuario o Logic App envia solicitud, API valida, clasificador calcula prioridad/categoria, Storage persiste, API devuelve `SOL-XXX`. |
-| `despliegue_azure.png` | Anexo D | Flujo de despliegue: repositorio GitHub, scripts PowerShell, Azure CLI, App Service, Key Vault, Storage, Application Insights y script de verificacion. |
-| `seguridad_secretos.png` | Memoria y Anexo C | Modelo de seguridad: Key Vault almacena `api-key`, App Service usa Managed Identity, endpoints protegidos con Bearer token, HTTPS y variables de entorno. |
-| `calidad_planificacion.png` | Anexo A y Anexo D | Relación entre Zube, commits GitHub, SonarCloud, pruebas automáticas y evidencias de despliegue. |
-| `logic_app_workflow.png` | Anexo C o D | Orquestación de Logic App: trigger HTTP, acción HTTP `POST /solicitudes`, respuesta al cliente y almacenamiento final vía API. |
-| `observabilidad_monitor.png` | Anexo D | Monitorización: App Service emite métricas/logs, Application Insights recoge telemetría y Azure Monitor permite revisar disponibilidad y errores. |
-
-## Criterios de elaboración de diagramas
-
-Los diagramas finales se elaboran como documentación técnica propia del proyecto. Deben mantener un estilo homogéneo, utilizar nombres de servicios reales del despliegue y evitar cualquier dato sensible. Para su incorporación a LaTeX se exportan en formato PNG horizontal y alta resolución.
-
-Criterios comunes:
-
-- Usar fondo claro y etiquetas en español.
-- Agrupar los recursos cloud dentro de un bloque "Microsoft Azure".
-- Separar los servicios de soporte al proceso, como GitHub, Zube y SonarCloud.
-- Representar únicamente recursos desplegados, verificados o documentados como parte del prototipo.
-- No incluir tokens, claves, cadenas de conexión ni URL de Logic App con firma.
+Los modelos de casos de uso, entidades, estados y secuencias se generan directamente con TikZ en los anexos B y C. Todos los diagramas emplean nombres del despliegue real y omiten tokens, claves, cadenas de conexión y firmas de Logic Apps.
 ## Diagrama de componentes
 
 ```mermaid
