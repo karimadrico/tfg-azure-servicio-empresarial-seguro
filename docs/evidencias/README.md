@@ -18,7 +18,7 @@ La captura recoge el App Service `app-tfg-incidencias-dev`, su estado operativo 
 
 ![Configuración App Service](azure-app-service-configuration.png)
 
-La captura muestra la configuración de la aplicación con variables como `STORAGE_MODE`, `KEY_VAULT_URL` y `AZURE_STORAGE_CONTAINER`. No debe exponer valores secretos completos; su objetivo es evidenciar la configuración cloud.
+La captura muestra la configuración de la aplicación con variables como `STORAGE_MODE`, `KEY_VAULT_URL` y `AZURE_STORAGE_CONTAINER`; los valores sensibles permanecen ocultos.
 
 ### Identidad administrada
 
@@ -54,7 +54,7 @@ Pantalla del portal desplegado en `/portal`, con el formulario de solicitud TI.
 
 ![Portal solicitud enviada](portal-solicitud-enviada.png)
 
-Evidencia funcional del envío de una solicitud desde el portal. Debe verse la respuesta con identificador, prioridad, clasificación y recomendación.
+Evidencia funcional del envío de una solicitud desde el portal, incluida la respuesta con identificador, prioridad, clasificación y recomendación.
 
 ![Respuesta JSON portal](portal-solicitud-enviada-json.png)
 
@@ -105,7 +105,7 @@ Las capturas del 23 de junio completan la evidencia de uso sin sustituir a las p
 - `portal-operaciones-satisfaccion.png`: agregado de respuestas y satisfacción media en el centro operativo.
 - `portal-acerca-final.png`: versión candidata, arquitectura y enlaces públicos del proyecto.
 
-La captura que contenía un comando generado con un token visible se descartó. Las evidencias versionadas no deben mostrar claves, firmas `sig` ni cadenas de conexión.
+Las evidencias versionadas ocultan claves, firmas `sig` y cadenas de conexión.
 
 ## 2.1. Automatizacion con Logic App
 
@@ -121,7 +121,7 @@ La Logic App `logic-tfg-solicitudes-dev` automatiza la entrada de solicitudes ex
 - `logic-app-workflow-final-ejecucion.png`: definición desplegada del flujo HTTP hacia la API.
 - `logic-app-request-evidencia.png`: solicitud automatizada visible en la bandeja del portal.
 
-Estas evidencias sirven para defender la automatizacion cloud del proceso empresarial. No deben mostrar firmas `sig`, claves Bearer ni valores de secretos.
+Estas evidencias documentan la automatización cloud del proceso empresarial sin exponer firmas `sig`, claves Bearer ni valores de secretos.
 
 ## 2.2. Observabilidad con Azure Monitor
 
@@ -134,13 +134,13 @@ Evidencias incorporadas para completar la observabilidad:
 
 ## 3. Calidad de código
 
-![Quality Gate SonarCloud](sonarcloud-quality-gate.png)
+![Quality Gate SonarCloud](sonarcloud-quality-gate-final-23junio.png)
 
-Captura del Quality Gate aprobado en SonarCloud. Es la evidencia principal para el criterio de calidad interna.
+Captura final del Quality Gate aprobado en SonarCloud, con cero problemas abiertos, seguridad A, fiabilidad A, cero hotspots y duplicación del 0,0 %. La cobertura figura al 0,0 % porque el análisis web no recibió el informe generado por las pruebas locales.
 
 Evidencias finales incorporadas:
 
-- `sonarcloud-quality-gate-final-20junio.png`: estado más reciente, con Quality Gate aprobado, seguridad A, cero issues de seguridad y ocho issues no bloqueantes de mantenibilidad.
+- `sonarcloud-quality-gate-final-20junio.png`: estado intermedio, con Quality Gate aprobado, seguridad A y ocho cuestiones de mantenibilidad.
 - `sonarcloud-quality-gate-final-22junio.png`: análisis posterior a la ampliación, con Quality Gate aprobado y cero issues abiertos.
 - `sonarcloud-quality-gate-final-23junio.png`: análisis final tras demostración, OpenAPI y satisfacción, con Quality Gate aprobado, cero problemas abiertos y calificaciones A.
 

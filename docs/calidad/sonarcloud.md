@@ -1,44 +1,26 @@
-# SonarCloud / SonarQube Cloud
+# Calidad del código con SonarCloud
 
-El proyecto utiliza SonarCloud como herramienta de revision de calidad interna del codigo. El proyecto esta vinculado al repositorio de GitHub y el analisis se gestiona desde la interfaz web de SonarCloud, sin mantener un escaner local ni un workflow de pago.
-
-## Enlace del proyecto
+El repositorio está vinculado al proyecto público de SonarCloud:
 
 https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro
 
-## Resultado del ultimo analisis
+## Resultado del análisis del 23 de junio de 2026
 
-| Metrica | Resultado |
+| Métrica | Resultado |
 |---------|-----------|
-| Puerta de calidad | Pendiente de revisar cuatro alertas de Bicep |
-| Duplicacion | 0,0% |
-| Lineas analizadas | 3,5k aprox. |
+| Quality Gate | Aprobado |
+| Problemas abiertos | 0 |
+| Seguridad | A |
 | Fiabilidad | A |
-| Bugs | 0 |
-| Alertas abiertas | 4, limitadas a `Scope` y `Response` de Logic Apps |
-| Security Hotspots pendientes | 0 |
+| Security Hotspots | 0 |
+| Duplicación | 0,0 % |
+| Líneas de código analizadas | 4,3 k |
+| Cobertura importada | 0,0 % |
 
-Las cuatro alertas no afectan al codigo Python ni a Terraform. Son reglas genericas que
-solicitan `secureData` en contenedores `Scope` y salidas `Response`; Azure Logic Apps
-rechaza esas propiedades durante el despliegue. Las acciones HTTP internas si protegen
-sus entradas y salidas, y ambos flujos se han validado mediante ejecuciones reales en Azure.
-Antes de capturar el resultado definitivo deben revisarse en SonarCloud como excepciones
-aceptadas, conservando esta justificacion tecnica.
+La cobertura aparece al 0,0 % porque este análisis web no recibió un informe de cobertura. La validación funcional se ejecuta de forma independiente mediante `unittest` y contiene 26 pruebas automáticas. Por tanto, la cifra de SonarCloud describe la ausencia de datos de cobertura importados, no la ausencia de pruebas en el repositorio.
 
-## Evidencia para la entrega
+![Quality Gate final aprobado](../evidencias/sonarcloud-quality-gate-final-23junio.png)
 
-Para UBUVirtual y defensa conviene guardar:
+El análisis complementa las pruebas funcionales mediante reglas de seguridad, fiabilidad, mantenibilidad, duplicación y revisión de infraestructura como código. La captura conserva el estado observado después de incorporar el escenario de demostración, OpenAPI, valoración del servicio y los ajustes de Logic Apps.
 
-- captura del Quality Gate definitivo despues de revisar las cuatro excepciones;
-- captura del resumen de metricas generales;
-- captura del análisis del 20 de junio (`docs/evidencias/sonarcloud-quality-gate-final-20junio.png`);
-- enlace al panel de SonarCloud en el PDF final de enlaces.
-
-## Interpretacion
-
-SonarCloud aporta una medicion externa de mantenibilidad, fiabilidad, seguridad y duplicacion. Esta revision se complementa con las 26 pruebas automaticas del repositorio, que se ejecutan localmente antes de publicar cambios relevantes.
-
-## Revision desde la web
-
-El panel se consulta directamente en SonarCloud después de sincronizar los cambios con GitHub. Las pruebas funcionales se ejecutan por separado mediante `unittest`, por lo que el repositorio no depende de GitHub Actions, runners facturables ni instalaciones locales de SonarScanner.
-
+El proyecto utiliza la integración web de SonarCloud con GitHub. No mantiene un runner facturable ni guarda tokens de análisis en el repositorio.

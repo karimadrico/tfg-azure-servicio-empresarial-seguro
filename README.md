@@ -113,7 +113,7 @@ python -m unittest discover -s tests -p "test_*.py"
 
 ## Demostracion para el tribunal
 
-El recorrido recomendado dura pocos minutos y evita depender de datos creados anteriormente:
+El recorrido de demostración dura pocos minutos y evita depender de datos creados anteriormente:
 
 1. Abrir `/health` y comprobar `status: ok` y `storage_mode: azure`.
 2. Abrir `/portal` y registrar una solicitud para mostrar clasificacion, impacto, responsable y SLA.
@@ -163,8 +163,12 @@ La calidad se revisa manualmente en SonarCloud:
 
 - Panel: https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro
 - Puerta de calidad: aprobada.
+- Problemas abiertos: 0.
+- Seguridad, fiabilidad y revisión de hotspots: A.
 - Duplicacion: 0,0%.
-- Evidencia recomendada para entrega: captura del Quality Gate y resumen de metricas.
+- Cobertura importada en el análisis web: 0,0%; las 26 pruebas automáticas se ejecutan mediante `unittest`.
+
+![Quality Gate final aprobado en SonarCloud](docs/evidencias/sonarcloud-quality-gate-final-23junio.png)
 
 No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se gestiona desde la interfaz web de SonarCloud.
 
@@ -207,7 +211,7 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 | `memoria/img/` | Imagenes usadas por los documentos LaTeX. | Diagramas y recursos incluidos en memoria/anexos. |
 | `docs/api/` | Descripcion de endpoints y uso de la API. | Apoya la revision tecnica de la interfaz REST. |
 | `docs/arquitectura/` | Capturas y documentacion de arquitectura Azure. | Evidencia recursos cloud y decisiones de diseno. |
-| `docs/calidad/` | Resultado y explicacion de SonarCloud. | Evidencia calidad interna del codigo. |
+| `docs/calidad/` | Resultado, métricas y captura final de SonarCloud. | Evidencia la calidad interna del código. |
 | `docs/decisiones/` | Decisiones tecnicas justificadas. | Ayuda a defender alternativas y elecciones realizadas. |
 | `docs/despliegue/` | Guias de despliegue y guion de demostracion. | Facilita reproducir y explicar el despliegue. |
 | `docs/diagramas/` | Guía de diagramas finales y diagramas Mermaid de apoyo. | Define los PNG que se incorporan a memoria y anexos. |
