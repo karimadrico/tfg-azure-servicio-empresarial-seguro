@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt,twoside]{memoir}
+\documentclass[a4paper,12pt,oneside]{memoir}
 
 % Castellano
 \usepackage[spanish,es-tabla]{babel}
@@ -17,8 +17,11 @@
 % Links
 \PassOptionsToPackage{hyphens}{url}\usepackage[colorlinks]{hyperref}
 \hypersetup{
-	allcolors = {red}
+	linkcolor = {black},
+	citecolor = {black},
+	urlcolor = {blue}
 }
+\hypersetup{hypertexnames=false}
 
 % Ecuaciones
 \usepackage{amsmath}
@@ -288,7 +291,20 @@
 \graphicspath{ {./img/} }
 
 % Capítulos
-\chapterstyle{bianchi}
+\chapterstyle{default}
+\renewcommand{\chaptitlefont}{\normalfont\huge\bfseries\raggedright}
+\setlength{\beforechapskip}{12pt}
+\setlength{\midchapskip}{8pt}
+\setlength{\afterchapskip}{24pt}
+
+% Paginación uniforme: sin cabeceras repetidas y número centrado en el pie.
+\makepagestyle{tfg}
+\makeevenhead{tfg}{}{}{}
+\makeoddhead{tfg}{}{}{}
+\makeevenfoot{tfg}{}{\thepage}{}
+\makeoddfoot{tfg}{}{\thepage}{}
+\aliaspagestyle{chapter}{tfg}
+\aliaspagestyle{plain}{tfg}
 \newcommand{\capitulo}[2]{
 	\setcounter{chapter}{#1}
 	\setcounter{section}{0}
@@ -343,7 +359,7 @@
 \begin{center}%
 {%
   \noindent\LARGE
-  Presentado por \@author{}\\ 
+  Autora: \@author{}\\
   en Universidad de Burgos --- \@date{}\\
   Tutor: \@tutor{}\\
 }%
@@ -363,9 +379,9 @@
 
 \begin{document}
 
-\maketitle
+\pagestyle{tfg}
 
-\newpage\null\thispagestyle{empty}\newpage
+\maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \thispagestyle{empty}
@@ -402,12 +418,10 @@ D. José Ignacio Santos Martín
 %D. nombre tutor
 
 
-\newpage\null\thispagestyle{empty}\newpage
-
-
-
-
 \frontmatter
+
+\setlength{\absleftindent}{0pt}
+\setlength{\absrightindent}{0pt}
 
 % Abstract en castellano
 \renewcommand*\abstractname{Resumen}

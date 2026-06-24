@@ -18,15 +18,15 @@ La selección tecnológica se realizó atendiendo al alcance, al tipo de carga y
 
 \begin{table}[ht]
 \centering
-\scriptsize
-\begin{tabularx}{\textwidth}{p{3cm} p{2.3cm} X X}
-\textbf{Necesidad} & \textbf{Elección} & \textbf{Alternativa considerada} & \textbf{Justificación en el proyecto} \\
+\footnotesize
+\begin{tabularx}{\textwidth}{p{3.1cm} X}
+\textbf{Necesidad} & \textbf{Decisión y justificación} \\
 \hline
-API y portal web & Flask & Django & Django aporta ORM, administración y una estructura extensa, útiles en aplicaciones con dominio relacional complejo. Flask reduce componentes no utilizados y permite concentrar el prototipo en API, reglas de negocio e integración con Azure \cite{django_overview}. \\
-Persistencia cloud & Azure Blob Storage con JSON & SQLite o Azure SQL & Los registros son documentos sencillos, el volumen del prototipo es reducido y no se requieren relaciones ni transacciones entre tablas. Blob Storage se integra con el objetivo cloud y evita mantener un motor de base de datos. SQLite habría sido válido para ejecución local, pero menos representativo del despliegue distribuido \cite{sqlite_when_to_use,azure_blob_overview}. \\
-Alojamiento & Azure App Service & Máquina virtual o contenedor administrado manualmente & App Service abstrae sistema operativo, publicación y disponibilidad básica. Una máquina virtual ofrecería más control, pero añadiría mantenimiento ajeno al proceso empresarial estudiado. \\
-Automatización & Azure Logic Apps & Integración directa de cada sistema con la API & Logic Apps desacopla los sistemas externos del backend y hace visible la orquestación. La API conserva validación, clasificación y persistencia para evitar duplicar reglas. \\
-Secretos & Azure Key Vault con Managed Identity & Variables o secretos almacenados manualmente & Key Vault centraliza el secreto y Managed Identity evita credenciales de acceso entre servicios dentro del código. \\
+API y portal web & \textbf{Elección: Flask. Alternativa: Django.} Django aporta ORM, administración y una estructura extensa, útiles en dominios relacionales complejos. Flask reduce componentes no utilizados y permite concentrar el prototipo en API, reglas de negocio e integración con Azure \cite{django_overview}. \\
+Persistencia cloud & \textbf{Elección: Azure Blob Storage con JSON. Alternativas: SQLite o Azure SQL.} Los registros son documentos sencillos, el volumen del prototipo es reducido y no se requieren relaciones entre tablas. Blob Storage representa el despliegue cloud; SQLite se reserva para la ejecución local \cite{sqlite_when_to_use,azure_blob_overview}. \\
+Alojamiento & \textbf{Elección: Azure App Service. Alternativas: máquina virtual o contenedor administrado manualmente.} App Service abstrae sistema operativo, publicación y disponibilidad básica. Una máquina virtual añadiría mantenimiento que no forma parte del proceso estudiado. \\
+Automatización & \textbf{Elección: Azure Logic Apps. Alternativa: integración directa de cada sistema con la API.} Logic Apps desacopla los sistemas externos y hace visible la orquestación. La API conserva validación, clasificación y persistencia para no duplicar reglas. \\
+Secretos & \textbf{Elección: Azure Key Vault con Managed Identity. Alternativa: variables o secretos gestionados manualmente.} Key Vault centraliza el token y Managed Identity evita incorporar otra credencial de Azure al código. \\
 \end{tabularx}
 \caption{Comparación de alternativas para aplicación, datos y servicios cloud}
 \label{tabla:comparacion_alternativas}
@@ -36,13 +36,13 @@ La tabla \ref{tabla:comparacion_operacion} completa el análisis con las herrami
 
 \begin{table}[ht]
 \centering
-\small
-\begin{tabularx}{\textwidth}{p{2.6cm} p{2.7cm} X X}
-\textbf{Necesidad} & \textbf{Elección} & \textbf{Alternativa considerada} & \textbf{Justificación en el proyecto} \\
+\footnotesize
+\begin{tabularx}{\textwidth}{p{3.1cm} X}
+\textbf{Necesidad} & \textbf{Decisión y justificación} \\
 \hline
-Despliegue & PowerShell y Azure CLI & Pipeline CI/CD completo & El script es reproducible, auditable y suficiente para un único entorno académico. Un pipeline sería apropiado con varios equipos y promociones entre entornos, pero aumentaría el alcance sin mejorar el caso funcional validado. \\
-Planificación & Zube & Azure Boards, Jira o GitHub Projects & Zube ya estaba integrado con GitHub y permitió conservar tablero, historias y cinco sprints visibles. Cambiar de gestor al final habría fragmentado la trazabilidad histórica. \\
-Calidad & SonarCloud & SonarQube autohospedado & SonarCloud aporta el mismo tipo de métricas sin administrar servidor, base de datos ni actualizaciones de una instancia propia. \\
+Despliegue & \textbf{Elección: PowerShell y Azure CLI. Alternativa: pipeline CI/CD completo.} El script es reproducible, auditable y suficiente para un único entorno académico. Un pipeline sería apropiado con varios equipos y promociones entre entornos. \\
+Planificación & \textbf{Elección: Zube. Alternativas: Azure Boards, Jira o GitHub Projects.} Su integración con GitHub permitió conservar tablero, historias y cinco sprints en un mismo historial. \\
+Calidad & \textbf{Elección: SonarCloud. Alternativa: SonarQube autohospedado.} Proporciona métricas de seguridad, fiabilidad, mantenibilidad y duplicación sin administrar un servidor propio. \\
 \end{tabularx}
 \caption{Comparación de alternativas para operación y seguimiento}
 \label{tabla:comparacion_operacion}
