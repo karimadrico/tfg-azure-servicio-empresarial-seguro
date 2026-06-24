@@ -49,6 +49,18 @@ Karthik Bojja.
 \newblock Azure well-architected framework, 2026.
 \newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
 
+\bibitem{azure_logic_apps_http}
+{Microsoft Learn}.
+\newblock Call, trigger, or nest workflows with http endpoints in azure logic
+  apps, 2026.
+\newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
+
+\bibitem{azure_blob_concurrency}
+{Microsoft Learn}.
+\newblock Managing concurrency in blob storage, 2026.
+\newblock Documentación oficial sobre ETag y acceso condicional, consultado
+  junio 2026.
+
 \bibitem{azure_blob_python}
 {Microsoft Learn}.
 \newblock Quickstart: Azure blob storage client library for python, 2026.
