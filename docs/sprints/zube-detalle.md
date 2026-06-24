@@ -71,20 +71,23 @@ Este documento conserva la planificación real observada en Zube. Las fechas de 
 
 ## Sprint 5 - Finalización y defensa
 
-- Periodo: 22/05/2026 - 08/07/2026.
-- Estado: abierto.
-- Objetivo: cerrar documentación, vídeos, validación, defensa y entrega oficial.
-- Resultado actual: 4 tarjetas en progreso.
-- Estimación: 23 puntos comprometidos.
+- Periodo: 22/05/2026 - 24/06/2026.
+- Cierre real: 24/06/2026.
+- Objetivo: cerrar documentación, validación, defensa y entrega oficial.
+- Resultado: 4 tarjetas cerradas de 4 y 23 puntos completados.
 - Tablero del sprint: https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/sprintboard?where%5Bsprint_id%5D=62587
 
-| Tarjeta | Historia de usuario | Estado |
-|---------|--------------------|--------|
-| [#23](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/23) | HU-24 Generar memoria final PDF | En progreso |
-| [#24](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/24) | HU-25 Crear vídeo de demostración | En progreso |
-| [#25](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/25) | HU-26 Crear vídeo de presentación | En progreso |
-| [#26](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/26) | HU-27 Preparar defensa final | En progreso |
+| Tarjeta | Historia de usuario | Prioridad | Puntos | Estado |
+|---------|--------------------|:---------:|-------:|--------|
+| [#23](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/23) | HU-24 Generar memoria final PDF | P1 | 8 | Cerrada el 24/06/2026 |
+| [#24](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/24) | HU-25 Crear vídeo de demostración | P1 | 5 | Cerrada el 24/06/2026 |
+| [#25](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/25) | HU-26 Crear vídeo de presentación | P1 | 5 | Cerrada el 24/06/2026 |
+| [#26](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/26) | HU-27 Preparar defensa final | P1 | 5 | Cerrada el 24/06/2026 |
 
 ## Estimación relativa
 
 Las historias se normalizan con la escala Fibonacci `1, 2, 3, 5, 8 y 13`. Los puntos permiten comparar el tamaño de los incrementos y visualizar el cambio de alcance del Sprint 3. La asignación completa por tarjeta se recoge en [`criterio-estimacion.md`](criterio-estimacion.md); las horas del Anexo A se reservan para el cálculo económico.
+
+![Vista final de los cinco sprints cerrados](sprints-finalizacion-132-storypoints.png)
+
+El backlog suma 132 puntos estimados. Zube muestra 114 puntos cerrados dentro de las iteraciones y conserva los 18 puntos retirados del Sprint 3 como parte del historial de replanificación.

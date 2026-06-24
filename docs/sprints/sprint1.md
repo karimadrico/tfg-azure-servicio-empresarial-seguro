@@ -27,4 +27,4 @@ Definir el proceso empresarial, preparar la estructura del repositorio y la cuen
 
 La automatización prevista en HU-04 no se mantuvo como un pipeline de GitHub Actions. El despliegue final utiliza scripts PowerShell y Azure CLI porque fueron el mecanismo ejecutado y verificado durante el proyecto. La herramienta de calidad terminó siendo SonarCloud, conectada al repositorio público.
 
-La captura `sprint1-10marzo.png` conserva la evidencia visual disponible. El inventario completo de Zube se encuentra en `zube-detalle.md`.
+La captura `sprint1-10marzo.png` conserva el estado inicial y `sprint1-final.png` muestra el cierre con 6 tarjetas y 21 puntos completados. El inventario completo de Zube se encuentra en `zube-detalle.md`.

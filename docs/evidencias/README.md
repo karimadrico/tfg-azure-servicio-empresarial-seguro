@@ -154,9 +154,9 @@ Resumen de issues y calificaciones de SonarCloud. Sirve para explicar qué se co
 
 Evidencia de sprints cerrados en Zube. Para más detalle del seguimiento por iteraciones se conserva además la carpeta `docs/sprints/`, con capturas históricas y el resumen de sprints.
 
-![Sprint abierto Zube](zube-sprints-open.png)
+![Resumen final de sprints y puntos](../sprints/sprints-finalizacion-132-storypoints.png)
 
-Evidencia del Sprint 5 orientado al cierre de memoria, anexos, vídeos, release y entrega.
+Vista consolidada de los cinco sprints cerrados. Zube registra 114 puntos cerrados y conserva 18 puntos retirados del Sprint 3, por lo que el backlog estimado completo suma 132 puntos.
 
 ![Kanban final Zube](zube-kanban-final.png)
 
