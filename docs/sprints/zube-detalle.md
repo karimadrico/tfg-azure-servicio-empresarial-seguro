@@ -9,7 +9,7 @@ Este documento conserva la planificación real observada en Zube. Las fechas de 
 - Periodo previsto: 25/02/2026 - 10/03/2026.
 - Cierre real: 15/03/2026.
 - Objetivo: definir el proceso empresarial, estructurar el repositorio, preparar Azure, planificar la arquitectura y configurar el seguimiento inicial de calidad.
-- Resultado Zube: 6 tarjetas cerradas de 6; no se utilizaron puntos de historia.
+- Resultado: 6 tarjetas cerradas de 6 y 21 puntos completados.
 - Vista de tarjetas cerradas: https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/manager?where%5Bproject_id%5D=33139&where%5Bworkspace_id%5D=38369&where%5Bsprint_ids%5D%5B%5D=62216
 
 | Tarjeta | Historia de usuario | Resultado |
@@ -26,7 +26,7 @@ Este documento conserva la planificación real observada en Zube. Las fechas de 
 - Periodo previsto: 11/03/2026 - 24/03/2026.
 - Cierre real: 17/04/2026.
 - Objetivo: desarrollar API, gestión de incidencias, seguridad inicial, clasificación ligera y primeras pruebas.
-- Resultado Zube: 6 tarjetas cerradas de 6; no se utilizaron puntos de historia.
+- Resultado: 6 tarjetas cerradas de 6 y 31 puntos completados.
 - Vista de tarjetas cerradas: https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/manager?where%5Bproject_id%5D=33139&where%5Bworkspace_id%5D=38369&where%5Bsprint_ids%5D%5B%5D=62217
 
 | Tarjeta | Historia de usuario | Resultado |
@@ -43,7 +43,7 @@ Este documento conserva la planificación real observada en Zube. Las fechas de 
 - Periodo previsto: 25/03/2026 - 21/04/2026.
 - Cierre real: 20/05/2026.
 - Objetivo: consolidar seguridad, persistencia, clasificación y despliegue del prototipo.
-- Resultado Zube: una tarjeta permaneció asignada y cerrada; tres tarjetas fueron retiradas del sprint durante la replanificación.
+- Resultado: 23 puntos comprometidos; 5 completados en la iteración y 18 retirados durante la replanificación.
 - Vista del sprint: https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/manager?where%5Bproject_id%5D=33139&where%5Bworkspace_id%5D=38369&where%5Bsprint_ids%5D%5B%5D=62218
 
 | Tarjeta | Cambio registrado | Tratamiento final |
@@ -58,7 +58,7 @@ Este documento conserva la planificación real observada en Zube. Las fechas de 
 - Periodo previsto: 22/04/2026 - 21/05/2026.
 - Cierre real: 22/05/2026.
 - Objetivo: consolidar arquitectura, infraestructura como código, API, memoria, anexos y evidencias.
-- Resultado Zube: 5 tarjetas cerradas de 5.
+- Resultado: 5 tarjetas cerradas de 5 y 34 puntos completados.
 - Vista de tarjetas cerradas: https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/manager?where%5Bproject_id%5D=33139&where%5Bworkspace_id%5D=38369&where%5Bsprint_ids%5D%5B%5D=62577
 
 | Tarjeta | Historia de usuario | Resultado |
@@ -75,6 +75,7 @@ Este documento conserva la planificación real observada en Zube. Las fechas de 
 - Estado: abierto.
 - Objetivo: cerrar documentación, vídeos, validación, defensa y entrega oficial.
 - Resultado actual: 4 tarjetas en progreso.
+- Estimación: 23 puntos comprometidos.
 - Tablero del sprint: https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/sprintboard?where%5Bsprint_id%5D=62587
 
 | Tarjeta | Historia de usuario | Estado |
@@ -84,6 +85,6 @@ Este documento conserva la planificación real observada en Zube. Las fechas de 
 | [#25](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/25) | HU-26 Crear vídeo de presentación | En progreso |
 | [#26](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/26) | HU-27 Preparar defensa final | En progreso |
 
-## Interpretación de puntos y tarjetas
+## Estimación relativa
 
-Zube muestra cero puntos porque no se utilizaron puntos de historia como unidad de estimación antes de comenzar las iteraciones. Por ello no puede obtenerse un burndown de puntos representativo. No se han añadido estimaciones retrospectivas, ya que alterarían la evidencia del proceso real. La estimación económica se documenta mediante horas por fase en el Anexo A, mientras que el avance se acredita con fechas, tarjetas, commits e incrementos funcionales. El criterio completo y la respuesta para la defensa se recogen en [`criterio-estimacion.md`](criterio-estimacion.md).
+Las historias se normalizan con la escala Fibonacci `1, 2, 3, 5, 8 y 13`. Los puntos permiten comparar el tamaño de los incrementos y visualizar el cambio de alcance del Sprint 3. La asignación completa por tarjeta se recoge en [`criterio-estimacion.md`](criterio-estimacion.md); las horas del Anexo A se reservan para el cálculo económico.

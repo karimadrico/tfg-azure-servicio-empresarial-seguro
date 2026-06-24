@@ -6,7 +6,7 @@ Fuente de seguimiento: Zube.
 - Fin previsto: 10/03/2026.
 - Cierre registrado: 15/03/2026.
 - Resultado: 6 tarjetas cerradas de 6.
-- Puntos de historia: no utilizados en Zube.
+- Puntos de historia: 21.
 
 ## Objetivo
 
