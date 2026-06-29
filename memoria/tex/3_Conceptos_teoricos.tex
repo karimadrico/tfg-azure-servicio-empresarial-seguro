@@ -92,6 +92,15 @@ Azure Monitor & Apoya la revisión de estado y logs. & Facilita observabilidad b
 \label{tabla:servicios_azure_tfg}
 \end{table}
 
+La figura \ref{fig:arquitectura-integral-azure} resume la relación entre los servicios cloud seleccionados y las evidencias del proceso de desarrollo. La suscripción de Azure contiene el grupo de recursos del TFG, donde App Service ejecuta el portal y la API Flask, Key Vault protege el secreto utilizado como token Bearer, Blob Storage conserva las solicitudes y Azure Monitor recoge telemetría. Fuera de Azure quedan las herramientas que apoyan el seguimiento y la calidad: GitHub, Zube y SonarCloud.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{arquitectura_integral_tfg_azure.png}
+\caption{Visión integral de la arquitectura cloud y de las evidencias del TFG. Fuente: elaboración propia.}
+\label{fig:arquitectura-integral-azure}
+\end{figure}
+
 Azure Blob Storage está orientado al almacenamiento de objetos y datos no estructurados, y permite acceder a los objetos mediante HTTP/HTTPS o bibliotecas cliente, incluidas bibliotecas para Python \cite{azure_blob_overview}. Azure Key Vault centraliza secretos, claves y certificados, reduciendo la probabilidad de exponer información sensible en el código \cite{azure_keyvault_overview}. Las identidades administradas permiten que un recurso de Azure obtenga una identidad propia para acceder a otros servicios sin almacenar credenciales en la aplicación \cite{azure_managed_identities}.
 
 \section{Arquitectura basada en servicios}
