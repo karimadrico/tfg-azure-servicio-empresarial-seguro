@@ -14,7 +14,7 @@ Tablero: https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial
 
 Las capturas de Zube se conservan en `docs/sprints/` y permiten comprobar la evolución incremental del proyecto. Los cinco sprints están cerrados; el último se cerró el 24 de junio de 2026 con sus cuatro tarjetas y 23 puntos completados.
 
-![Resumen final de los cinco sprints en Zube](sprints-finalizacion-132-storypoints.png)
+![Resumen final de los cinco sprints en Zube](sprints-finalizacion-storypoints.png)
 
 La vista final muestra los 114 puntos cerrados en Zube. El backlog completo suma 132 puntos al incluir los 18 puntos retirados del Sprint 3 durante la replanificación. Las capturas `sprint1-final.png`, `sprint2-final.png`, `sprint3-final.png`, `sprint3-final-retiradas.png`, `sprint4-final.png` y `sprint5-final.png` permiten revisar cada iteración por separado.
 
