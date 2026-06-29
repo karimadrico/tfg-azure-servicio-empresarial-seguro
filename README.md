@@ -235,5 +235,6 @@ No se mantiene un workflow de SonarCloud en el repositorio porque el analisis se
 - Base del PDF de enlaces en `docs/entrega/enlaces-tfg.md`.
 - Cartel A3 editable y compilado en `docs/entrega/cartel-a3.tex` y `docs/entrega/cartel-a3.pdf`.
 - Cartel A3 incorporado también como material de apoyo en `memoria/anexos.pdf`.
+- Presentación de apoyo a la defensa en `docs/entrega/presentacion-defensa-tfg.pptx`.
 - Licencia MIT en `LICENSE`.
 
