@@ -23,3 +23,5 @@ El inventario de tarjetas, enlaces y decisiones de replanificación se encuentra
 ## Estimación relativa
 
 El backlog utiliza una escala Fibonacci para comparar complejidad, incertidumbre y dependencias. En el Sprint 3 se comprometieron 23 puntos: 5 se cerraron dentro de la iteración y 18 se retiraron durante la replanificación. La asignación por historia y el tratamiento de esos cambios se detallan en [`criterio-estimacion.md`](criterio-estimacion.md).
+
+Los dos primeros sprints fueron más cortos porque cubrían la preparación del entorno, el diseño inicial y la primera versión del prototipo. Los sprints posteriores concentraron despliegue cloud, validación, documentación académica y cierre de evidencias, por lo que se ampliaron hasta completar incrementos verificables. Algunas historias aparecen cerradas el mismo día porque la revisión de sprint se registró de forma agrupada después de comprobar código, capturas y documentación asociada.

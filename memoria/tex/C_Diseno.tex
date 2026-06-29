@@ -238,7 +238,7 @@ No existe un esquema físico relacional. La figura \ref{fig:modelo-conceptual-da
 \draw[relation] (servicio.east)--node[label, above, sloped]{1 valida N} (solicitud.north west);
 \draw[relation] (servicio.south)--node[label, left]{1 contiene N} (activo.north);
 \draw[relation] (activo.east)--node[label, below, sloped]{1 contextualiza N} (solicitud.south west);
-\draw[relation] (solicitud.north east)--node[label, above, sloped]{1 incorpora N} (historial.west);
+\draw[relation] (solicitud.north east)--node[label, above, sloped]{1 incorpora 1..N} (historial.west);
 \draw[relation] (solicitud.east)--node[label, above]{0..1} (aprobacion.west);
 \draw[relation] (solicitud.south east)--node[label, below, sloped]{0..1 tras cierre} (valoracion.west);
 \end{tikzpicture}%
@@ -317,7 +317,7 @@ es\_demo & booleano & Sistema & Distingue los casos repetibles de evaluación. \
 \label{tabla:datos-solicitud-flujo}
 \end{table}
 
-El historial se almacena dentro de cada solicitud. Cada evento contiene fecha, acción, actor y detalle, lo que permite reconstruir la evolución sin consultar una estructura externa y materializa los requisitos RF-09 y RNF-04.
+El historial se almacena dentro de cada solicitud y se inicializa con un evento de creación. Por tanto, toda solicitud válida incorpora al menos un evento y puede acumular muchos más durante aprobaciones, escalados, cambios de estado, cierre o valoración. Cada evento contiene fecha, acción, actor y detalle, lo que permite reconstruir la evolución sin consultar una estructura externa y materializa los requisitos RF-09 y RNF-04.
 
 \subsection{Reglas de validación y cálculo}
 

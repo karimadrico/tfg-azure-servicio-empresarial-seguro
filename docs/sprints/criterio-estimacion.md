@@ -2,6 +2,10 @@
 
 Las historias de usuario se estiman con la escala Fibonacci `1, 2, 3, 5, 8 y 13`. La puntuación combina complejidad técnica, incertidumbre, dependencias y esfuerzo relativo; no representa horas de trabajo. La prioridad utiliza la escala de Zube, donde P1 identifica el trabajo imprescindible y P5 el de menor urgencia. Esta normalización permite comparar el tamaño de los incrementos y analizar las replanificaciones conservadas en Zube.
 
+La duración de las iteraciones no fue uniforme. Los dos primeros sprints se planificaron con una duración cercana a dos semanas porque correspondían a preparación, configuración inicial y construcción del primer prototipo. A partir del Sprint 3 el trabajo pasó a depender más del despliegue real en Azure, la documentación LaTeX, las evidencias y la validación con servicios cloud, por lo que las iteraciones se cerraron con ventanas más amplias. Se mantuvo el histórico real de Zube, incluidas las diferencias entre fecha prevista y fecha de cierre, para que el seguimiento refleje cómo evolucionó el proyecto.
+
+En varios momentos las tarjetas se cerraron en grupo al final de una revisión de sprint. Esta forma de trabajo se utilizó para registrar en Zube el resultado de incrementos que ya estaban implementados o documentados en el repositorio, pero que se revisaban conjuntamente antes de marcarse como cerrados. Por ese motivo, el seguimiento combina las fechas de Zube con los commits de GitHub y las evidencias funcionales, en lugar de interpretar cada fecha de cierre como el único momento en que se realizó la tarea.
+
 ## Sprint 1 - Preparación y base
 
 | Tarjeta | Historia | Prioridad | Puntos | Estado |

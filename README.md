@@ -76,6 +76,8 @@ Start-Process https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.
 
 Consultar solicitudes protegidas:
 
+El token de evaluación se entrega fuera del repositorio y se obtiene desde Azure Key Vault o desde el PDF de enlaces entregado en UBUVirtual. No se versiona en GitHub ni debe aparecer completo en capturas.
+
 ```powershell
 Invoke-RestMethod `
   -Uri "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/solicitudes" `
@@ -125,7 +127,7 @@ El recorrido de demostración dura pocos minutos y evita depender de datos cread
 8. Abrir `/docs` para enseñar el contrato OpenAPI y `/acerca` para revisar version, arquitectura y enlaces.
 9. Como integracion externa, ejecutar la Logic App y localizar en la bandeja la solicitud creada.
 
-El token nunca debe incluirse en comandos versionados, documentos ni capturas. El manual detallado está en `memoria/tex/E_Manual_usuario.tex` y las pruebas visuales en `docs/evidencias/`.
+El token de prueba se facilita junto con los enlaces de entrega y corresponde al secreto almacenado en Azure Key Vault. Nunca debe incluirse en comandos versionados, documentos públicos ni capturas. El manual detallado está en `memoria/tex/E_Manual_usuario.tex` y las pruebas visuales en `docs/evidencias/`.
 
 La bateria actual contiene 26 pruebas de API, almacenamiento, clasificacion, seguridad, flujo empresarial, SLA, exportacion, demostracion y satisfaccion.
 

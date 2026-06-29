@@ -20,3 +20,15 @@ Este documento sirve como base para generar el PDF final de enlaces solicitado e
 | Zube | https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban |
 | SonarCloud | https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro |
 | Release publicada | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.1.0 |
+
+## Datos de acceso para la prueba
+
+Las operaciones públicas del portal permiten registrar solicitudes sin credenciales. Las operaciones de equipo TI, centro operativo, exportación, demostración y OpenAPI protegida requieren un token Bearer.
+
+El token de evaluación se facilita en la versión final de este PDF de enlaces entregado en UBUVirtual y corresponde al secreto `api-key` almacenado en Azure Key Vault. No se incluye en el repositorio público ni en capturas de evidencias.
+
+Formato de uso:
+
+```text
+Authorization: Bearer <token-de-evaluacion>
+```
