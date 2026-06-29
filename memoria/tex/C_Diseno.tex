@@ -93,7 +93,7 @@ La figura \ref{fig:gobernanza-cloud-azure} sintetiza la gobernanza aplicada al p
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{gobernanza_cloud_azure.png}
+\includegraphics[width=0.82\textwidth,height=0.52\textheight,keepaspectratio]{gobernanza_cloud_azure.png}
 \caption{Gobernanza cloud aplicada al prototipo Azure. Fuente: elaboración propia.}
 \label{fig:gobernanza-cloud-azure}
 \end{figure}
@@ -225,22 +225,29 @@ No existe un esquema físico relacional. La figura \ref{fig:modelo-conceptual-da
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
-    entity/.style={draw, rounded corners, align=left, font=\small, minimum width=3.1cm, minimum height=1.15cm, fill=blue!5},
-    relation/.style={->, >=stealth, line width=0.55pt},
+    entity/.style={draw, rounded corners, align=left, font=\small, minimum width=3.2cm, minimum height=1.15cm, fill=blue!5},
+    main/.style={entity, minimum width=4.4cm, fill=green!7},
+    relation/.style={-, line width=0.65pt},
     label/.style={font=\scriptsize, fill=white, inner sep=1.5pt}
 ]
 \node[entity] (servicio) at (0,4) {\textbf{Servicio}\\id, criticidad\\propietario, aprobador};
 \node[entity] (activo) at (0,0) {\textbf{Activo}\\id, nombre\\servicio asociado};
-\node[entity, minimum width=4.2cm, fill=green!7] (solicitud) at (5.3,2) {\textbf{Solicitud}\\datos de entrada y clasificación\\contexto, SLA y estado};
-\node[entity] (historial) at (10.8,4.5) {\textbf{Evento de historial}\\fecha, acción\\actor, detalle};
-\node[entity] (aprobacion) at (10.8,2) {\textbf{Aprobación / escalado}\\decisión, nivel\\actor y fechas};
-\node[entity] (valoracion) at (10.8,-0.5) {\textbf{Valoración}\\puntuación, comentario\\correo y fecha};
-\draw[relation] (servicio.east)--node[label, above, sloped]{1 valida N} (solicitud.north west);
-\draw[relation] (servicio.south)--node[label, left]{1 contiene N} (activo.north);
-\draw[relation] (activo.east)--node[label, below, sloped]{1 contextualiza N} (solicitud.south west);
-\draw[relation] (solicitud.north east)--node[label, above, sloped]{1 incorpora 1..N} (historial.west);
-\draw[relation] (solicitud.east)--node[label, above]{0..1} (aprobacion.west);
-\draw[relation] (solicitud.south east)--node[label, below, sloped]{0..1 tras cierre} (valoracion.west);
+\node[main] (solicitud) at (7,2) {\textbf{Solicitud}\\entrada, contexto y clasificación\\SLA, estado e historial};
+\node[entity] (historial) at (14,4) {\textbf{Evento de historial}\\fecha, acción\\actor, detalle};
+\node[entity] (aprobacion) at (14,2) {\textbf{Aprobación / escalado}\\decisión, nivel\\actor y fechas};
+\node[entity] (valoracion) at (14,0) {\textbf{Valoración}\\puntuación, comentario\\correo y fecha};
+\draw[relation] (servicio.east)--(solicitud.north west);
+\draw[relation] (servicio.south)--(activo.north);
+\draw[relation] (activo.east)--(solicitud.south west);
+\draw[relation] (solicitud.north east)--(historial.west);
+\draw[relation] (solicitud.east)--(aprobacion.west);
+\draw[relation] (solicitud.south east)--(valoracion.west);
+\node[label] at (3.25,3.55) {valida};
+\node[label] at (0.9,2) {1:N};
+\node[label] at (3.25,0.45) {contextualiza};
+\node[label] at (10.7,3.55) {1:1..N};
+\node[label] at (10.7,2.25) {0..1};
+\node[label] at (10.7,0.45) {0..1};
 \end{tikzpicture}%
 }
 \caption{Modelo conceptual de los datos documentales. No representa tablas físicas. Fuente: elaboración propia.}
@@ -369,10 +376,10 @@ La figura \ref{fig:estados-solicitud} representa únicamente transiciones implem
 \draw[flow] (pendiente)--node[note, left]{rechazar} (rechazada);
 \draw[flow] (abierta) to[bend left=12] node[note, above]{iniciar} (proceso);
 \draw[flow] (proceso) to[bend left=12] node[note, below]{devolver} (abierta);
-\draw[flow] (abierta) to[bend left=18] node[note, above]{resolver} (cerrada);
-\draw[flow] (proceso)--node[note, above]{resolver} (cerrada);
+\draw[flow] (abierta) to[bend left=36] node[note, above, pos=0.55]{cierre directo} (cerrada);
+\draw[flow] (proceso)--node[note, below]{resolver} (cerrada);
 \draw[flow] (cerrada) to[bend left=28] node[note, below]{reabrir} (proceso);
-\path[flow] (proceso) edge[loop above] node[note]{escalar} (proceso);
+\path[flow] (proceso) edge[loop above] node[note, above]{escalar} (proceso);
 \end{tikzpicture}%
 }
 \caption{Diagrama de estados de una solicitud. Fuente: elaboración propia.}
