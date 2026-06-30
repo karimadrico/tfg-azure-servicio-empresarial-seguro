@@ -9,6 +9,10 @@ $WebAppName = "app-tfg-incidencias-dev"
 $StorageAccount = "sttfgincidenciasdev"
 $KeyVaultName = "kv-tfg-incidencias-dev"
 $AppInsightsName = "appi-tfg-incidencias-dev"
+$CosmosAccountName = if ($env:COSMOS_ACCOUNT_NAME) { $env:COSMOS_ACCOUNT_NAME } else { "cosmos-tfg-kdr-2026" }
+$CosmosDatabase = if ($env:COSMOS_DATABASE) { $env:COSMOS_DATABASE } else { "tfg-solicitudes" }
+$CosmosContainer = if ($env:COSMOS_CONTAINER) { $env:COSMOS_CONTAINER } else { "solicitudes" }
+$StorageMode = if ($env:STORAGE_MODE) { $env:STORAGE_MODE } else { "cosmos" }
 if (-not $env:API_KEY) {
     throw "Define la variable de entorno API_KEY antes de desplegar."
 }
@@ -107,6 +111,7 @@ Write-Host "Azure CLI: $AzCli" -ForegroundColor DarkGray
 Write-Host "=== Despliegue API TFG en Azure ===" -ForegroundColor Cyan
 Write-Host "Resource Group: $ResourceGroup"
 Write-Host "App Service:    $WebAppName"
+Write-Host "Storage mode:   $StorageMode"
 Write-Host ""
 
 Write-Host "[1/7] Comprobando sesion en Azure..."
@@ -151,8 +156,8 @@ $kvRbacEnabled = Invoke-Az @(
     "-o", "tsv"
 )
 
-Write-Host "[3/7] Preparando Application Insights..."
-foreach ($providerNamespace in @("Microsoft.Insights", "Microsoft.OperationalInsights")) {
+Write-Host "[3/8] Preparando Application Insights y Cosmos DB..."
+foreach ($providerNamespace in @("Microsoft.Insights", "Microsoft.OperationalInsights", "Microsoft.DocumentDB")) {
     $providerState = Invoke-Az @(
         "provider", "show",
         "--namespace", $providerNamespace,
@@ -200,7 +205,70 @@ $appInsightsConnectionString = Invoke-Az @(
     "-o", "tsv"
 )
 
-Write-Host "[4/7] Habilitando Managed Identity en App Service..."
+$cosmosEndpoint = ""
+$cosmosKey = ""
+if ($StorageMode -eq "cosmos") {
+    $cosmosAccount = ""
+    try {
+        $cosmosAccount = Invoke-Az @(
+            "cosmosdb", "show",
+            "--name", $CosmosAccountName,
+            "--resource-group", $ResourceGroup,
+            "--query", "name",
+            "-o", "tsv"
+        )
+    }
+    catch {
+        $cosmosAccount = ""
+    }
+
+    if (-not $cosmosAccount) {
+        Write-Host "Creando Cosmos DB con Free Tier: $CosmosAccountName"
+        Invoke-Az @(
+            "cosmosdb", "create",
+            "--name", $CosmosAccountName,
+            "--resource-group", $ResourceGroup,
+            "--locations", "regionName=swedencentral", "failoverPriority=0", "isZoneRedundant=False",
+            "--default-consistency-level", "Session",
+            "--enable-free-tier", "true"
+        ) | Out-Null
+    }
+
+    Invoke-Az @(
+        "cosmosdb", "sql", "database", "create",
+        "--account-name", $CosmosAccountName,
+        "--resource-group", $ResourceGroup,
+        "--name", $CosmosDatabase
+    ) | Out-Null
+
+    Invoke-Az @(
+        "cosmosdb", "sql", "container", "create",
+        "--account-name", $CosmosAccountName,
+        "--resource-group", $ResourceGroup,
+        "--database-name", $CosmosDatabase,
+        "--name", $CosmosContainer,
+        "--partition-key-path", "/tipo_solicitud",
+        "--throughput", "400"
+    ) | Out-Null
+
+    $cosmosEndpoint = Invoke-Az @(
+        "cosmosdb", "show",
+        "--name", $CosmosAccountName,
+        "--resource-group", $ResourceGroup,
+        "--query", "documentEndpoint",
+        "-o", "tsv"
+    )
+    $cosmosKey = Invoke-Az @(
+        "cosmosdb", "keys", "list",
+        "--name", $CosmosAccountName,
+        "--resource-group", $ResourceGroup,
+        "--type", "keys",
+        "--query", "primaryMasterKey",
+        "-o", "tsv"
+    )
+}
+
+Write-Host "[4/8] Habilitando Managed Identity en App Service..."
 $identity = Invoke-Az @(
     "webapp", "identity", "assign",
     "--name", $WebAppName,
@@ -209,7 +277,7 @@ $identity = Invoke-Az @(
     "-o", "tsv"
 )
 
-Write-Host "[5/7] Configurando acceso de App Service a Key Vault..."
+Write-Host "[5/8] Configurando acceso de App Service a Key Vault..."
 if ($kvRbacEnabled -eq "true") {
     Write-Host "Key Vault usa RBAC. Asignando rol Key Vault Secrets User..."
     try {
@@ -243,23 +311,29 @@ Invoke-Az @(
     "--value", $ApiKey
 ) | Out-Null
 
-Write-Host "[6/7] Configurando variables de entorno..."
-Invoke-Az @(
+$settings = @(
     "webapp", "config", "appsettings", "set",
     "--name", $WebAppName,
     "--resource-group", $ResourceGroup,
     "--settings",
-    "STORAGE_MODE=azure",
+    "STORAGE_MODE=$StorageMode",
     "AZURE_STORAGE_CONNECTION_STRING=$storageConn",
     "AZURE_STORAGE_CONTAINER=incidencias",
     "AZURE_STORAGE_BLOB=incidencias.json",
+    "COSMOS_ENDPOINT=$cosmosEndpoint",
+    "COSMOS_KEY=$cosmosKey",
+    "COSMOS_DATABASE=$CosmosDatabase",
+    "COSMOS_CONTAINER=$CosmosContainer",
     "KEY_VAULT_URL=$kvUrl",
     "KEY_VAULT_SECRET_NAME=api-key",
     "APPLICATIONINSIGHTS_CONNECTION_STRING=$appInsightsConnectionString",
     "API_KEY=",
     "SCM_DO_BUILD_DURING_DEPLOYMENT=true",
     "WEBSITES_PORT=8000"
-) | Out-Null
+)
+
+Write-Host "[6/8] Configurando variables de entorno..."
+Invoke-Az $settings | Out-Null
 
 Invoke-Az @(
     "webapp", "config", "set",
@@ -268,7 +342,7 @@ Invoke-Az @(
     "--startup-file", "gunicorn --bind=0.0.0.0:8000 --workers=2 app:app"
 ) | Out-Null
 
-Write-Host "[7/7] Publicando codigo de src/..."
+Write-Host "[7/8] Publicando codigo de src/..."
 $zipPath = Join-Path $env:TEMP "tfg-api-deploy.zip"
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 
@@ -298,12 +372,17 @@ Invoke-Az @(
     "--src", $zipPath
 ) | Out-Null
 
+Write-Host "[8/8] Despliegue publicado. La verificacion se ejecuta con scripts/verify-azure.ps1."
+
 $defaultHostName = Invoke-Az @("webapp", "show", "--name", $WebAppName, "--resource-group", $ResourceGroup, "--query", "defaultHostName", "-o", "tsv")
 $url = "https://$defaultHostName"
 Write-Host ""
 Write-Host "Despliegue finalizado." -ForegroundColor Green
 Write-Host "URL:     $url"
 Write-Host "API Key: almacenada en Key Vault"
+if ($StorageMode -eq "cosmos") {
+    Write-Host "Cosmos:  $CosmosAccountName / $CosmosDatabase / $CosmosContainer"
+}
 Write-Host ""
 Write-Host "Comprobacion:"
 Write-Host "  Invoke-RestMethod $url/health"
