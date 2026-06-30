@@ -396,7 +396,11 @@ class ApiTests(unittest.TestCase):
         class FakeCosmosContainer:
             def __init__(self) -> None:
                 self.documents = {
-                    "SOL-001": {"id": "SOL-001", "tipo_solicitud": "incidencia"},
+                    "SOL-001": {
+                        "id": "SOL-001",
+                        "tipo_solicitud": "incidencia",
+                        "_etag": "metadata",
+                    },
                     "SOL-999": {"id": "SOL-999", "tipo_solicitud": "acceso"},
                 }
 
@@ -427,7 +431,9 @@ class ApiTests(unittest.TestCase):
         fake_container = FakeCosmosContainer()
 
         with patch.object(storage, "_cosmos_container", return_value=fake_container):
-            self.assertEqual([item["id"] for item in storage.load()], ["SOL-001", "SOL-999"])
+            loaded = storage.load()
+            self.assertEqual([item["id"] for item in loaded], ["SOL-001", "SOL-999"])
+            self.assertNotIn("_etag", loaded[0])
             storage.save(
                 [
                     {"id": "SOL-001", "tipo_solicitud": "incidencia", "estado": "abierta"},

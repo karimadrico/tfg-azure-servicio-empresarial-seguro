@@ -91,13 +91,19 @@ class IncidenciaStorage:
             partition_key=PartitionKey(path="/tipo_solicitud"),
         )
 
+    def _strip_cosmos_metadata(self, item: dict[str, Any]) -> dict[str, Any]:
+        return {key: value for key, value in item.items() if not key.startswith("_")}
+
     def _load_from_cosmos(self) -> list[dict[str, Any]]:
         container = self._cosmos_container()
         items = container.query_items(
             query="SELECT * FROM c",
             enable_cross_partition_query=True,
         )
-        return sorted((dict(item) for item in items), key=lambda item: item.get("id", ""))
+        return sorted(
+            (self._strip_cosmos_metadata(dict(item)) for item in items),
+            key=lambda item: item.get("id", ""),
+        )
 
     def _save_to_cosmos(self, incidencias: list[dict[str, Any]]) -> None:
         container = self._cosmos_container()
