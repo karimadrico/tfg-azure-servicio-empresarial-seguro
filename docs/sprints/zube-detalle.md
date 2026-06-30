@@ -84,10 +84,26 @@ Este documento conserva la planificación real observada en Zube. Las fechas de 
 | [#25](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/25) | HU-26 Crear vídeo de presentación | P1 | 5 | Cerrada el 24/06/2026 |
 | [#26](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/26) | HU-27 Preparar defensa final | P1 | 5 | Cerrada el 24/06/2026 |
 
+
+## Sprint 6 - Mejora final de persistencia con Cosmos DB
+
+- Periodo: 25/06/2026 - 30/06/2026.
+- Cierre real: 30/06/2026.
+- Objetivo: evolucionar la persistencia final a Azure Cosmos DB, migrar las solicitudes existentes y actualizar evidencias/documentación.
+- Resultado: 5 tarjetas cerradas de 5 y 13 puntos completados.
+
+| Tarjeta | Historia de usuario | Prioridad | Puntos | Labels recomendadas | Estado |
+|---------|--------------------|:---------:|-------:|---------------------|--------|
+| HU-28 | Crear Cosmos DB Free Tier | P1 | 3 | `azure`, `database`, `cosmosdb`, `security` | Cerrada |
+| HU-29 | Implementar almacenamiento en Cosmos DB | P1 | 5 | `backend`, `api`, `cosmosdb`, `persistence` | Cerrada |
+| HU-30 | Migrar solicitudes desde Blob Storage | P1 | 2 | `migration`, `azure`, `data` | Cerrada |
+| HU-31 | Verificar despliegue real con Cosmos DB | P1 | 2 | `testing`, `azure`, `validation` | Cerrada |
+| HU-32 | Actualizar evidencias y documentación final | P2 | 1 | `documentation`, `evidence`, `latex`, `quality` | Cerrada |
+
 ## Estimación relativa
 
 Las historias se normalizan con la escala Fibonacci `1, 2, 3, 5, 8 y 13`. Los puntos permiten comparar el tamaño de los incrementos y visualizar el cambio de alcance del Sprint 3. La asignación completa por tarjeta se recoge en [`criterio-estimacion.md`](criterio-estimacion.md); las horas del Anexo A se reservan para el cálculo económico.
 
-![Vista final de los cinco sprints cerrados](sprints-finalizacion-storypoints.png)
+![Vista final de los sprints cerrados](sprints-finalizacion-storypoints.png)
 
-El backlog suma 132 puntos estimados. Zube muestra 114 puntos cerrados dentro de las iteraciones y conserva los 18 puntos retirados del Sprint 3 como parte del historial de replanificación.
+El backlog suma 145 puntos estimados. Zube muestra 127 puntos cerrados dentro de las iteraciones y conserva los 18 puntos retirados del Sprint 3 como parte del historial de replanificación.

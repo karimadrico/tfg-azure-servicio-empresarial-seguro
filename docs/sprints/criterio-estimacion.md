@@ -66,6 +66,19 @@ Total del Sprint 4: **34 puntos cerrados**.
 
 Total del Sprint 5: **23 puntos cerrados**.
 
+
+## Sprint 6 - Mejora final de persistencia con Cosmos DB
+
+| Tarjeta | Historia | Prioridad | Puntos | Estado |
+|---------|----------|:---------:|-------:|--------|
+| HU-28 | Crear Cosmos DB Free Tier | P1 | 3 | Cerrada |
+| HU-29 | Implementar almacenamiento en Cosmos DB | P1 | 5 | Cerrada |
+| HU-30 | Migrar solicitudes desde Blob Storage | P1 | 2 | Cerrada |
+| HU-31 | Verificar despliegue real con Cosmos DB | P1 | 2 | Cerrada |
+| HU-32 | Actualizar evidencias y documentación final | P2 | 1 | Cerrada |
+
+Total del Sprint 6: **13 puntos cerrados**.
+
 ## Resumen por sprint
 
 | Sprint | Puntos comprometidos | Puntos completados en el sprint | Tratamiento |
@@ -75,8 +88,9 @@ Total del Sprint 5: **23 puntos cerrados**.
 | Sprint 3 | 23 | 5 | Se retiraron 18 puntos durante la replanificación. |
 | Sprint 4 | 34 | 34 | Consolidación técnica y documental. |
 | Sprint 5 | 23 | 23 | Cierre documental, validación y preparación de la defensa. |
+| Sprint 6 | 13 | 13 | Persistencia final con Cosmos DB, migración, validación y evidencias. |
 
-El backlog estimado suma 132 puntos. Zube registra 114 puntos cerrados dentro de los sprints y 18 puntos retirados del Sprint 3, correspondientes a HU-13, HU-15 y HU-16. La persistencia y la clasificación se incorporaron posteriormente mediante Blob Storage, Cosmos DB y reglas deterministas; el pipeline completo se sustituyó por despliegue reproducible con PowerShell y Azure CLI. De esta forma, la diferencia representa un cambio de alcance registrado, no trabajo oculto.
+El backlog estimado suma 145 puntos. Zube registra 127 puntos cerrados dentro de los sprints y 18 puntos retirados del Sprint 3, correspondientes a HU-13, HU-15 y HU-16. La persistencia y la clasificación se incorporaron posteriormente mediante Blob Storage, Cosmos DB y reglas deterministas; el pipeline completo se sustituyó por despliegue reproducible con PowerShell y Azure CLI. De esta forma, la diferencia representa un cambio de alcance registrado, no trabajo oculto.
 
 ## Evidencias de seguimiento
 
@@ -84,5 +98,5 @@ La estimación relativa se interpreta junto con las fechas previstas y reales, l
 
 ## Mejora final de persistencia
 
-La revisión final incorporó Cosmos DB como base documental porque el prototipo había evolucionado desde un registro sencillo hacia una gestión operativa con historial, aprobaciones, escalados, SLA y valoración. La mejora mantiene el formato JSON, pero separa cada solicitud en un documento propio y alinea mejor la solución con una arquitectura cloud empresarial. El cambio se documenta como mejora final de cierre, vinculada a la validación técnica posterior al Sprint 5 y al objetivo de dejar una persistencia más realista para la entrega.
+El Sprint 6 incorporó Cosmos DB como base documental porque el prototipo había evolucionado desde un registro sencillo hacia una gestión operativa con historial, aprobaciones, escalados, SLA y valoración. La mejora mantiene el formato JSON, pero separa cada solicitud en un documento propio y alinea mejor la solución con una arquitectura cloud empresarial. El cambio se documenta como mejora final de cierre, vinculada a la validación técnica posterior al Sprint 5 y al objetivo de dejar una persistencia más realista para la entrega.
 

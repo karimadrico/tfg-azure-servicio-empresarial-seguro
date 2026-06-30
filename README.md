@@ -4,13 +4,13 @@
 **Titulación:** Grado en Ingeniería Informática Online, Universidad de Burgos  
 **Título:** Cloud Computing: Análisis, Diseño y Despliegue de un Servicio Empresarial Seguro en Microsoft Azure
 
-Este repositorio contiene el prototipo funcional desarrollado para el Trabajo Fin de Grado. La solución automatiza la gestión de solicitudes internas de TI mediante un portal web, una API Flask desplegada en Azure App Service, persistencia documental en Azure Cosmos DB, gestión segura de secretos con Azure Key Vault, identidad administrada, Logic App para entrada desde sistemas externos y observabilidad con Application Insights.
+Este repositorio contiene el prototipo funcional desarrollado para el Trabajo Fin de Grado. La solución aborda un problema habitual en entornos empresariales: la gestión dispersa de solicitudes internas de TI, credenciales, aprobaciones, prioridades y evidencias de seguimiento.
 
-El objetivo no es sustituir a una plataforma ITSM comercial, sino demostrar de extremo a extremo el análisis, diseño, implementación, despliegue, validación y documentación de una solución cloud empresarial segura en Microsoft Azure.
+Para estudiar este problema se ha desarrollado una plataforma cloud desplegada en Microsoft Azure. El sistema permite registrar solicitudes, clasificarlas automáticamente mediante reglas explicables, asignar prioridad e impacto, gestionar aprobaciones, controlar SLA, conservar historial, exportar información operativa y aceptar entradas desde sistemas externos mediante una Logic App.
+
+La solución no pretende sustituir a una plataforma ITSM comercial, sino demostrar de extremo a extremo el análisis, diseño, implementación, despliegue, validación y documentación de un servicio empresarial seguro en Microsoft Azure.
 
 ![Arquitectura integral del TFG en Microsoft Azure](memoria/img/arquitectura_integral_tfg_azure.png)
-
-![Base de datos documental desplegada en Azure Cosmos DB](docs/evidencias/base-de-datos-azure-cosmos-db.png)
 
 ## Enlaces de evaluación
 
@@ -26,61 +26,33 @@ El objetivo no es sustituir a una plataforma ITSM comercial, sino demostrar de e
 | SonarCloud | https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro |
 | Release v1.1.0 | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.1.0 |
 
-Las operaciones públicas permiten registrar solicitudes y consultar la ayuda. Las operaciones de equipo TI, métricas, exportación, carga de demostración y gestión interna requieren token Bearer. Ese token se facilita únicamente en el PDF de enlaces entregado en UBUVirtual y corresponde al secreto `api-key` almacenado en Azure Key Vault.
+Las operaciones públicas permiten registrar solicitudes y consultar la ayuda. Las operaciones internas del equipo TI requieren token Bearer; el token de evaluación se facilita en el PDF de enlaces entregado en UBUVirtual y corresponde al secreto `api-key` almacenado en Azure Key Vault.
 
-## Recorrido de demostración
+## Demostración funcional
 
-| Paso | Pantalla o enlace | Qué se comprueba |
-|------|-------------------|------------------|
-| 1 | `/health` | La API responde `estado: ok` y confirma `storage_mode: cosmos`. |
-| 2 | `/portal` | Registro de una solicitud sensible desde el portal web. |
-| 3 | Resultado de solicitud | Clasificación, prioridad, impacto, responsable, SLA y estado inicial. |
-| 4 | Gestión del equipo TI | Acceso protegido con token Bearer y filtrado de solicitudes. |
-| 5 | Detalle de solicitud | Historial, catálogo de servicio/activo, aprobación y escalado. |
-| 6 | Centro operativo | Carga por responsable, SLA vencido, métricas y satisfacción. |
-| 7 | Exportación CSV | Generación de informe operativo protegido. |
-| 8 | Logic App | Entrada automática desde un sistema externo mediante HTTP. |
-| 9 | `/docs` | Contrato OpenAPI interactivo del servicio. |
-| 10 | SonarCloud y Zube | Calidad del código, planificación por sprints y evidencias de proceso. |
+El portal permite registrar una solicitud de TI sin acceder directamente a la base de datos ni a secretos internos. La API valida el contenido, consulta el catálogo de servicios, aplica reglas de clasificación y devuelve una solicitud con identificador, prioridad, impacto, responsable, SLA y estado inicial.
 
-## Prueba rápida
+![Registro de solicitud desde el portal](docs/evidencias/portal-solicitud-enviada.png)
 
-Abrir el portal:
+El equipo TI trabaja desde una bandeja protegida. Desde ahí puede filtrar solicitudes, revisar el detalle, aprobar o rechazar solicitudes sensibles, escalar incidencias, cerrar trabajos y conservar la trazabilidad de cada cambio.
 
-```text
-https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/portal
-```
+![Gestión protegida del equipo TI](docs/evidencias/solicitud-portal-gestionTI-tokenkeyvault.png)
 
-Comprobar el estado desde PowerShell:
+La solución incorpora un centro operativo para revisar carga de trabajo, SLA vencidos, distribución por responsable, métricas de operación y satisfacción. Esta parte convierte el prototipo en una herramienta demostrable para seguimiento operativo, no solo en un formulario de alta de tickets.
 
-```powershell
-Invoke-RestMethod `
-  -Uri "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/health"
-```
+![Centro operativo con SLA y métricas](docs/evidencias/portal-centro-operativo-sla.png)
 
-Consultar solicitudes protegidas:
+La documentación OpenAPI permite consultar y probar los endpoints principales del servicio. Esto facilita que el tribunal o un equipo técnico pueda entender el contrato de la API sin revisar directamente el código fuente.
 
-```powershell
-$env:API_KEY = "<token-de-evaluacion>"
+![Documentación interactiva de la API](docs/evidencias/documentacion-interactiva-de-API.png)
 
-Invoke-RestMethod `
-  -Uri "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/solicitudes" `
-  -Headers @{ Authorization = "Bearer $env:API_KEY" }
-```
+La Logic App representa la entrada automática desde otro sistema empresarial. Un formulario corporativo, intranet o herramienta externa puede enviar una solicitud HTTP a la Logic App; esta valida el flujo de integración y llama a `POST /solicitudes` en la API desplegada.
 
-Crear una solicitud desde PowerShell:
-
-```powershell
-Invoke-RestMethod `
-  -Method POST `
-  -Uri "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/solicitudes" `
-  -ContentType "application/json" `
-  -Body '{"tipo_solicitud":"acceso","titulo":"Acceso VPN","descripcion":"Necesito acceso VPN al entorno cloud","reportado_por":"usuario@empresa.com"}'
-```
+![Ejecución de Logic App hacia la API](docs/evidencias/logic-app-created-request.png)
 
 ## Arquitectura
 
-La arquitectura final se compone de los siguientes servicios y responsabilidades:
+La arquitectura final se compone de servicios gestionados de Azure y herramientas de apoyo al proceso de desarrollo:
 
 | Componente | Uso en el TFG |
 |------------|---------------|
@@ -91,8 +63,24 @@ La arquitectura final se compone de los siguientes servicios y responsabilidades
 | Managed Identity | Permite que App Service acceda a Key Vault sin credenciales cloud embebidas. |
 | Azure Logic Apps | Recibe solicitudes desde sistemas externos y llama a `POST /solicitudes`. |
 | Application Insights / Azure Monitor | Recoge telemetría básica y facilita la observabilidad del despliegue. |
-| Zube | Documenta la planificación ágil en cinco sprints cerrados. |
+| Zube | Documenta la planificación ágil por sprints. |
 | SonarCloud | Aporta análisis externo de calidad, seguridad, fiabilidad y mantenibilidad. |
+
+## Persistencia con Cosmos DB
+
+La persistencia final utiliza Azure Cosmos DB porque el modelo de datos es documental: cada solicitud contiene datos semiestructurados, historial, aprobación, escalado, SLA y valoración. La primera versión cloud usó Blob Storage con una colección JSON única; la evolución a Cosmos DB mantiene el formato JSON, separa cada solicitud en un documento propio y alinea mejor el prototipo con una solución empresarial real.
+
+![Base de datos documental desplegada en Azure Cosmos DB](docs/evidencias/base-de-datos-azure-cosmos-db.png)
+
+La migración se realizó con `scripts/migrate-blob-to-cosmos.ps1`, leyendo las solicitudes existentes desde Blob Storage e insertándolas o actualizándolas en Cosmos DB. Se migraron 20 solicitudes existentes y la última verificación real creó `SOL-023`, dejando 23 solicitudes listadas por la API.
+
+| Elemento Cosmos DB | Valor desplegado |
+|--------------------|------------------|
+| Cuenta | `cosmos-tfg-kdr-2026` |
+| Base de datos | `tfg-solicitudes` |
+| Contenedor | `solicitudes` |
+| Clave de partición | `/tipo_solicitud` |
+| Modo de App Service | `STORAGE_MODE=cosmos` |
 
 ## Funcionalidades implementadas
 
@@ -108,10 +96,11 @@ La arquitectura final se compone de los siguientes servicios y responsabilidades
 - Exportación CSV de solicitudes.
 - Documentación OpenAPI integrada.
 - Logic App para automatizar la entrada desde sistemas externos.
+- Persistencia final en Cosmos DB con documentos independientes por solicitud.
 
 ## Calidad y validación
 
-El proyecto incluye validación técnica y evidencias de calidad:
+El proyecto incluye pruebas automáticas, verificación real en Azure y análisis externo de calidad. El análisis final de SonarCloud se conserva como evidencia de cierre.
 
 | Evidencia | Estado |
 |-----------|--------|
@@ -120,50 +109,33 @@ El proyecto incluye validación técnica y evidencias de calidad:
 | Duplicación | 0,0 % en el análisis de calidad documentado. |
 | Seguridad | Endpoints internos protegidos con Bearer token y secreto almacenado en Key Vault. |
 | Despliegue | API y portal desplegados en Azure App Service. |
-| Verificación | Script `scripts/verify-azure.ps1` para comprobar `/health`, solicitudes, métricas y portal. |
+| Persistencia | Cosmos DB Free Tier con base de datos `tfg-solicitudes` y contenedor `solicitudes`. |
+| Verificación | `scripts/verify-azure.ps1` comprueba `/health`, creación, listado, métricas y portal. |
 
 ![Quality Gate final aprobado en SonarCloud](docs/evidencias/sonarcloud-quality-gate-final-30junio.png)
 
-## Ejecución local
+## Comprobación técnica
+
+La forma principal de probar la solución es utilizar el portal desplegado y el recorrido funcional anterior. Como apoyo técnico, también se puede comprobar el estado de la API desde PowerShell:
 
 ```powershell
-cd src
-$env:STORAGE_MODE = "local"
-pip install -r requirements.txt
-python app.py
+Invoke-RestMethod `
+  -Uri "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/health"
 ```
 
-Después se accede a:
-
-```text
-http://localhost:5000/portal
-```
-
-## Pruebas
-
-Desde la raíz del repositorio:
+La respuesta debe indicar `estado: ok` y `storage_mode: cosmos`. Las operaciones internas se prueban con el token incluido en el PDF de enlaces de entrega:
 
 ```powershell
-python -m unittest discover -s tests -p "test_*.py"
+$env:API_KEY = "<token-de-evaluacion>"
+
+Invoke-RestMethod `
+  -Uri "https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/solicitudes" `
+  -Headers @{ Authorization = "Bearer $env:API_KEY" }
 ```
-
-## Migración a Cosmos DB
-
-La persistencia final utiliza Azure Cosmos DB porque el modelo de datos del proyecto es documental: cada solicitud contiene campos semiestructurados, historial, aprobación, escalado y valoración. La primera versión cloud usó Blob Storage con una colección JSON única; la evolución a Cosmos DB mantiene el formato JSON, separa cada solicitud en un documento propio y reduce el riesgo de concentrar todo el estado en un único objeto.
-
-La migración se realizó con `scripts/migrate-blob-to-cosmos.ps1`, que lee las solicitudes existentes desde Blob Storage y las inserta o actualiza en la base de datos `tfg-solicitudes`, contenedor `solicitudes`. Tras la migración, `/health` confirma `storage_mode: cosmos` y la verificación HTTP comprueba creación, consulta, métricas y persistencia. Se migraron 20 solicitudes existentes desde Blob Storage y la última verificación real creó `SOL-023`, dejando 23 solicitudes listadas por la API.
-
-| Elemento Cosmos DB | Valor desplegado |
-|--------------------|------------------|
-| Cuenta | `cosmos-tfg-kdr-2026` |
-| Base de datos | `tfg-solicitudes` |
-| Contenedor | `solicitudes` |
-| Clave de partición | `/tipo_solicitud` |
-| Modo de App Service | `STORAGE_MODE=cosmos` |
 
 ## Despliegue en Azure
 
-El despliegue real se realiza con PowerShell y Azure CLI:
+El despliegue se realiza con PowerShell y Azure CLI. Los scripts configuran App Service, Cosmos DB Free Tier, Storage de apoyo, Key Vault, Managed Identity, variables de entorno y publicación del código. El token no se versiona en GitHub.
 
 ```powershell
 az login
@@ -178,8 +150,6 @@ La Logic App se despliega con:
 $env:API_KEY = "<token-de-verificacion>"
 .\scripts\deploy-logicapp.ps1
 ```
-
-Los scripts configuran App Service, Cosmos DB Free Tier, Storage de apoyo, Key Vault, Managed Identity, variables de entorno y publicación del código. El token no se versiona en GitHub.
 
 ## Endpoints principales
 
@@ -239,12 +209,4 @@ Los scripts configuran App Service, Cosmos DB Free Tier, Storage de apoyo, Key V
 | Release final | `v1.1.0` en GitHub Releases |
 | Licencia | `LICENSE` |
 
-## Vídeos obligatorios
-
-La entrega requiere dos vídeos independientes, ambos de máximo cinco minutos:
-
-1. Vídeo de presentación del TFG: introducción, objetivos, conceptos teóricos, técnicas y herramientas, trabajos relacionados y conclusiones.
-2. Vídeo de demostración funcional: recorrido real por portal, solicitud, bandeja TI, aprobación, SLA, Logic App, Azure y SonarCloud.
-
-El guion preparado para grabarlos está fuera del repositorio público de entrega, en la carpeta general del TFG.
-
+Las direcciones de los vídeos, el token de evaluación y las instrucciones finales de acceso se entregan en el PDF de enlaces de UBUVirtual.
