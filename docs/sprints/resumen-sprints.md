@@ -13,9 +13,9 @@ Tablero: https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial
 
 ## Evidencias
 
-Las capturas de Zube se conservan en `docs/sprints/` y permiten comprobar la evolución incremental del proyecto. Los sprints cerrados muestran la evolución incremental del proyecto. El Sprint 5 cerró la entrega documental el 24 de junio y el Sprint 6 recoge la mejora final de persistencia con Cosmos DB cerrada el 30 de junio.
+Las capturas de Zube se conservan en `docs/sprints/` y permiten comprobar la evolución incremental del proyecto. El Sprint 5 cerró la entrega documental el 24 de junio y el Sprint 6 recoge la mejora final de persistencia con Cosmos DB cerrada el 30 de junio.
 
-![Resumen final de los cinco sprints en Zube](sprints-finalizacion-storypoints.png)
+![Resumen final de los seis sprints en Zube](sprints-total-6.png)
 
 Con esta mejora, el backlog completo suma 145 puntos estimados: 127 puntos cerrados en sprints y 18 puntos retirados del Sprint 3 durante la replanificación. Las capturas `sprint1-final.png`, `sprint2-final.png`, `sprint3-final.png`, `sprint3-final-retiradas.png`, `sprint4-final.png`, `sprint5-final.png` y la captura final del Sprint 6 permiten revisar cada iteración por separado.
 

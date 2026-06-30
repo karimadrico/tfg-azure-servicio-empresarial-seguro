@@ -2,7 +2,7 @@
 
 \section{Metodología de desarrollo}
 
-El trabajo se repartió en cinco sprints. Cada iteración agrupó un resultado reconocible: preparación, API y seguridad inicial, despliegue, consolidación técnica y cierre de la entrega.
+El trabajo se repartió en seis sprints. Cada iteración agrupó un resultado reconocible: preparación, API y seguridad inicial, despliegue, consolidación técnica, cierre documental y mejora final de persistencia con Cosmos DB.
 
 Zube registró las historias, fechas y cambios de alcance. Su historial conserva también tres tarjetas retiradas del Sprint 3, una decisión que después se explicó como replanificación y no como trabajo oculto.
 
@@ -41,7 +41,7 @@ La tabla \ref{tabla:comparacion_operacion} completa el análisis con las herrami
 \textbf{Necesidad} & \textbf{Decisión y justificación} \\
 \hline
 Despliegue & \textbf{Elección: PowerShell y Azure CLI. Alternativa: pipeline CI/CD completo.} El script es reproducible, auditable y suficiente para un único entorno académico. Un pipeline sería apropiado con varios equipos y promociones entre entornos. \\
-Planificación & \textbf{Elección: Zube. Alternativas: Azure Boards, Jira o GitHub Projects.} Su integración con GitHub permitió conservar tablero, historias y cinco sprints en un mismo historial. \\
+Planificación & \textbf{Elección: Zube. Alternativas: Azure Boards, Jira o GitHub Projects.} Su integración con GitHub permitió conservar tablero, historias y seis sprints en un mismo historial. \\
 Calidad & \textbf{Elección: SonarCloud. Alternativa: SonarQube autohospedado.} Proporciona métricas de seguridad, fiabilidad, mantenibilidad y duplicación sin administrar un servidor propio. \\
 \end{tabularx}
 \caption{Comparación de alternativas para operación y seguimiento}

@@ -30,7 +30,7 @@ Las principales fases del proyecto han sido:
 
 \subsection{Iteraciones realizadas}
 
-La planificación se ha dividido en cinco iteraciones, superando el mínimo de tres sprints indicado en la guía docente. Cada iteración generó un incremento funcional o documental verificable:
+La planificación se ha dividido en seis iteraciones, superando el mínimo de tres sprints indicado en la guía docente. Cada iteración generó un incremento funcional o documental verificable:
 
 La duración de las iteraciones no fue uniforme. Los dos primeros sprints se plantearon con una ventana cercana a dos semanas porque cubrían tareas de preparación, configuración y prototipado inicial. Desde el Sprint 3 aumentó el peso del despliegue real en Azure, la integración de servicios cloud, la documentación LaTeX y la recopilación de evidencias, por lo que las iteraciones posteriores se cerraron con periodos más amplios. El histórico de Zube se mantiene sin ajustar artificialmente las fechas, ya que muestra la evolución real del proyecto.
 
@@ -45,6 +45,7 @@ Sprint 2 (11/03/2026--24/03/2026) & Implementación de módulos y dashboard. & C
 Sprint 3 (25/03/2026--21/04/2026) & Incidencias y despliegue. & API de solicitudes, validación, seguridad básica y despliegue en Azure. \\
 Sprint 4 (22/04/2026--21/05/2026) & Consolidación y documentación técnica. & App Service, Storage, Key Vault, Managed Identity, evidencias y anexos. \\
 Sprint 5 (22/05/2026--24/06/2026) & Finalización y defensa. & Memoria, anexos, calidad SonarCloud, validación y preparación de la defensa. \\
+Sprint 6 (25/06/2026--30/06/2026) & Mejora final de persistencia. & Cosmos DB, migración de datos, validación del despliegue y evidencias finales. \\
 \end{tabularx}
 \caption{Resumen de iteraciones del proyecto}
 \end{table}
@@ -64,12 +65,13 @@ Sprint 2 & 11/03/2026 & Cerrado 17/04/2026 & 6 tarjetas cerradas; módulos, dash
 Sprint 3 & 25/03/2026 & Cerrado 20/05/2026 & Integración de incidencias, seguridad, despliegue y validación de endpoints. \\
 Sprint 4 & 22/04/2026 & Cerrado 22/05/2026 & 5 tarjetas cerradas; consolidación técnica, Azure, documentación y evidencias. \\
 Sprint 5 & 22/05/2026 & Cerrado 24/06/2026 & 4 tarjetas cerradas; memoria, anexos, calidad, validación y preparación de la entrega. \\
+Sprint 6 & 25/06/2026 & Cerrado 30/06/2026 & 5 tarjetas cerradas; Cosmos DB, migración, validación y documentación final. \\
 \end{tabularx}
 \caption{Seguimiento de sprints registrado en Zube}
 \label{tabla:seguimiento_zube}
 \end{table}
 
-Las capturas asociadas al seguimiento se conservan en \path{docs/sprints/}. Los cinco sprints están cerrados y el Sprint 5 finalizó el 24 de junio de 2026 con sus cuatro tarjetas y 23 puntos completados.
+Las capturas asociadas al seguimiento se conservan en \path{docs/sprints/}. Los seis sprints están cerrados. El Sprint 5 finalizó el 24 de junio de 2026 y el Sprint 6 finalizó el 30 de junio de 2026 con cinco tarjetas y 13 puntos completados.
 
 \subsection{Criterio de estimación y seguimiento}
 
@@ -86,21 +88,22 @@ Sprint 2 & 31 & 31 & API, incidencias, seguridad y clasificación. \\
 Sprint 3 & 23 & 5 & Dieciocho puntos retirados y replanificados. \\
 Sprint 4 & 34 & 34 & Consolidación técnica y documental. \\
 Sprint 5 & 23 & 23 & Cierre documental, validación y preparación de la defensa. \\
+Sprint 6 & 13 & 13 & Persistencia final con Cosmos DB, migración, validación y evidencias. \\
 \end{tabularx}
 \caption{Estimación relativa y resultado por sprint}
 \label{tabla:puntos-sprints}
 \end{table}
 
-El backlog completo suma 132 puntos estimados. Zube registra 114 puntos cerrados dentro de los sprints y conserva 18 puntos retirados durante la replanificación del Sprint 3. Estos últimos no se contabilizan como completados en aquella iteración, aunque parte de su alcance se materializara después mediante otras historias. El avance se acredita mediante puntos, tarjetas cerradas, diferencias entre fechas previstas y reales, commits, releases e incrementos funcionales. Las horas por fase se emplean exclusivamente para la viabilidad económica. La asignación detallada por historia se conserva en \path{docs/sprints/criterio-estimacion.md}.
+El backlog completo suma 145 puntos estimados. Zube registra 127 puntos cerrados dentro de los sprints y conserva 18 puntos retirados durante la replanificación del Sprint 3. Estos últimos no se contabilizan como completados en aquella iteración, aunque parte de su alcance se materializara después mediante otras historias. El avance se acredita mediante puntos, tarjetas cerradas, diferencias entre fechas previstas y reales, commits, releases e incrementos funcionales. Las horas por fase se emplean exclusivamente para la viabilidad económica. La asignación detallada por historia se conserva en \path{docs/sprints/criterio-estimacion.md}.
 
 Algunas historias aparecen cerradas en Zube el mismo día porque la revisión se registró de forma agrupada al final del sprint. En esos casos, la ejecución se contrasta con los commits del repositorio, las capturas y los incrementos funcionales. Esta combinación evita interpretar la fecha de cierre de la tarjeta como la única evidencia de trabajo realizado.
 
-La figura \ref{fig:sprints-finales-anexo} muestra el estado final registrado en Zube: cinco sprints cerrados, sin tarjetas ni puntos abiertos.
+La figura \ref{fig:sprints-finales-anexo} muestra el estado final registrado en Zube: seis sprints cerrados, sin tarjetas ni puntos abiertos.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{zube_sprints_final_132_storypoints.png}
-\caption{Vista final de los cinco sprints y sus puntos en Zube. Fuente: elaboración propia a partir del tablero del proyecto.}
+\includegraphics[width=\textwidth]{zube_sprints_final_145_storypoints.png}
+\caption{Vista final de los seis sprints y sus puntos en Zube. Fuente: elaboración propia a partir del tablero del proyecto.}
 \label{fig:sprints-finales-anexo}
 \end{figure}
 
@@ -137,6 +140,7 @@ Sprint 2 & Progreso del tablero, primeras pruebas y evolución del portal/API. &
 Sprint 3 & Despliegue inicial, endpoints y validación de solicitudes. & Conecta la implementación con el despliegue cloud. \\
 Sprint 4 & Capturas de Azure Portal, Key Vault, Storage y Managed Identity. & Justifica la arquitectura cloud segura. \\
 Sprint 5 & SonarCloud, escenario de demostración, OpenAPI, valoración, cartel, README y entregables finales. & Aporta evidencias de cierre, calidad, uso y defensa. \\
+Sprint 6 & Cosmos DB, migración de solicitudes, verificación en Azure, README, diagramas y SonarCloud final. & Refuerza el diseño de datos y deja la persistencia final alineada con una solución cloud empresarial. \\
 \end{tabularx}
 \caption{Evidencias asociadas a cada sprint}
 \label{tabla:evidencias_sprint}

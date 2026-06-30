@@ -104,6 +104,6 @@ Este documento conserva la planificación real observada en Zube. Las fechas de 
 
 Las historias se normalizan con la escala Fibonacci `1, 2, 3, 5, 8 y 13`. Los puntos permiten comparar el tamaño de los incrementos y visualizar el cambio de alcance del Sprint 3. La asignación completa por tarjeta se recoge en [`criterio-estimacion.md`](criterio-estimacion.md); las horas del Anexo A se reservan para el cálculo económico.
 
-![Vista final de los sprints cerrados](sprints-finalizacion-storypoints.png)
+![Vista final de los seis sprints cerrados](sprints-total-6.png)
 
 El backlog suma 145 puntos estimados. Zube muestra 127 puntos cerrados dentro de las iteraciones y conserva los 18 puntos retirados del Sprint 3 como parte del historial de replanificación.
