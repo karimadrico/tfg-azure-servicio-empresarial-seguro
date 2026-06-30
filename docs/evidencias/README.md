@@ -44,7 +44,7 @@ La captura muestra el Storage Account `sttfgincidenciasdev` y el contenedor `inc
 
 ![Blob JSON](azure-storage-container-blob-json.png)
 
-La captura muestra la base de datos Azure Cosmos DB usada para persistir las solicitudes como documentos JSON independientes. Es útil para explicar la evolución desde el blob inicial hacia una persistencia documental más adecuada para consultas y crecimiento.
+La captura muestra el blob JSON usado en la primera persistencia cloud. Se conserva como evidencia histórica y origen de la migración posterior a Cosmos DB.
 
 ## 2. Portal y API funcionando
 
@@ -155,9 +155,9 @@ Resumen de issues y calificaciones de SonarCloud. Sirve para explicar qué se co
 
 Evidencia de sprints cerrados en Zube. Para más detalle del seguimiento por iteraciones se conserva además la carpeta `docs/sprints/`, con capturas históricas y el resumen de sprints.
 
-![Resumen final de sprints y puntos](../sprints/sprints-finalizacion-storypoints.png)
+![Resumen final de sprints y puntos](../sprints/sprints-total-6.png)
 
-Vista consolidada de los cinco sprints cerrados. Zube registra 114 puntos cerrados y conserva 18 puntos retirados del Sprint 3, por lo que el backlog estimado completo suma 132 puntos.
+Vista consolidada de los seis sprints cerrados. Zube registra 127 puntos cerrados y conserva 18 puntos retirados del Sprint 3, por lo que el backlog estimado completo suma 145 puntos.
 
 ![Kanban final Zube](zube-kanban-final.png)
 
@@ -175,7 +175,7 @@ Evidencia del historial de commits y de la trazabilidad del desarrollo.
 
 ![Release histórica GitHub](github-release-final.png)
 
-Captura de la release `v1.0.0`, conservada como evidencia histórica. La versión candidata actual se distribuye como `v1.1.0` y su enlace figura en el README principal.
+Captura de una release histórica, conservada como evidencia de evolución. La versión final de entrega se distribuye como `v1.2.0` y su enlace figura en el README principal.
 
 ![Changelog GitHub](github-changelog-final.png)
 

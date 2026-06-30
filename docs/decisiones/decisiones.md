@@ -52,7 +52,7 @@ Consecuencia: pueden añadirse canales empresariales sin copiar reglas de negoci
 
 ## Zube para seguimiento
 
-Zube se utilizó desde el inicio y conserva cinco sprints, sus tarjetas, prioridades y cambios de alcance. El backlog se normalizó con una escala Fibonacci de puntos de historia para comparar el tamaño relativo de las historias y documentar la replanificación del Sprint 3. Las horas del Anexo A se mantienen separadas para el análisis económico.
+Zube se utilizó desde el inicio y conserva seis sprints, sus tarjetas, prioridades y cambios de alcance. El backlog se normalizó con una escala Fibonacci de puntos de historia para comparar el tamaño relativo de las historias y documentar la replanificación del Sprint 3 y la mejora final de persistencia del Sprint 6. Las horas del Anexo A se mantienen separadas para el análisis económico.
 
 Consecuencia: las desviaciones de fechas, los puntos y las tarjetas retiradas se documentan tal como aparecen en el historial, sin reconstruir un gráfico burndown que no se utilizó durante la ejecución.
 

@@ -1,9 +1,19 @@
-# Evolución de la persistencia documental
+# Decisión de persistencia y concurrencia
 
-La primera versión cloud del prototipo almacenaba la colección de solicitudes en un único blob JSON. La API era el único componente que descargaba, validaba y modificaba el documento; el portal y la Logic App siempre accedían a los datos mediante operaciones HTTP de la API.
+## Situación inicial
 
-Ese diseño era suficiente para demostrar persistencia gestionada con bajo volumen, pero tenía un límite claro: si dos procesos leían la misma versión del blob y guardaban cambios después, la última escritura podía sobrescribir la anterior. Azure Blob Storage permite mitigar este problema con ETag y escrituras condicionales `If-Match`, pero el modelo seguía concentrando toda la colección en un único objeto.
+La primera versión cloud utilizó Azure Blob Storage con una colección JSON única. Era una solución sencilla para demostrar persistencia gestionada, inspeccionar el contenido y mantener el mismo formato que las pruebas locales.
 
-La rama de evolución de persistencia migra las solicitudes a Azure Cosmos DB. Cada solicitud se conserva como documento JSON independiente en la base de datos `tfg-solicitudes` y el contenedor `solicitudes`, manteniendo la compatibilidad conceptual con el modelo semiestructurado y reduciendo el acoplamiento del blob único.
+## Limitación detectada
 
-La API sigue siendo la frontera de acceso: valida, clasifica, calcula SLA, actualiza historial y persiste. Ni el portal ni la Logic App acceden directamente a Cosmos DB. Esta decisión mantiene las reglas de negocio centralizadas y facilita defender la evolución desde una persistencia sencilla hacia una base documental gestionada.
+El modelo de blob único concentraba todas las solicitudes en un solo objeto. Si dos operaciones leían la misma versión y escribían después, la última escritura podía sobrescribir la anterior. Blob Storage permite controles con ETag y escrituras condicionales, pero el diseño seguía obligando a leer y guardar la colección completa.
+
+## Decisión final
+
+La persistencia final se migró a Azure Cosmos DB. Cada solicitud se almacena como documento JSON independiente en la base de datos `tfg-solicitudes` y el contenedor `solicitudes`, con partición `/tipo_solicitud`.
+
+Esta decisión mantiene el modelo documental del proyecto y mejora la separación de registros. La API continúa siendo la única frontera de acceso: valida, clasifica, calcula SLA, actualiza historial y persiste. El portal y la Logic App no acceden directamente a Cosmos DB.
+
+## Alcance
+
+Cosmos DB resuelve la principal limitación del blob único para el prototipo entregado, pero una implantación productiva debería añadir políticas más completas de concurrencia optimista, auditoría, retención, copias, identidad individual y autorización por roles.

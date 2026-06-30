@@ -1,69 +1,44 @@
-# Arquitectura de la plataforma TFG
+# Arquitectura de la plataforma TI
 
-## Proceso empresarial
+Este documento resume la solución software entregada: una plataforma cloud para automatizar solicitudes internas de TI sobre Microsoft Azure. El objetivo es que una petición pueda entrar desde el portal web o desde un sistema externo, pasar por las mismas reglas de validación y quedar persistida en Cosmos DB con trazabilidad.
 
-Automatización de solicitudes internas de TI:
+## Proceso empresarial cubierto
 
-| Tipo | Ejemplo |
-|------|---------|
-| Acceso | VPN, permisos, cuentas |
-| Entorno | Staging, desarrollo, producción |
-| Aplicación | Alta de servicio o API |
-| Configuración | Cambio de parámetros |
-| Incidencia | Fallo operativo |
+| Tipo de solicitud | Ejemplos | Tratamiento aplicado |
+|-------------------|----------|----------------------|
+| Acceso | VPN, permisos, cuentas | Validación de solicitante, impacto y posible aprobación. |
+| Configuración | Cambio de parámetros o entorno | Revisión del servicio afectado y responsable técnico. |
+| Soporte | Consulta o petición operativa | Clasificación, responsable y SLA según prioridad. |
+| Incidencia | Fallo operativo o interrupción | Priorización, alerta de SLA y seguimiento en centro operativo. |
 
-## Flujo arquitectónico
+## Flujo funcional
 
-```text
-Empleado / Tribunal
-        |
-        v
-Portal web en App Service
-        |
-        v
-API Flask
-        |
-        +--> Clasificador ligero
-        |
-        +--> Cosmos DB
-        |
-        +--> Key Vault mediante Managed Identity
+| Paso | Componente | Resultado |
+|------|------------|-----------|
+| 1 | Portal web o Logic App | Entrada de la solicitud desde usuario o sistema externo. |
+| 2 | API Flask en App Service | Validación de campos, catálogo y token cuando procede. |
+| 3 | Reglas de negocio | Cálculo de tipo, prioridad, impacto, SLA, responsable y aprobación. |
+| 4 | Azure Cosmos DB | Persistencia de la solicitud como documento JSON independiente. |
+| 5 | Centro operativo | Consulta de bandeja, alertas, métricas, escalado, cierre y valoración. |
+| 6 | SonarCloud, Zube y GitHub | Evidencias de calidad, planificación y trazabilidad del desarrollo. |
 
-Sistema externo
-        |
-        v
-Logic App
-        |
-        v
-POST /solicitudes
-```
+## Automatización con Logic App
 
-## Clasificación automática basada en reglas
+La Logic App `logic-tfg-solicitudes-dev` representa el canal de integración con otros sistemas empresariales. Recibe una petición HTTP, construye el cuerpo esperado por la API y llama a `POST /solicitudes` usando el token configurado durante el despliegue. La Logic App no escribe en Cosmos DB ni aplica reglas propias; esa responsabilidad permanece centralizada en la API.
 
-El clasificador de `src/classifier.py`:
+## Clasificación y reglas
 
-- detecta tipo de solicitud;
-- asigna prioridad;
-- clasifica categoría;
-- genera recomendación operativa;
-- devuelve un nivel de confianza.
+El componente de clasificación es ligero y explicable. No depende de un servicio externo de IA ni de datos de entrenamiento. Aplica reglas deterministas para estimar tipo, categoría, prioridad, recomendación y nivel de confianza, lo que permite justificar cada resultado durante la defensa y cubrirlo con pruebas automáticas.
 
-No requiere un servicio de lenguaje externo ni un conjunto de entrenamiento. Las decisiones pueden seguirse en el código y repetirse en las pruebas.
+## Seguridad y datos
 
-## Automatizacion con Logic App
+- Las operaciones internas usan token Bearer.
+- El secreto `api-key` se almacena en Azure Key Vault.
+- App Service usa Managed Identity para acceder a Key Vault.
+- Cosmos DB conserva cada solicitud como documento independiente.
+- El portal y la Logic App acceden siempre mediante la API, nunca directamente a la base de datos.
+- Las evidencias no muestran secretos, firmas `sig` ni cadenas de conexión.
 
-La Logic App `logic-tfg-solicitudes-dev` recibe solicitudes por HTTP y las reenvia a `POST /solicitudes`. Esta pieza permite demostrar un flujo de automatizacion empresarial sin que el sistema externo tenga que conocer los detalles internos de la API Flask.
+## Validación
 
-## Seguridad
-
-- Token Bearer para operaciones protegidas.
-- Token almacenado en Azure Key Vault.
-- Acceso desde App Service mediante Managed Identity.
-- Cosmos DB privado, accedido únicamente por la API.
-- Variables sensibles fuera del código fuente.
-
-## Despliegue
-
-- Script operativo: `scripts/deploy-azure.ps1`.
-- Verificación: `scripts/verify-azure.ps1`.
-- Infraestructura documentada: `infra/terraform/` e `infra/bicep/`.
+La solución se valida con 27 pruebas automáticas, verificación real contra Azure, Quality Gate aprobado en SonarCloud y capturas de Azure Portal, Zube, GitHub, Logic App, Cosmos DB y el portal desplegado.

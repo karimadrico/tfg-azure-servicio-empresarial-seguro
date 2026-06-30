@@ -373,7 +373,7 @@ try {
         Where-Object {
             $_.FullName -notmatch "\\__pycache__\\" -and
             $_.Extension -ne ".pyc" -and
-            $_.Name -notin @("run-local.ps1", "run-local.sh", "test_local_api.py")
+            $_.Name -notin @("run-local.ps1", "run-local.sh")
         } |
         ForEach-Object {
             $relativePath = $_.FullName.Substring($srcRoot.Length).TrimStart("\", "/").Replace("\", "/")
