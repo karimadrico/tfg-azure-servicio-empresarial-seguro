@@ -19,7 +19,7 @@ Este documento sirve como base para generar el PDF final de enlaces solicitado e
 | Estado de la API | https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/health |
 | Zube | https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban |
 | SonarCloud | https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro |
-| Release publicada | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.1.0 |
+| Release publicada | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.2.0 |
 
 ## Datos de acceso para la prueba
 
