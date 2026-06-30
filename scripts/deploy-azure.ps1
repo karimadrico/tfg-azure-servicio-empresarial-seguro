@@ -234,22 +234,41 @@ if ($StorageMode -eq "cosmos") {
         ) | Out-Null
     }
 
-    Invoke-Az @(
-        "cosmosdb", "sql", "database", "create",
+    $databaseExists = Invoke-Az @(
+        "cosmosdb", "sql", "database", "exists",
         "--account-name", $CosmosAccountName,
         "--resource-group", $ResourceGroup,
-        "--name", $CosmosDatabase
-    ) | Out-Null
+        "--name", $CosmosDatabase,
+        "-o", "tsv"
+    )
+    if ($databaseExists -ne "true") {
+        Invoke-Az @(
+            "cosmosdb", "sql", "database", "create",
+            "--account-name", $CosmosAccountName,
+            "--resource-group", $ResourceGroup,
+            "--name", $CosmosDatabase
+        ) | Out-Null
+    }
 
-    Invoke-Az @(
-        "cosmosdb", "sql", "container", "create",
+    $containerExists = Invoke-Az @(
+        "cosmosdb", "sql", "container", "exists",
         "--account-name", $CosmosAccountName,
         "--resource-group", $ResourceGroup,
         "--database-name", $CosmosDatabase,
         "--name", $CosmosContainer,
-        "--partition-key-path", "/tipo_solicitud",
-        "--throughput", "400"
-    ) | Out-Null
+        "-o", "tsv"
+    )
+    if ($containerExists -ne "true") {
+        Invoke-Az @(
+            "cosmosdb", "sql", "container", "create",
+            "--account-name", $CosmosAccountName,
+            "--resource-group", $ResourceGroup,
+            "--database-name", $CosmosDatabase,
+            "--name", $CosmosContainer,
+            "--partition-key-path", "/tipo_solicitud",
+            "--throughput", "400"
+        ) | Out-Null
+    }
 
     $cosmosEndpoint = Invoke-Az @(
         "cosmosdb", "show",
