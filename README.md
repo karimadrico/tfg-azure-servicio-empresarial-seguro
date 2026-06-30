@@ -4,7 +4,7 @@
 **Titulación:** Grado en Ingeniería Informática Online, Universidad de Burgos  
 **Título:** Cloud Computing: Análisis, Diseño y Despliegue de un Servicio Empresarial Seguro en Microsoft Azure
 
-Este repositorio contiene el prototipo funcional desarrollado para el Trabajo Fin de Grado. La solución automatiza la gestión de solicitudes internas de TI mediante un portal web, una API Flask desplegada en Azure App Service, persistencia documental en Azure Blob Storage, gestión segura de secretos con Azure Key Vault, identidad administrada, Logic App para entrada desde sistemas externos y observabilidad con Application Insights.
+Este repositorio contiene el prototipo funcional desarrollado para el Trabajo Fin de Grado. La solución automatiza la gestión de solicitudes internas de TI mediante un portal web, una API Flask desplegada en Azure App Service, persistencia documental en Azure Cosmos DB, gestión segura de secretos con Azure Key Vault, identidad administrada, Logic App para entrada desde sistemas externos y observabilidad con Application Insights.
 
 El objetivo no es sustituir a una plataforma ITSM comercial, sino demostrar de extremo a extremo el análisis, diseño, implementación, despliegue, validación y documentación de una solución cloud empresarial segura en Microsoft Azure.
 
@@ -30,7 +30,7 @@ Las operaciones públicas permiten registrar solicitudes y consultar la ayuda. L
 
 | Paso | Pantalla o enlace | Qué se comprueba |
 |------|-------------------|------------------|
-| 1 | `/health` | La API responde `status: ok` y confirma el modo de almacenamiento Azure. |
+| 1 | `/health` | La API responde `estado: ok` y confirma `storage_mode: cosmos`. |
 | 2 | `/portal` | Registro de una solicitud sensible desde el portal web. |
 | 3 | Resultado de solicitud | Clasificación, prioridad, impacto, responsable, SLA y estado inicial. |
 | 4 | Gestión del equipo TI | Acceso protegido con token Bearer y filtrado de solicitudes. |
@@ -84,7 +84,7 @@ La arquitectura final se compone de los siguientes servicios y responsabilidades
 |------------|---------------|
 | Azure App Service | Aloja el portal web y la API Flask. |
 | API Flask | Centraliza validación, catálogo, reglas de negocio, clasificación, aprobación, escalado, SLA e historial. |
-| Azure Blob Storage | Conserva las solicitudes como documentos JSON semiestructurados. |
+| Azure Cosmos DB | Conserva cada solicitud como documento JSON independiente en el contenedor `solicitudes`. |
 | Azure Key Vault | Almacena el token de autenticación fuera del código fuente. |
 | Managed Identity | Permite que App Service acceda a Key Vault sin credenciales cloud embebidas. |
 | Azure Logic Apps | Recibe solicitudes desde sistemas externos y llama a `POST /solicitudes`. |
@@ -113,14 +113,14 @@ El proyecto incluye validación técnica y evidencias de calidad:
 
 | Evidencia | Estado |
 |-----------|--------|
-| Pruebas automáticas | 26 pruebas superadas con `unittest`. |
+| Pruebas automáticas | 27 pruebas superadas con `unittest`. |
 | SonarCloud | Quality Gate aprobado en el análisis final documentado. |
 | Duplicación | 0,0 % en el análisis de calidad documentado. |
 | Seguridad | Endpoints internos protegidos con Bearer token y secreto almacenado en Key Vault. |
 | Despliegue | API y portal desplegados en Azure App Service. |
 | Verificación | Script `scripts/verify-azure.ps1` para comprobar `/health`, solicitudes, métricas y portal. |
 
-![Quality Gate final aprobado en SonarCloud](docs/evidencias/sonarcloud-quality-gate-final-23junio.png)
+![Quality Gate final aprobado en SonarCloud](docs/evidencias/sonarcloud-quality-gate-final-30junio.png)
 
 ## Ejecución local
 
@@ -163,7 +163,7 @@ $env:API_KEY = "<token-de-verificacion>"
 .\scripts\deploy-logicapp.ps1
 ```
 
-Los scripts configuran App Service, Storage, Key Vault, Managed Identity, variables de entorno y publicación del código. El token no se versiona en GitHub.
+Los scripts configuran App Service, Cosmos DB Free Tier, Storage de apoyo, Key Vault, Managed Identity, variables de entorno y publicación del código. El token no se versiona en GitHub.
 
 ## Endpoints principales
 
@@ -194,7 +194,7 @@ Los scripts configuran App Service, Storage, Key Vault, Managed Identity, variab
 |------|-----------|
 | `src/` | API Flask, portal web, clasificador, almacenamiento y configuración. |
 | `tests/` | Pruebas automáticas del comportamiento principal. |
-| `scripts/` | Scripts de despliegue y verificación en Azure. |
+| `scripts/` | Scripts de despliegue, migración Blob a Cosmos DB y verificación en Azure. |
 | `logicapp/` | Definición del flujo de Logic App. |
 | `infra/terraform/` | Infraestructura declarativa documentada en Terraform. |
 | `infra/bicep/` | Plantillas Bicep de apoyo/documentación. |

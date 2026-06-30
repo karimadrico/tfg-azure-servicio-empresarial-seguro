@@ -1,13 +1,13 @@
 # Resumen del proyecto
 
-El TFG desarrolla una plataforma cloud para registrar, clasificar y consultar solicitudes operativas TI en Microsoft Azure. El prototipo final está desplegado en Azure App Service e integra persistencia en Azure Blob Storage, gestión de secretos con Azure Key Vault, Managed Identity, autenticación Bearer, un portal web y una API Flask.
+El TFG desarrolla una plataforma cloud para registrar, clasificar y consultar solicitudes operativas TI en Microsoft Azure. El prototipo final está desplegado en Azure App Service e integra persistencia en Azure Cosmos DB, gestión de secretos con Azure Key Vault, Managed Identity, autenticación Bearer, un portal web y una API Flask.
 
 ## Alcance entregado
 
 - Portal web accesible desde Azure App Service.
 - API REST para crear solicitudes, consultar solicitudes protegidas y obtener métricas.
 - Clasificador ligero para tipo de solicitud, prioridad, categoría y recomendación.
-- Persistencia cloud en Azure Blob Storage y modo local para pruebas.
+- Persistencia cloud en Azure Cosmos DB y modo local para pruebas.
 - Secreto de API gestionado con Azure Key Vault.
 - Despliegue reproducible con `scripts/deploy-azure.ps1`.
 - Verificación automatizada con `scripts/verify-azure.ps1`.

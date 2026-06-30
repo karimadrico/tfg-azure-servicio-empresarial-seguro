@@ -66,7 +66,8 @@ Los principales servicios utilizados en este proyecto son:
 
 \begin{itemize}
     \item Azure App Service.
-    \item Azure Blob Storage.
+    \item Azure Cosmos DB.
+    \item Azure Blob Storage como persistencia inicial y origen de migración.
     \item Azure Key Vault.
     \item Managed Identity.
     \item Azure Monitor.
@@ -83,7 +84,8 @@ La tabla \ref{tabla:servicios_azure_tfg} relaciona los servicios Azure seleccion
 \textbf{Servicio} & \textbf{Uso en el TFG} & \textbf{Justificación} \\
 \hline
 App Service & Aloja la API Flask y el portal web. & Servicio PaaS adecuado para aplicaciones web y APIs REST. \\
-Blob Storage & Guarda las solicitudes en formato JSON. & Almacenamiento sencillo, económico y apropiado para datos semiestructurados. \\
+Cosmos DB & Guarda cada solicitud como documento JSON. & Base de datos documental gestionada, adecuada para datos semiestructurados y consultas por solicitud. \\
+Blob Storage & Conserva la persistencia inicial y sirve como origen de migración. & Almacenamiento sencillo y económico para objetos JSON. \\
 Key Vault & Almacena el token de autenticación. & Evita credenciales embebidas en código fuente. \\
 Managed Identity & Permite que App Service acceda a Key Vault. & Reduce la gestión manual de secretos y claves. \\
 Azure Monitor & Apoya la revisión de estado y logs. & Facilita observabilidad básica del despliegue. \\
@@ -92,7 +94,7 @@ Azure Monitor & Apoya la revisión de estado y logs. & Facilita observabilidad b
 \label{tabla:servicios_azure_tfg}
 \end{table}
 
-La figura \ref{fig:arquitectura-integral-azure} resume la relación entre los servicios cloud seleccionados y las evidencias del proceso de desarrollo. La suscripción de Azure contiene el grupo de recursos del TFG, donde App Service ejecuta el portal y la API Flask, Key Vault protege el secreto utilizado como token Bearer, Blob Storage conserva las solicitudes y Azure Monitor recoge telemetría. Fuera de Azure quedan las herramientas que apoyan el seguimiento y la calidad: GitHub, Zube y SonarCloud.
+La figura \ref{fig:arquitectura-integral-azure} resume la relación entre los servicios cloud seleccionados y las evidencias del proceso de desarrollo. La suscripción de Azure contiene el grupo de recursos del TFG, donde App Service ejecuta el portal y la API Flask, Key Vault protege el secreto utilizado como token Bearer, Cosmos DB conserva las solicitudes, Blob Storage queda como soporte de migración y Azure Monitor recoge telemetría. Fuera de Azure quedan las herramientas que apoyan el seguimiento y la calidad: GitHub, Zube y SonarCloud.
 
 \begin{figure}[h]
 \centering
@@ -101,7 +103,7 @@ La figura \ref{fig:arquitectura-integral-azure} resume la relación entre los se
 \label{fig:arquitectura-integral-azure}
 \end{figure}
 
-Azure Blob Storage está orientado al almacenamiento de objetos y datos no estructurados, y permite acceder a los objetos mediante HTTP/HTTPS o bibliotecas cliente, incluidas bibliotecas para Python \cite{azure_blob_overview}. Azure Key Vault centraliza secretos, claves y certificados, reduciendo la probabilidad de exponer información sensible en el código \cite{azure_keyvault_overview}. Las identidades administradas permiten que un recurso de Azure obtenga una identidad propia para acceder a otros servicios sin almacenar credenciales en la aplicación \cite{azure_managed_identities}.
+Azure Cosmos DB es una base de datos NoSQL gestionada que permite trabajar con documentos JSON y contenedores particionados \cite{azure_cosmos_overview,azure_cosmos_nosql}. Azure Blob Storage está orientado al almacenamiento de objetos y datos no estructurados, y se utilizó como persistencia inicial y origen de migración \cite{azure_blob_overview,azure_blob_python}. Azure Key Vault centraliza secretos, claves y certificados, reduciendo la probabilidad de exponer información sensible en el código \cite{azure_keyvault_overview}. Las identidades administradas permiten que un recurso de Azure obtenga una identidad propia para acceder a otros servicios sin almacenar credenciales en la aplicación \cite{azure_managed_identities}.
 
 \section{Arquitectura basada en servicios}
 
@@ -116,19 +118,19 @@ Este enfoque facilita:
     \item Seguridad.
 \end{itemize}
 
-La arquitectura del proyecto sigue esta idea: el portal web se encarga de la interacción con el usuario, la API Flask concentra la lógica de negocio, el clasificador aplica reglas de análisis automático, Blob Storage conserva las solicitudes y Key Vault protege el secreto usado por los endpoints protegidos. Esta separación facilita explicar el sistema, probarlo por partes y evolucionarlo en futuras versiones.
+La arquitectura del proyecto sigue esta idea: el portal web se encarga de la interacción con el usuario, la API Flask concentra la lógica de negocio, el clasificador aplica reglas de análisis automático, Cosmos DB conserva las solicitudes y Key Vault protege el secreto usado por los endpoints protegidos. Esta separación facilita explicar el sistema, probarlo por partes y evolucionarlo en futuras versiones.
 
 \subsection{Plano de gestión y plano de datos}
 
-En una solución cloud conviene distinguir entre el plano de gestión y el plano de datos. El primero reúne las operaciones con las que se crean, configuran y supervisan recursos: alta del App Service, definición de variables de entorno, asignación de identidad o concesión de permisos. El segundo contiene las operaciones propias de la aplicación: registrar una solicitud, consultar su historial o guardar el documento en Blob Storage. Mezclar ambos planos haría que una petición funcional necesitara permisos de administración sobre Azure, un acoplamiento innecesario y difícil de proteger.
+En una solución cloud conviene distinguir entre el plano de gestión y el plano de datos. El primero reúne las operaciones con las que se crean, configuran y supervisan recursos: alta del App Service, definición de variables de entorno, asignación de identidad o concesión de permisos. El segundo contiene las operaciones propias de la aplicación: registrar una solicitud, consultar su historial o guardar el documento en Cosmos DB. Mezclar ambos planos haría que una petición funcional necesitara permisos de administración sobre Azure, un acoplamiento innecesario y difícil de proteger.
 
 En el prototipo, PowerShell y Azure CLI actúan sobre el plano de gestión durante el despliegue. La API, la Logic App y el portal operan en el plano de datos durante el uso normal. Managed Identity sirve de unión controlada entre ambos: la identidad se concede desde el plano de gestión, pero App Service la utiliza durante la ejecución para obtener el secreto autorizado. Esta separación permite aplicar privilegio mínimo y explica por qué el token de usuario no debe convertirse en una credencial de administración de la suscripción.
 
 \subsection{Persistencia documental y consistencia}
 
-Blob Storage conserva objetos y no ofrece por sí mismo las relaciones, restricciones o consultas de un sistema gestor de bases de datos. Esa diferencia condiciona el diseño. La colección de solicitudes del prototipo se serializa como JSON y la API concentra las lecturas y escrituras; ningún cliente modifica directamente el blob. Con un único proceso y el volumen de demostración, esta solución reduce infraestructura y mantiene el formato fácil de inspeccionar. La biblioteca oficial de Azure permite ejecutar las mismas operaciones desde Python mediante HTTPS \cite{azure_blob_overview,azure_blob_python}.
+La persistencia evolucionó durante el proyecto. La primera versión cloud utilizó Blob Storage con una colección JSON única; era sencilla y permitía inspeccionar el documento completo, pero obligaba a leer y escribir toda la colección en cada cambio. La versión actual utiliza Cosmos DB con API for NoSQL, manteniendo el formato JSON de las solicitudes y separando cada registro en un documento propio dentro del contenedor \texttt{solicitudes} \cite{azure_cosmos_overview,azure_cosmos_python}.
 
-La elección tiene un límite importante: dos escrituras concurrentes podrían partir de versiones distintas y sobrescribir cambios. Azure Blob Storage permite aplicar concurrencia optimista mediante ETag y cabeceras condicionales \texttt{If-Match} \cite{azure_blob_concurrency}. Una implantación con varios equipos, mayor carga o requisitos transaccionales debería utilizar ese control, separar cada solicitud en un objeto o migrar a Azure SQL o Cosmos DB. La escalabilidad del servicio cloud no corrige automáticamente un modelo de persistencia inadecuado; es necesario analizar también la granularidad y consistencia de los datos.
+Esta evolución mejora la granularidad de los datos y responde a una limitación detectada en el diseño inicial: con un blob único, dos escrituras concurrentes podían partir de versiones distintas y sobrescribir cambios. Cosmos DB no convierte el prototipo en una plataforma ITSM completa, pero aporta una base documental más adecuada para consultas por solicitud, crecimiento incremental y particionado por atributos como el tipo de solicitud. La API sigue siendo la única responsable de validar, clasificar y modificar los datos; el portal y la Logic App nunca acceden directamente a la base de datos.
 
 \section{API REST}
 

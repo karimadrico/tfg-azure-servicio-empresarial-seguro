@@ -44,6 +44,21 @@ Karthik Bojja.
 \newblock Azure app service overview, 2026.
 \newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
 
+\bibitem{azure_cosmos_overview}
+{Microsoft Learn}.
+\newblock Azure cosmos db documentation, 2026.
+\newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
+
+\bibitem{azure_cosmos_python}
+{Microsoft Learn}.
+\newblock Azure cosmos db for nosql client library for python, 2026.
+\newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
+
+\bibitem{azure_cosmos_nosql}
+{Microsoft Learn}.
+\newblock Azure cosmos db for nosql documentation, 2026.
+\newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
+
 \bibitem{azure_well_architected_framework}
 {Microsoft Learn}.
 \newblock Azure well-architected framework, 2026.
@@ -54,12 +69,6 @@ Karthik Bojja.
 \newblock Call, trigger, or nest workflows with http endpoints in azure logic
   apps, 2026.
 \newblock Documentación oficial de Microsoft Learn, consultado junio 2026.
-
-\bibitem{azure_blob_concurrency}
-{Microsoft Learn}.
-\newblock Managing concurrency in blob storage, 2026.
-\newblock Documentación oficial sobre ETag y acceso condicional, consultado
-  junio 2026.
 
 \bibitem{azure_blob_python}
 {Microsoft Learn}.
@@ -102,10 +111,5 @@ Jorge Sanclemente~Vilda.
 \bibitem{sonarqube_docs}
 {SonarSource}.
 \newblock Sonarqube documentation, 2025.
-
-\bibitem{sqlite_when_to_use}
-{SQLite Project}.
-\newblock Appropriate uses for sqlite, 2026.
-\newblock Documentación oficial, consultado junio 2026.
 
 \end{thebibliography}

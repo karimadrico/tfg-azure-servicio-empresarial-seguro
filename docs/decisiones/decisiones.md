@@ -14,11 +14,11 @@ La aplicación necesita una API REST acotada, validación JSON y una interfaz we
 
 Consecuencia: la estructura se reparte entre `app.py`, `classifier.py`, `storage.py` y `config.py`.
 
-## Blob Storage para las solicitudes
+## Cosmos DB para las solicitudes
 
-Cada solicitud se guarda como un documento JSON y el prototipo no necesita relaciones ni transacciones entre tablas. SQLite habría simplificado el modo local, mientras que Azure SQL habría facilitado consultas complejas. Blob Storage encaja mejor con el objetivo de probar persistencia gestionada en Azure con un volumen reducido.
+Cada solicitud se guarda como un documento JSON independiente. La primera versión cloud utilizó Azure Blob Storage con una colección JSON única, suficiente para demostrar persistencia gestionada, pero limitada ante consultas y concurrencia. Cosmos DB encaja mejor con el modelo semiestructurado porque mantiene el formato documental, separa los registros y evita concentrar todas las solicitudes en un único objeto.
 
-Consecuencia: `storage.py` ofrece modo local y modo Azure, pero la evolución hacia búsquedas avanzadas requeriría otra tecnología de datos.
+Consecuencia: `storage.py` ofrece modo local, modo Blob Storage y modo Cosmos DB. El despliegue actualizado utiliza `STORAGE_MODE=cosmos`, base de datos `tfg-solicitudes` y contenedor `solicitudes`.
 
 ## Key Vault y Managed Identity
 
@@ -58,7 +58,7 @@ Consecuencia: las desviaciones de fechas, los puntos y las tarjetas retiradas se
 
 ## SonarCloud y pruebas
 
-SonarCloud aporta una revisión externa del repositorio sin mantener una instancia propia de SonarQube. Las 26 pruebas automáticas verifican el comportamiento funcional, mientras que SonarCloud revisa seguridad, fiabilidad, mantenibilidad y duplicación.
+SonarCloud aporta una revisión externa del repositorio sin mantener una instancia propia de SonarQube. Las 27 pruebas automáticas verifican el comportamiento funcional, mientras que SonarCloud revisa seguridad, fiabilidad, mantenibilidad y duplicación.
 
 Consecuencia: ninguna de las dos herramientas sustituye a la otra y ambas forman parte de la evidencia de calidad.
 

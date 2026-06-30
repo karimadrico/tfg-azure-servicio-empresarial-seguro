@@ -6,13 +6,13 @@ Este anexo describe el diseño general de la plataforma cloud para la automatiza
 
 \section{Diseño arquitectónico}
 
-La arquitectura sigue un modelo basado en servicios cloud desplegados sobre Microsoft Azure. La aplicación se ejecuta en Azure App Service, utiliza Azure Blob Storage para persistir solicitudes, Azure Key Vault para secretos y Managed Identity para reducir la exposición de credenciales \cite{azure_appservice_python,azure_blob_python,azure_appservice_managed_identity,azure_appservice_keyvault_python}. Además, incorpora Azure Logic Apps como mecanismo de automatización de entrada y Application Insights/Azure Monitor para observabilidad básica del servicio \cite{azure_logic_apps,azure_monitor}.
+La arquitectura sigue un modelo basado en servicios cloud desplegados sobre Microsoft Azure. La aplicación se ejecuta en Azure App Service, utiliza Azure Cosmos DB para persistir solicitudes, Azure Key Vault para secretos y Managed Identity para reducir la exposición de credenciales \cite{azure_appservice_python,azure_blob_python,azure_appservice_managed_identity,azure_appservice_keyvault_python}. Además, incorpora Azure Logic Apps como mecanismo de automatización de entrada y Application Insights/Azure Monitor para observabilidad básica del servicio \cite{azure_logic_apps,azure_monitor}.
 
 Los principales componentes son:
 
 \begin{itemize}
     \item Azure App Service (API Flask y portal web).
-    \item Azure Storage (persistencia de solicitudes).
+    \item Azure Cosmos DB (persistencia documental de solicitudes).
     \item Azure Key Vault (gestión de secretos).
     \item Azure Logic Apps (automatización HTTP de solicitudes).
     \item Application Insights y Azure Monitor (observabilidad del despliegue).
@@ -28,7 +28,7 @@ La tabla \ref{tabla:decisiones_arquitectura} recoge las decisiones de arquitectu
 \textbf{Decisión} & \textbf{Alternativa considerada} & \textbf{Justificación} \\
 \hline
 App Service para la API & Máquina virtual Linux & Reduce administración de sistema operativo y facilita despliegue PaaS. \\
-Blob Storage para persistencia & Base de datos relacional & El prototipo requiere documentos JSON sencillos y bajo coste. \\
+Cosmos DB para persistencia & Blob Storage o base de datos relacional & El prototipo utiliza documentos JSON y necesita separar cada solicitud en un registro propio. \\
 Key Vault para secretos & Variables locales o fichero \texttt{.env} & Evita almacenar credenciales en el repositorio y mejora seguridad. \\
 Managed Identity & Credenciales manuales entre servicios & Permite acceso a Key Vault sin secretos intermedios. \\
 PowerShell + Azure CLI & Pipeline remoto obligatorio & Hace el despliegue reproducible, auditable y demostrable desde el entorno local. \\
@@ -40,7 +40,7 @@ Application Insights & Revisión manual exclusiva de logs & Permite evidenciar o
 \label{tabla:decisiones_arquitectura}
 \end{table}
 
-La figura \ref{fig:arquitectura-cloud-azure} muestra el esquema general de la solución, centrado en App Service, Blob Storage y Key Vault.
+La figura \ref{fig:arquitectura-cloud-azure} muestra el esquema general de la solución, centrado en App Service, Cosmos DB y Key Vault.
 
 \begin{figure}[h]
 \centering
@@ -153,7 +153,7 @@ El flujo principal del sistema es:
     \item Clasificación automática mediante reglas de negocio y cálculo del impacto empresarial.
     \item Asignación del equipo propietario y del objetivo SLA.
     \item Bloqueo en estado pendiente cuando la criticidad exige aprobación.
-    \item Persistencia de la solicitud y de su historial en Azure Blob Storage.
+    \item Persistencia de la solicitud y de su historial en Azure Cosmos DB.
     \item Gestión posterior mediante aprobación, rechazo, escalado, asignación y transiciones de estado.
     \item Supervisión de carga, vencimientos y alertas desde el centro operativo.
     \item Cierre de la solicitud y valoración opcional del servicio por el solicitante.
@@ -219,9 +219,19 @@ Las capturas individuales de App Service, Key Vault, Managed Identity y Storage 
 
 \section{Diseño de datos}
 
-Los datos son semiestructurados y se serializan como JSON. En Azure, un único blob contiene la colección completa de solicitudes; en ejecución local se utiliza un fichero con el mismo formato. La API es la única responsable de leer, validar y modificar esta colección. El portal consume la API y la Logic App envía peticiones HTTP, pero ninguno de los dos accede directamente a Storage. Esta frontera evita duplicar reglas entre canales y permite reutilizar el mismo modelo local y cloud.
+Los datos son semiestructurados y se serializan como JSON. En Azure, cada solicitud se almacena como documento independiente en Cosmos DB; en ejecución local se utiliza un fichero JSON con el mismo formato funcional para facilitar las pruebas. La API es la única responsable de leer, validar y modificar los documentos. El portal consume la API y la Logic App envía peticiones HTTP, pero ninguno de los dos accede directamente a la base de datos. Esta frontera evita duplicar reglas entre canales y permite reutilizar el mismo modelo local y cloud.
 
 No existe un esquema físico relacional. La figura \ref{fig:modelo-conceptual-datos} representa un modelo conceptual para explicar las relaciones lógicas que después se embeben o referencian dentro de cada documento JSON.
+
+La figura \ref{fig:cosmos-db-evidencia} muestra la base de datos documental creada en Azure Cosmos DB. La captura se incluye como evidencia de que las solicitudes no quedan únicamente en memoria ni en un fichero local, sino en un servicio gestionado de Azure.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth,height=0.52\textheight,keepaspectratio]{base_de_datos_azure_cosmos_db.png}
+\caption{Base de datos Azure Cosmos DB utilizada para persistir solicitudes. Fuente: captura propia.}
+\label{fig:cosmos-db-evidencia}
+\end{figure}
+
 
 \begin{figure}[H]
 \centering
@@ -390,13 +400,13 @@ La figura \ref{fig:estados-solicitud} representa únicamente transiciones implem
 
 \subsection{Secuencia de creación y persistencia}
 
-La figura \ref{fig:secuencia-persistencia} muestra que todos los canales convergen en la API y que Blob Storage no se expone al portal ni a Logic Apps.
+La figura \ref{fig:secuencia-persistencia} muestra que todos los canales convergen en la API y que Cosmos DB no se expone al portal ni a Logic Apps.
 
 \begin{figure}[H]
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[font=\scriptsize, msg/.style={->, >=stealth, line width=0.5pt}]
-\foreach \x/\name in {0/Usuario o sistema,3/Portal o Logic App,6/API Flask,9/Reglas y catálogo,12/Azure Blob Storage}{
+\foreach \x/\name in {0/Usuario o sistema,3/Portal o Logic App,6/API Flask,9/Reglas y catálogo,12/Azure Cosmos DB}{
   \node[draw, rounded corners, fill=blue!5, minimum width=2.45cm, minimum height=0.65cm, align=center] (n\x) at (\x,7.5) {\name};
   \draw[dashed, gray] (\x,7.15)--(\x,0.15);
 }
@@ -404,9 +414,9 @@ La figura \ref{fig:secuencia-persistencia} muestra que todos los canales converg
 \draw[msg] (3,5.9)--node[above]{POST /solicitudes} (6,5.9);
 \draw[msg] (6,5.1)--node[above]{validar y clasificar} (9,5.1);
 \draw[msg] (9,4.5)--node[above]{contexto, impacto y flujo} (6,4.5);
-\draw[msg] (6,3.7)--node[above]{leer colección JSON} (12,3.7);
-\draw[msg] (12,3.1)--node[above]{versión actual} (6,3.1);
-\draw[msg] (6,2.3)--node[above]{añadir registro y sobrescribir blob} (12,2.3);
+\draw[msg] (6,3.7)--node[above]{consultar documentos JSON} (12,3.7);
+\draw[msg] (12,3.1)--node[above]{documentos actuales} (6,3.1);
+\draw[msg] (6,2.3)--node[above]{insertar o actualizar documento} (12,2.3);
 \draw[msg] (12,1.7)--node[above]{confirmación} (6,1.7);
 \draw[msg] (6,1.1)--node[above]{HTTP 201 + SOL-XXX} (3,1.1);
 \draw[msg] (3,0.5)--node[above]{resultado} (0,0.5);
@@ -425,9 +435,3 @@ Esta decisión es aceptable para la demostración de bajo volumen, pero no para 
 \section{Calidad y observabilidad}
 
 La calidad se comprueba mediante pruebas automáticas y análisis manual en SonarCloud. El panel de SonarCloud se aporta como evidencia de mantenibilidad, fiabilidad, seguridad y duplicidad del código. La observabilidad técnica se apoya en el endpoint \texttt{/health}, en los logs de App Service y en las métricas disponibles desde Application Insights y Azure Monitor \cite{azure_monitor}.
-
-
-
-
-
-

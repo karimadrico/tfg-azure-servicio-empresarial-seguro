@@ -18,7 +18,7 @@ La captura recoge el App Service `app-tfg-incidencias-dev`, su estado operativo 
 
 ![Configuración App Service](azure-app-service-configuration.png)
 
-La captura muestra la configuración de la aplicación con variables como `STORAGE_MODE`, `KEY_VAULT_URL` y `AZURE_STORAGE_CONTAINER`; los valores sensibles permanecen ocultos.
+La captura muestra la configuración de la aplicación con variables como `STORAGE_MODE`, `COSMOS_ENDPOINT`, `KEY_VAULT_URL` y `AZURE_STORAGE_CONTAINER`; los valores sensibles permanecen ocultos.
 
 ### Identidad administrada
 
@@ -44,7 +44,7 @@ La captura muestra el Storage Account `sttfgincidenciasdev` y el contenedor `inc
 
 ![Blob JSON](azure-storage-container-blob-json.png)
 
-La captura muestra el blob JSON usado para persistir las solicitudes. Es útil para explicar el modelo documental empleado en lugar de una base de datos relacional.
+La captura muestra la base de datos Azure Cosmos DB usada para persistir las solicitudes como documentos JSON independientes. Es útil para explicar la evolución desde el blob inicial hacia una persistencia documental más adecuada para consultas y crecimiento.
 
 ## 2. Portal y API funcionando
 
@@ -193,5 +193,3 @@ Captura complementaria de la aplicación web en Azure.
 ![Portal Home adicional](url-portal-home.png)
 
 Captura adicional del portal público usado para la demostración.
-
-

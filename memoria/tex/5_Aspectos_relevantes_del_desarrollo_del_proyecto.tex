@@ -9,7 +9,7 @@ Los cinco sprints muestran cómo cambió el producto desde la propuesta inicial 
     \item Sprint 2, implementación de módulos y dashboard: API y portal iniciales, persistencia, clasificación por reglas y primeras pruebas.
     \item Sprint 3, incidencias y despliegue: consolidación de solicitudes, validación, seguridad y despliegue funcional en Azure.
     \item Sprint 4, consolidación y documentación técnica: App Service, Storage, Key Vault, Managed Identity, infraestructura como código, evidencias y anexos.
-    \item Sprint 5, finalización y defensa: ampliación empresarial, veintiséis pruebas, SonarCloud, OpenAPI, documentación y preparación de los entregables.
+    \item Sprint 5, finalización y defensa: ampliación empresarial, veintisiete pruebas, SonarCloud, OpenAPI, Cosmos DB, documentación y preparación de los entregables.
 \end{itemize}
 
 Esta relación utiliza los mismos nombres y alcance que la tabla A.1 del Anexo A. Las fechas previstas, los cierres reales y las replanificaciones se conservan allí y en Zube; este capítulo resume únicamente el incremento técnico producido en cada iteración. Los cinco sprints quedaron cerrados el 24 de junio de 2026. El backlog suma 132 puntos estimados: 114 se cerraron dentro de las iteraciones y 18 se retiraron del Sprint 3 durante una replanificación documentada.
@@ -43,7 +43,7 @@ El flujo principal del sistema es el siguiente:
     \item Azure App Service procesa la petición con Gunicorn.
     \item La API valida los datos y clasifica automáticamente la solicitud.
     \item El sistema genera una recomendación operativa para el equipo de TI.
-    \item Los datos se almacenan en Azure Blob Storage.
+    \item Los datos se almacenan en Azure Cosmos DB como documentos JSON independientes.
     \item Los secretos se obtienen desde Azure Key Vault mediante Managed Identity.
     \item El endpoint de métricas y Application Insights permiten observar el estado agregado del sistema.
 \end{enumerate}
@@ -63,7 +63,7 @@ La API es el punto de aplicación de las reglas del negocio. Tanto el portal com
 
 Storage y Key Vault no son accesibles desde el navegador. La API actúa como frontera: valida el contenido antes de persistirlo y recupera el secreto mediante la identidad del App Service. La Logic App tampoco escribe directamente en el blob. Al conservar una única ruta de entrada se reduce el número de componentes capaces de alterar datos y se mantiene igual el resultado funcional con independencia del canal utilizado.
 
-La dependencia más sensible es la disponibilidad del almacenamiento. Si Blob Storage falla, la aplicación puede seguir respondiendo en el endpoint de salud, pero no debe confirmar una solicitud que no haya quedado persistida. La implementación propaga el error y evita devolver un identificador de éxito falso. En un entorno de producción se añadirían reintentos controlados, telemetría específica y una cola para absorber interrupciones temporales; en el prototipo se prioriza que el fallo sea visible y reproducible.
+La dependencia más sensible es la disponibilidad del almacenamiento. Si Cosmos DB falla, la aplicación puede seguir respondiendo en el endpoint de salud, pero no debe confirmar una solicitud que no haya quedado persistida. La implementación propaga el error y evita devolver un identificador de éxito falso. En un entorno de producción se añadirían reintentos controlados, telemetría específica y una cola para absorber interrupciones temporales; en el prototipo se prioriza que el fallo sea visible y reproducible.
 
 \section{API REST implementada}
 
@@ -196,7 +196,7 @@ El despliegue reproducible se concentra en \texttt{scripts/deploy-azure.ps1}. El
 
 \section{Automatización empresarial con Logic App}
 
-La Logic App actúa como capa de orquestación para integrar la plataforma con otros sistemas de la empresa. En el prototipo, un sistema externo puede enviar una petición al trigger HTTP de la Logic App y esta invoca de forma controlada el endpoint \texttt{POST /solicitudes} de la API desplegada en App Service \cite{azure_logic_apps_http}. La API conserva la responsabilidad de validar datos, clasificar la solicitud, generar la recomendación y persistir el registro en Azure Blob Storage.
+La Logic App actúa como capa de orquestación para integrar la plataforma con otros sistemas de la empresa. En el prototipo, un sistema externo puede enviar una petición al trigger HTTP de la Logic App y esta invoca de forma controlada el endpoint \texttt{POST /solicitudes} de la API desplegada en App Service \cite{azure_logic_apps_http}. La API conserva la responsabilidad de validar datos, clasificar la solicitud, generar la recomendación y persistir el registro en Azure Cosmos DB.
 
 Este flujo resulta útil para un escenario empresarial realista: un formulario corporativo, una herramienta de soporte, un buzón automatizado o un sistema de atención interna podrían crear solicitudes sin acceder manualmente al portal. La Logic App no sustituye al equipo de TI ni al backend, sino que automatiza la entrada de trabajo. Si la API determina que el servicio, el activo y el entorno requieren aprobación, el flujo registra la notificación al aprobador y la solicitud permanece bloqueada hasta recibir una decisión. La asignación, el escalado, el seguimiento y el cierre se realizan en la bandeja operativa del portal.
 \section{Seguridad y gestión de secretos}
@@ -230,7 +230,7 @@ La información utilizada en las evidencias es ficticia. Aun así, una explotaci
 
 \section{Validación del prototipo}
 
-La validación se organizó en tres capas. La primera ejecuta veintiséis pruebas automáticas con almacenamiento temporal local y dobles de prueba para Azure; permite repetir casos sin modificar los datos desplegados. La segunda utiliza \texttt{verify-azure.ps1} y pruebas HTTP contra la URL pública para comprobar el recorrido real por App Service, Key Vault, Blob Storage y Logic Apps. La tercera conserva capturas del portal, Azure Portal, Application Insights, Zube y SonarCloud para relacionar el resultado técnico con los recursos observados.
+La validación se organizó en tres capas. La primera ejecuta veintisiete pruebas automáticas con almacenamiento temporal local y dobles de prueba para Azure; permite repetir casos sin modificar los datos desplegados. La segunda utiliza \texttt{verify-azure.ps1} y pruebas HTTP contra la URL pública para comprobar el recorrido real por App Service, Key Vault, Cosmos DB y Logic Apps. La tercera conserva capturas del portal, Azure Portal, Application Insights, Zube y SonarCloud para relacionar el resultado técnico con los recursos observados.
 
 Las pruebas automáticas cubren creación, consulta, autenticación, validaciones de entrada, filtros, paginación, ciclo de vida, historial, persistencia, métricas y reglas de clasificación. La ampliación añade catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV, demostración idempotente, OpenAPI, valoración y consistencia entre procesos de App Service. Se incluyen caminos negativos: token incorrecto, campos vacíos, correo no válido, prioridad desconocida, paginación fuera de rango, transición no permitida, valoración repetida e identificador inexistente.
 
@@ -240,7 +240,7 @@ Las pruebas automáticas cubren creación, consulta, autenticación, validacione
 \begin{tabularx}{\textwidth}{l X X}
 \textbf{Nivel} & \textbf{Comprobación} & \textbf{Resultado observado} \\
 \hline
-Unidad e integración local & Veintiséis pruebas sobre API, almacenamiento, flujos y clasificador. & Todas finalizan correctamente con datos temporales. \\
+Unidad e integración local & Veintisiete pruebas sobre API, almacenamiento, flujos y clasificador. & Todas finalizan correctamente con datos temporales. \\
 Despliegue público & Página raíz, portal y \texttt{/health}. & Servicio accesible por HTTPS y almacenamiento en modo Azure. \\
 Proceso empresarial & Catálogo, alta, impacto, aprobación, escalado, SLA, valoración e informe CSV. & Solicitud persistida y gestionada con trazabilidad completa. \\
 Demostración y contrato & Escenario idempotente y operaciones descritas en OpenAPI. & Cinco casos reproducibles y documentación interactiva accesible. \\
@@ -255,5 +255,4 @@ Calidad estática & Revisión del repositorio en SonarCloud. & Duplicación nula
 
 El resultado confirma el funcionamiento del caso práctico, pero no constituye una prueba de carga ni una certificación de seguridad. No se ha medido concurrencia elevada, recuperación regional, disponibilidad mensual o comportamiento con miles de solicitudes. Estas pruebas exigirían un entorno estable durante más tiempo, datos representativos y criterios de aceptación acordados con una organización usuaria.
 
-La posibilidad de ejecutar el backend con fichero local y desplegarlo con Blob Storage también se utilizó como mecanismo de prueba. La lógica de la API permanece igual y la estrategia de persistencia se selecciona mediante configuración. Esta separación permite desarrollar sin consumir Azure y comprobar después la integración cloud sin mantener dos implementaciones funcionales diferentes.
-
+La posibilidad de ejecutar el backend con fichero local, mantener compatibilidad con Blob Storage y desplegarlo con Cosmos DB también se utilizó como mecanismo de prueba. La lógica de la API permanece igual y la estrategia de persistencia se selecciona mediante configuración. Esta separación permite desarrollar sin consumir Azure y comprobar después la integración cloud sin mantener dos implementaciones funcionales diferentes.

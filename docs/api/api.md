@@ -7,7 +7,7 @@
 - Contrato: OpenAPI 3.0 en `/openapi.json`.
 - Explorador interactivo: Swagger UI en `/docs`.
 - Autenticación interna: cabecera Bearer con secreto almacenado en Key Vault.
-- Persistencia: Azure Blob Storage en cloud y fichero JSON en local.
+- Persistencia: Azure Cosmos DB en cloud, Azure Blob Storage como modo anterior/migración y fichero JSON en local.
 
 ## Registro de solicitudes
 

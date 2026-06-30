@@ -49,7 +49,7 @@ Este documento conserva la planificación real observada en Zube. Las fechas de 
 | Tarjeta | Cambio registrado | Tratamiento final |
 |---------|-------------------|-------------------|
 | [#14](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/14) | HU-14 Integrar Azure Key Vault correctamente | Cerrada el 30/04/2026 dentro del Sprint 3 |
-| [#13](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/13) | HU-13 Integrar almacenamiento persistente; retirada el 17/04/2026 | Replanificada y materializada mediante Azure Blob Storage |
+| [#13](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/13) | HU-13 Integrar almacenamiento persistente; retirada el 17/04/2026 | Replanificada primero mediante Azure Blob Storage y evolucionada a Azure Cosmos DB |
 | [#15](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/15) | HU-15 Implementar CI/CD completo; retirada el 17/04/2026 | Descartada del alcance final; se adoptó despliegue reproducible con PowerShell y Azure CLI |
 | [#16](https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/c/16) | HU-16 Mejorar clasificación; retirada el 17/04/2026 | Replanificada y completada como clasificador determinista con reglas y pruebas |
 

@@ -23,7 +23,7 @@ La selección tecnológica se realizó atendiendo al alcance, al tipo de carga y
 \textbf{Necesidad} & \textbf{Decisión y justificación} \\
 \hline
 API y portal web & \textbf{Elección: Flask. Alternativa: Django.} Django aporta ORM, administración y una estructura extensa, útiles en dominios relacionales complejos. Flask reduce componentes no utilizados y permite concentrar el prototipo en API, reglas de negocio e integración con Azure \cite{django_overview}. \\
-Persistencia cloud & \textbf{Elección: Azure Blob Storage con JSON. Alternativas: SQLite o Azure SQL.} Los registros son documentos sencillos, el volumen del prototipo es reducido y no se requieren relaciones entre tablas. Blob Storage representa el despliegue cloud; SQLite se reserva para la ejecución local \cite{sqlite_when_to_use,azure_blob_overview}. \\
+Persistencia cloud & \textbf{Elección: Azure Cosmos DB con documentos JSON. Alternativas: Blob Storage, SQLite o Azure SQL.} Los registros son semiestructurados y encajan con una base documental. Blob Storage se utilizó como primera persistencia cloud, pero Cosmos DB separa cada solicitud y resulta más adecuado para consultas y evolución del prototipo \cite{azure_cosmos_overview,azure_cosmos_python}. \\
 Alojamiento & \textbf{Elección: Azure App Service. Alternativas: máquina virtual o contenedor administrado manualmente.} App Service abstrae sistema operativo, publicación y disponibilidad básica. Una máquina virtual añadiría mantenimiento que no forma parte del proceso estudiado. \\
 Automatización & \textbf{Elección: Azure Logic Apps. Alternativa: integración directa de cada sistema con la API.} Logic Apps desacopla los sistemas externos y hace visible la orquestación. La API conserva validación, clasificación y persistencia para no duplicar reglas. \\
 Secretos & \textbf{Elección: Azure Key Vault con Managed Identity. Alternativa: variables o secretos gestionados manualmente.} Key Vault centraliza el token y Managed Identity evita incorporar otra credencial de Azure al código. \\
@@ -54,13 +54,14 @@ Git y GitHub conservaron el código y la documentación. Los commits separan, si
 
 \section{Plataforma cloud}
 
-La infraestructura cloud se basa en Microsoft Azure y en servicios gestionados documentados por Microsoft para aplicaciones web, almacenamiento, monitorización y gestión de secretos \cite{azure_appservice_python_quickstart,azure_blob_python,azure_appservice_keyvault_python,azure_monitor}.
+La infraestructura cloud se basa en Microsoft Azure y en servicios gestionados documentados por Microsoft para aplicaciones web, bases de datos documentales, almacenamiento, monitorización y gestión de secretos \cite{azure_appservice_python_quickstart,azure_cosmos_python,azure_blob_python,azure_appservice_keyvault_python,azure_monitor}.
 
 Los servicios principales utilizados son:
 
 \begin{itemize}
     \item Azure App Service.
-    \item Azure Storage.
+    \item Azure Cosmos DB.
+    \item Azure Storage como soporte de migración.
     \item Azure Key Vault.
     \item Azure Monitor.
 \end{itemize}
@@ -75,7 +76,8 @@ La tabla \ref{tabla:herramientas_utilizadas} resume las herramientas empleadas y
 \hline
 Python y Flask & Implementación de la API REST y lógica de negocio. & Rapidez de desarrollo, claridad y ecosistema de bibliotecas. \\
 Azure App Service & Despliegue del portal y la API. & Servicio PaaS adecuado para exponer aplicaciones web sin administrar servidores. \\
-Azure Blob Storage & Persistencia de solicitudes en JSON. & Almacenamiento sencillo, económico y suficiente para el prototipo. \\
+Azure Cosmos DB & Persistencia documental de solicitudes. & Mantiene el modelo JSON y evita concentrar todas las solicitudes en un único blob. \\
+Azure Blob Storage & Persistencia inicial y origen de migración. & Almacenamiento sencillo para objetos JSON. \\
 Azure Key Vault & Gestión del token de autenticación. & Separación de secretos respecto al código fuente. \\
 Managed Identity & Acceso de App Service a Key Vault. & Evita credenciales manuales entre servicios Azure. \\
 PowerShell y Azure CLI & Automatización del despliegue. & Reproducibilidad y trazabilidad de los pasos ejecutados. \\
@@ -89,7 +91,7 @@ SonarCloud & Análisis de calidad del código. & Métricas externas de mantenibi
 \section{Automatización del despliegue}
 
 \begin{sloppypar}
-El despliegue se automatiza mediante el script \path{scripts/deploy-azure.ps1}, que utiliza Azure CLI para configurar App Service, Storage, Key Vault, Managed Identity y publicación ZIP de la aplicación. Esta decisión permite reproducir el despliegue desde un equipo local y documentar de forma explícita cada paso técnico aplicado sobre Azure.
+El despliegue se automatiza mediante el script \path{scripts/deploy-azure.ps1}, que utiliza Azure CLI para configurar App Service, Cosmos DB, Storage, Key Vault, Managed Identity y publicación ZIP de la aplicación. Esta decisión permite reproducir el despliegue desde un equipo local y documentar de forma explícita cada paso técnico aplicado sobre Azure.
 \end{sloppypar}
 
 El script automatiza:

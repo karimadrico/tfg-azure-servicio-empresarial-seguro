@@ -58,7 +58,7 @@ La tabla \ref{tabla:requisitos_prioridad_validacion} amplía el catálogo de req
 RF-01 & Funcional & Alta & Prueba de \texttt{POST /solicitudes} y envío desde portal web. \\
 RF-02 & Funcional & Alta & Prueba de \texttt{GET /solicitudes} con token Bearer. \\
 RF-03 & Funcional & Media & Prueba de \texttt{GET /metricas}. \\
-RF-04 & Funcional & Alta & Comprobación de persistencia en Blob Storage y modo local. \\
+RF-04 & Funcional & Alta & Comprobación de persistencia en Cosmos DB y modo local. \\
 RF-05 & Funcional & Alta & Capturas de Key Vault, secreto e identidad administrada. \\
 RF-06 & Funcional & Media & Pruebas unitarias del clasificador y respuesta de creación de solicitud. \\
 RF-07 & Funcional & Media & Evidencia de Logic App con trigger HTTP y solicitud creada. \\
@@ -73,7 +73,7 @@ RF-15 & Funcional & Media & Prueba de carga idempotente de los cinco casos de de
 RF-16 & Funcional & Media & Acceso a \texttt{/ayuda}, \texttt{/docs}, \texttt{/openapi.json} y \texttt{/acerca}. \\
 RF-17 & Funcional & Media & Prueba de valoración única de una solicitud cerrada y agregado de satisfacción. \\
 RNF-01 & No funcional & Alta & Revisión de autenticación, secretos fuera del código y SonarCloud. \\
-RNF-02 & No funcional & Media & Uso de App Service y Blob Storage como servicios gestionados. \\
+RNF-02 & No funcional & Media & Uso de App Service y Cosmos DB como servicios gestionados. \\
 RNF-03 & No funcional & Media & Endpoint \texttt{/health} y script \texttt{verify-azure.ps1}. \\
 RNF-04 & No funcional & Alta & Identificador, fechas, estado, prioridad, responsable e historial por solicitud. \\
 RNF-05 & No funcional & Media & Capturas de Application Insights, Azure Monitor y endpoint de métricas. \\
@@ -96,7 +96,7 @@ El sistema debe listar solicitudes mediante \texttt{GET /solicitudes}, con filtr
 El sistema debe exponer métricas agregadas en \texttt{GET /metricas}.
 
 \subsection{RF-04 Gestionar almacenamiento cloud}
-Las solicitudes deben persistirse en Azure Blob Storage en entorno cloud y en fichero JSON en desarrollo local.
+Las solicitudes deben persistirse en Azure Cosmos DB en entorno cloud y en fichero JSON en desarrollo local.
 
 \subsection{RF-05 Gestionar secretos mediante Azure Key Vault}
 El token de autenticación debe almacenarse en Key Vault y recuperarse mediante Managed Identity.
@@ -141,7 +141,7 @@ Una solicitud cerrada debe admitir una única valoración de uno a cinco puntos 
 Autenticación Bearer, almacenamiento privado y gestión de secretos centralizada.
 
 \subsection{RNF-02 Escalabilidad}
-Arquitectura basada en servicios gestionados de Azure App Service y Blob Storage.
+Arquitectura basada en servicios gestionados de Azure App Service y Cosmos DB.
 
 \subsection{RNF-03 Disponibilidad}
 Endpoint de salud \texttt{/health} y despliegue automatizado.
@@ -266,6 +266,3 @@ CU-08 & Solicitud activa, correo distinto o valoración repetida. & HTTP 403/409
 \caption{Excepciones principales de los casos de uso}
 \label{tabla:excepciones-casos-uso}
 \end{table}
-
-
-

@@ -114,7 +114,7 @@ El historial del Sprint 3 registra la retirada de tres tarjetas el 17 de abril. 
 \begin{tabularx}{\textwidth}{l X X}
 \textbf{Historia} & \textbf{Cambio en Zube} & \textbf{Resultado final} \\
 \hline
-HU-13 Persistencia & Retirada del Sprint 3. & Replanificada e implementada mediante Azure Blob Storage. \\
+HU-13 Persistencia & Retirada del Sprint 3. & Replanificada primero mediante Azure Blob Storage y evolucionada a Azure Cosmos DB en la rama de persistencia documental. \\
 HU-15 CI/CD completo & Retirada del Sprint 3. & Descartada; se eligió despliegue reproducible con PowerShell y Azure CLI. \\
 HU-16 Clasificación & Retirada del Sprint 3. & Replanificada e implementada mediante reglas deterministas y pruebas automáticas. \\
 \end{tabularx}
@@ -227,9 +227,3 @@ Microsoft Azure & Servicio cloud & App Service, Storage, Key Vault, Managed Iden
 \end{table}
 
 Las licencias empleadas son compatibles con un proyecto académico y permiten la distribución del código fuente del prototipo. El repositorio incluye un archivo \texttt{LICENSE} con licencia MIT para el código propio desarrollado durante el TFG. Las credenciales y secretos no se almacenan en el repositorio, sino en variables de entorno y Azure Key Vault.
-
-
-
-
-
-

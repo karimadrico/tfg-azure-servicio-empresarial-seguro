@@ -76,7 +76,7 @@ Total del Sprint 5: **23 puntos cerrados**.
 | Sprint 4 | 34 | 34 | Consolidación técnica y documental. |
 | Sprint 5 | 23 | 23 | Cierre documental, validación y preparación de la defensa. |
 
-El backlog estimado suma 132 puntos. Zube registra 114 puntos cerrados dentro de los sprints y 18 puntos retirados del Sprint 3, correspondientes a HU-13, HU-15 y HU-16. La persistencia y la clasificación se incorporaron posteriormente mediante Blob Storage y reglas deterministas; el pipeline completo se sustituyó por despliegue reproducible con PowerShell y Azure CLI. De esta forma, la diferencia representa un cambio de alcance registrado, no trabajo oculto.
+El backlog estimado suma 132 puntos. Zube registra 114 puntos cerrados dentro de los sprints y 18 puntos retirados del Sprint 3, correspondientes a HU-13, HU-15 y HU-16. La persistencia y la clasificación se incorporaron posteriormente mediante Blob Storage, Cosmos DB y reglas deterministas; el pipeline completo se sustituyó por despliegue reproducible con PowerShell y Azure CLI. De esta forma, la diferencia representa un cambio de alcance registrado, no trabajo oculto.
 
 ## Evidencias de seguimiento
 

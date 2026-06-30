@@ -9,7 +9,7 @@ Este anexo describe la estructura técnica del repositorio y los pasos para ejec
 \begin{itemize}
     \item \texttt{src/app.py}: API principal Flask.
     \item \texttt{src/classifier.py}: clasificador automático de incidencias.
-    \item \texttt{src/storage.py}: persistencia local o en Azure Blob Storage.
+    \item \texttt{src/storage.py}: persistencia local, Azure Blob Storage o Azure Cosmos DB.
     \item \texttt{src/config.py}: configuración por variables de entorno.
     \item \texttt{src/catalog.py}: catálogo de servicios, activos y responsables.
     \item \texttt{src/request\_workflow.py}: reglas de impacto, aprobación y SLA.
@@ -93,7 +93,7 @@ La figura \ref{fig:despliegue-azure} resume el proceso de despliegue y verificac
 python -m unittest discover -s tests -p "test_*.py"
 \end{verbatim}
 
-La batería contiene veintiséis pruebas que verifican endpoints, autenticación, creación, consulta y actualización de solicitudes, persistencia, historial, transiciones inválidas, filtros, paginación, portal, clasificación y métricas con SLA. También cubre catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV, escenario de demostración, contrato OpenAPI, valoración tras el cierre y refresco de Blob Storage entre procesos de App Service.
+La batería contiene veintisiete pruebas que verifican endpoints, autenticación, creación, consulta y actualización de solicitudes, persistencia, historial, transiciones inválidas, filtros, paginación, portal, clasificación y métricas con SLA. También cubre catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV, escenario de demostración, contrato OpenAPI, valoración tras el cierre y persistencia en Cosmos DB y compatibilidad con el modo Blob Storage anterior.
 
 Las tablas \ref{tabla:pruebas_funcionales} y \ref{tabla:pruebas_tecnicas} resumen las comprobaciones principales aplicadas durante la validación del prototipo.
 
@@ -126,7 +126,7 @@ Valoración y satisfacción & Validar el feedback posterior al cierre. & Una val
 \begin{tabularx}{\textwidth}{l X X}
 \textbf{Prueba} & \textbf{Objetivo} & \textbf{Resultado esperado} \\
 \hline
-Consistencia Azure & Simular lecturas sucesivas desde Blob Storage. & Cada proceso obtiene la versión más reciente de los datos. \\
+Persistencia Cosmos DB & Simular lectura y escritura de documentos en Cosmos DB. & La API trabaja con documentos limpios sin exponer metadatos internos de Cosmos DB. \\
 Validaciones de gestión & Rechazar estados desconocidos y recursos inexistentes. & Respuestas 400 y 404 según el caso. \\
 Clasificación de seguridad & Validar detección de incidencias críticas. & Categoría seguridad y prioridad alta. \\
 Escenarios de reglas & Ejecutar cuatro entradas con coincidencias y valores de respaldo. & Tipo, categoría y prioridad coinciden con las reglas documentadas. \\
@@ -148,7 +148,7 @@ El proyecto utiliza SonarCloud como servicio gestionado de SonarQube:
     \item \texttt{docs/calidad/sonarcloud.md}: documenta el resultado observado y su relación con las pruebas funcionales.
 \end{itemize}
 
-El análisis final del 23 de junio se ejecutó después de incorporar el escenario de demostración, la documentación OpenAPI y la valoración de solicitudes. El panel público muestra el \textit{Quality Gate} aprobado, cero problemas abiertos, calificaciones A en seguridad, fiabilidad y mantenibilidad, cero \textit{security hotspots} y duplicación del 0,0\%. La captura conserva el resultado observado en la plataforma, mientras que las veintiséis pruebas automáticas aportan la validación funcional del repositorio.
+El análisis final del 23 de junio se ejecutó después de incorporar el escenario de demostración, la documentación OpenAPI y la valoración de solicitudes. El panel público muestra el \textit{Quality Gate} aprobado, cero problemas abiertos, calificaciones A en seguridad, fiabilidad y mantenibilidad, cero \textit{security hotspots} y duplicación del 0,0\%. La captura conserva el resultado observado en la plataforma, mientras que las veintisiete pruebas automáticas aportan la validación funcional del repositorio.
 
 
 \begin{figure}[h]
@@ -190,5 +190,3 @@ El mantenimiento del prototipo se organiza alrededor de los siguientes puntos:
     \item Revisar SonarCloud tras cambios relevantes para mantener el Quality Gate aprobado.
     \item Documentar evidencias finales en \texttt{docs/evidencias/} antes de generar los entregables.
 \end{itemize}
-
-

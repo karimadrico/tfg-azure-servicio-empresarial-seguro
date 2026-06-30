@@ -25,7 +25,7 @@ API Flask
         |
         +--> Clasificador ligero
         |
-        +--> Blob Storage
+        +--> Cosmos DB
         |
         +--> Key Vault mediante Managed Identity
 
@@ -59,7 +59,7 @@ La Logic App `logic-tfg-solicitudes-dev` recibe solicitudes por HTTP y las reenv
 - Token Bearer para operaciones protegidas.
 - Token almacenado en Azure Key Vault.
 - Acceso desde App Service mediante Managed Identity.
-- Blob Storage privado.
+- Cosmos DB privado, accedido únicamente por la API.
 - Variables sensibles fuera del código fuente.
 
 ## Despliegue
@@ -67,4 +67,3 @@ La Logic App `logic-tfg-solicitudes-dev` recibe solicitudes por HTTP y las reenv
 - Script operativo: `scripts/deploy-azure.ps1`.
 - Verificación: `scripts/verify-azure.ps1`.
 - Infraestructura documentada: `infra/terraform/` e `infra/bicep/`.
-

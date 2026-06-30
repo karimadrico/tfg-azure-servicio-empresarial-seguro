@@ -17,7 +17,7 @@ https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresa
 | Líneas de código analizadas | 4,3 k |
 | Cobertura importada | 0,0 % |
 
-La cobertura aparece al 0,0 % porque este análisis web no recibió un informe de cobertura. La validación funcional se ejecuta de forma independiente mediante `unittest` y contiene 26 pruebas automáticas. Por tanto, la cifra de SonarCloud describe la ausencia de datos de cobertura importados, no la ausencia de pruebas en el repositorio.
+La cobertura aparece al 0,0 % porque este análisis web no recibió un informe de cobertura. La validación funcional se ejecuta de forma independiente mediante `unittest` y contiene 27 pruebas automáticas. Por tanto, la cifra de SonarCloud describe la ausencia de datos de cobertura importados, no la ausencia de pruebas en el repositorio.
 
 ![Quality Gate final aprobado](../evidencias/sonarcloud-quality-gate-final-23junio.png)
 

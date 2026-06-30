@@ -2,7 +2,7 @@
 
 ## Descripción general
 
-El sistema implementa una plataforma cloud para gestionar solicitudes internas de TI en Microsoft Azure. La solución está compuesta por un portal web, una API Flask, un clasificador ligero, almacenamiento en Azure Blob Storage y gestión segura de secretos con Azure Key Vault.
+El sistema implementa una plataforma cloud para gestionar solicitudes internas de TI en Microsoft Azure. La solución está compuesta por un portal web, una API Flask, un clasificador ligero, persistencia documental en Azure Cosmos DB y gestión segura de secretos con Azure Key Vault.
 
 ## Componentes principales
 
@@ -18,10 +18,11 @@ El sistema implementa una plataforma cloud para gestionar solicitudes internas d
 - Evita credenciales en el código fuente.
 - Se consulta desde la aplicación mediante Managed Identity.
 
-### Azure Blob Storage
+### Azure Cosmos DB
 
-- Persiste las solicitudes en el contenedor `incidencias`.
-- Permite conservar el histórico de solicitudes creadas durante la demo.
+- Persiste cada solicitud como documento JSON independiente.
+- Utiliza la base de datos `tfg-solicitudes` y el contenedor `solicitudes`.
+- Permite conservar histórico, estados, aprobaciones y valoraciones sin concentrar toda la colección en un único blob.
 
 ### Clasificador ligero
 
@@ -36,7 +37,7 @@ Usuario
   -> Portal web o API REST
   -> Validación de entrada
   -> Clasificación automática
-  -> Persistencia en Blob Storage
+  -> Persistencia en Cosmos DB
   -> Respuesta JSON con prioridad y recomendación
 ```
 
@@ -46,9 +47,8 @@ Usuario
 - Token Bearer en operaciones de consulta.
 - Secreto en Key Vault.
 - Managed Identity para acceso al secreto.
-- Blob Storage privado.
+- Cosmos DB con contenedor privado y acceso desde la API.
 
 ## Despliegue
 
 El despliegue operativo se realiza mediante `scripts/deploy-azure.ps1`, que configura identidad administrada, permisos de Key Vault, variables de entorno y publicación ZIP de `src/`.
-

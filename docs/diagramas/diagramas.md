@@ -6,7 +6,7 @@ La documentación visual del proyecto combina diagramas exportados a `memoria/im
 
 | Diagrama | Documento | Contenido |
 |----------|-----------|-----------|
-| `arquitectura_final_azure.png` | Memoria y Anexo C | Usuario, portal, App Service, API Flask, clasificador, Blob Storage, Key Vault, Managed Identity, Application Insights, Logic App, GitHub, Zube y SonarCloud. |
+| `arquitectura_final_azure.png` | Memoria y Anexo C | Usuario, portal, App Service, API Flask, clasificador, Cosmos DB, Key Vault, Managed Identity, Application Insights, Logic App, GitHub, Zube y SonarCloud. |
 | `flujo_solicitud_ti.png` | Anexo C | Validación, clasificación, cálculo de impacto, persistencia y respuesta `SOL-XXX`. |
 | `despliegue_azure.png` | Anexo D | Repositorio, PowerShell, Azure CLI, recursos de Azure y verificación de endpoints. |
 | `seguridad_secretos.png` | Memoria y Anexo C | Token en Key Vault, acceso mediante Managed Identity, HTTPS y endpoints protegidos. |
@@ -22,7 +22,7 @@ flowchart TB
     usuario[Usuario / Tribunal] --> portal[Portal web en App Service]
     portal --> api[API Flask]
     api --> clasificador[Clasificador ligero]
-    api --> storage[Azure Blob Storage]
+    api --> storage[Azure Cosmos DB]
     api --> keyvault[Azure Key Vault]
     api --> appinsights[Application Insights]
     logicapp[Logic App HTTP] --> api
@@ -78,7 +78,7 @@ flowchart LR
     script --> azcli[Azure CLI]
     azcli --> app[Azure App Service]
     azcli --> kv[Azure Key Vault]
-    azcli --> blob[Azure Blob Storage]
+    azcli --> blob[Azure Cosmos DB]
     azcli --> ai[Application Insights]
     logic[deploy-logicapp.ps1] --> la[Azure Logic App]
     verify[verify-azure.ps1] --> app
@@ -96,4 +96,3 @@ flowchart TB
     azure --> api[API REST]
     repo --> memoria[Memoria y anexos PDF]
 ```
-
