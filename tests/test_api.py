@@ -392,6 +392,52 @@ class ApiTests(unittest.TestCase):
 
         self.assertEqual(loader.call_count, 2)
 
+    def test_cosmos_storage_upserts_and_removes_documents(self) -> None:
+        class FakeCosmosContainer:
+            def __init__(self) -> None:
+                self.documents = {
+                    "SOL-001": {"id": "SOL-001", "tipo_solicitud": "incidencia"},
+                    "SOL-999": {"id": "SOL-999", "tipo_solicitud": "acceso"},
+                }
+
+            def query_items(self, query: str, enable_cross_partition_query: bool) -> list[dict[str, str]]:
+                self.assert_query_enabled = enable_cross_partition_query
+                if "SELECT c.id" in query:
+                    return [
+                        {"id": item["id"], "tipo_solicitud": item["tipo_solicitud"]}
+                        for item in self.documents.values()
+                    ]
+                return list(self.documents.values())
+
+            def upsert_item(self, document: dict[str, str]) -> None:
+                self.documents[document["id"]] = document
+
+            def delete_item(self, item: str, partition_key: str) -> None:
+                if self.documents[item]["tipo_solicitud"] == partition_key:
+                    del self.documents[item]
+
+        config = SimpleNamespace(
+            STORAGE_MODE="cosmos",
+            COSMOS_ENDPOINT="https://example.documents.azure.com:443/",
+            COSMOS_KEY="fake-key",
+            COSMOS_DATABASE="tfg-solicitudes",
+            COSMOS_CONTAINER="solicitudes",
+        )
+        storage = api_app.IncidenciaStorage(config)
+        fake_container = FakeCosmosContainer()
+
+        with patch.object(storage, "_cosmos_container", return_value=fake_container):
+            self.assertEqual([item["id"] for item in storage.load()], ["SOL-001", "SOL-999"])
+            storage.save(
+                [
+                    {"id": "SOL-001", "tipo_solicitud": "incidencia", "estado": "abierta"},
+                    {"id": "SOL-002", "tipo_solicitud": "acceso", "estado": "pendiente_aprobacion"},
+                ]
+            )
+
+        self.assertEqual(set(fake_container.documents), {"SOL-001", "SOL-002"})
+        self.assertEqual(fake_container.documents["SOL-001"]["estado"], "abierta")
+
     def test_operations_center_reports_workload_alerts_and_resolution(self) -> None:
         pending = self.client.post(
             "/solicitudes",
