@@ -2,10 +2,12 @@
 
 Los cambios relevantes del producto se registran siguiendo el formato de Keep a Changelog.
 
-## [1.2.0] - En preparación
+## [1.2.0] - 2026-06-30
 
 ### Añadido
 
+- Persistencia final en Azure Cosmos DB con documentos JSON independientes.
+- Migración de 20 solicitudes existentes desde Blob Storage a Cosmos DB.
 - Escenario idempotente con cinco solicitudes de demostración.
 - Guía de uso integrada y rutas públicas `/ayuda` y `/acerca`.
 - Contrato OpenAPI 3.0 y documentación interactiva en `/docs`.
@@ -13,11 +15,13 @@ Los cambios relevantes del producto se registran siguiendo el formato de Keep a 
 - Catálogo de servicios, activos, entornos, criticidad y responsables.
 - Flujo de aprobación, escalado, SLA, alertas y centro operativo.
 - Exportación CSV protegida y segura frente a fórmulas.
+- Sprint 6 de mejora final de persistencia con 13 puntos cerrados.
 
 ### Mejorado
 
-- Cobertura funcional ampliada a 26 pruebas automáticas.
+- Cobertura funcional ampliada a 27 pruebas automáticas.
 - Navegación y trazabilidad del portal orientadas a una demostración completa.
+- README, memoria, anexos, diagramas y evidencias alineados con Cosmos DB y la release `v1.2.0`.
 
 ## [1.1.0] - 2026-06-22
 
@@ -39,6 +43,6 @@ Los cambios relevantes del producto se registran siguiendo el formato de Keep a 
 - Scripts PowerShell de despliegue y verificación.
 - Plantillas declarativas de infraestructura en Bicep y Terraform.
 
-[1.2.0]: https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/compare/v1.1.0...HEAD
+[1.2.0]: https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.2.0
 [1.1.0]: https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.1.0
 [1.0.0]: https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.0.0
