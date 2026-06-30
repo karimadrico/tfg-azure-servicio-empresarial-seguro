@@ -151,7 +151,15 @@ python -m unittest discover -s tests -p "test_*.py"
 
 La persistencia final utiliza Azure Cosmos DB porque el modelo de datos del proyecto es documental: cada solicitud contiene campos semiestructurados, historial, aprobación, escalado y valoración. La primera versión cloud usó Blob Storage con una colección JSON única; la evolución a Cosmos DB mantiene el formato JSON, separa cada solicitud en un documento propio y reduce el riesgo de concentrar todo el estado en un único objeto.
 
-La migración se realizó con `scripts/migrate-blob-to-cosmos.ps1`, que lee las solicitudes existentes desde Blob Storage y las inserta o actualiza en la base de datos `tfg-solicitudes`, contenedor `solicitudes`. Tras la migración, `/health` confirma `storage_mode: cosmos` y la verificación HTTP comprueba creación, consulta, métricas y persistencia.
+La migración se realizó con `scripts/migrate-blob-to-cosmos.ps1`, que lee las solicitudes existentes desde Blob Storage y las inserta o actualiza en la base de datos `tfg-solicitudes`, contenedor `solicitudes`. Tras la migración, `/health` confirma `storage_mode: cosmos` y la verificación HTTP comprueba creación, consulta, métricas y persistencia. Se migraron 20 solicitudes existentes desde Blob Storage y la última verificación real creó `SOL-023`, dejando 23 solicitudes listadas por la API.
+
+| Elemento Cosmos DB | Valor desplegado |
+|--------------------|------------------|
+| Cuenta | `cosmos-tfg-kdr-2026` |
+| Base de datos | `tfg-solicitudes` |
+| Contenedor | `solicitudes` |
+| Clave de partición | `/tipo_solicitud` |
+| Modo de App Service | `STORAGE_MODE=cosmos` |
 
 ## Despliegue en Azure
 

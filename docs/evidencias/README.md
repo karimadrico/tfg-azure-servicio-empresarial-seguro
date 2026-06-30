@@ -134,7 +134,7 @@ Evidencias incorporadas para completar la observabilidad:
 
 ## 3. Calidad de código
 
-![Quality Gate SonarCloud](sonarcloud-quality-gate-final-23junio.png)
+![Quality Gate SonarCloud](sonarcloud-quality-gate-final-30junio.png)
 
 Captura final del Quality Gate aprobado en SonarCloud, con cero problemas abiertos, seguridad A, fiabilidad A, cero hotspots y duplicación del 0,0 %. La cobertura figura al 0,0 % porque el análisis web no recibió el informe generado por las pruebas locales.
 
@@ -142,7 +142,8 @@ Evidencias finales incorporadas:
 
 - `sonarcloud-quality-gate-final-20junio.png`: estado intermedio, con Quality Gate aprobado, seguridad A y ocho cuestiones de mantenibilidad.
 - `sonarcloud-quality-gate-final-22junio.png`: análisis posterior a la ampliación, con Quality Gate aprobado y cero issues abiertos.
-- `sonarcloud-quality-gate-final-23junio.png`: análisis final tras demostración, OpenAPI y satisfacción, con Quality Gate aprobado, cero problemas abiertos y calificaciones A.
+- `sonarcloud-quality-gate-final-23junio.png`: analisis tras demostracion, OpenAPI y satisfaccion, con Quality Gate aprobado, cero problemas abiertos y calificaciones A.
+- `sonarcloud-quality-gate-final-30junio.png`: análisis final tras la migración a Cosmos DB, con Quality Gate aprobado y la solución ya alineada con la persistencia documental final.
 
 ![Issues SonarCloud](sonarcloud-issues.png)
 
@@ -196,4 +197,6 @@ Captura adicional del portal público usado para la demostración.
 
 ## Base de datos Azure Cosmos DB
 
-- ase-de-datos-azure-cosmos-db.png: evidencia de la cuenta Cosmos DB, base de datos 	fg-solicitudes y contenedor solicitudes utilizados como persistencia documental final.
+![Base de datos Azure Cosmos DB](base-de-datos-azure-cosmos-db.png)
+
+La captura muestra la cuenta `cosmos-tfg-kdr-2026`, la base de datos `tfg-solicitudes` y el contenedor `solicitudes`, utilizado como persistencia documental final del prototipo. La partición configurada es `/tipo_solicitud`. Esta evidencia complementa la migración desde Blob Storage y confirma que las solicitudes se conservan como documentos independientes en Azure Cosmos DB.
