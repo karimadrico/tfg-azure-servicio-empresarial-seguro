@@ -14,6 +14,10 @@ El sistema se despliega en Microsoft Azure utilizando los siguientes recursos.
 
 Servicio encargado de ejecutar la API desarrollada en Python.
 
+### Azure Cosmos DB
+
+Persistencia documental de solicitudes en la base de datos `tfg-solicitudes` y el contenedor `solicitudes`.
+
 ### Storage Account
 
 `sttfgincidenciasdev`
@@ -33,3 +37,4 @@ Identidad administrada del App Service utilizada para acceder a Key Vault sin al
 ### Observabilidad
 
 La verificación operativa se realiza mediante el endpoint `/health`, los logs de App Service y las métricas básicas disponibles en Azure Portal. Application Insights queda identificado como una mejora futura, no como componente activo de la entrega.
+

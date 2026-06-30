@@ -9,7 +9,8 @@ El repositorio mantiene definiciones Terraform en `infra/terraform/` y plantilla
 | Resource Group | Contenedor lógico de la solución |
 | App Service Plan | Plan Linux para la aplicación |
 | Web App | API Flask y portal web |
-| Storage Account | Persistencia de solicitudes |
+| Cosmos DB | Persistencia documental de solicitudes |
+| Storage Account | Persistencia inicial y soporte de migración |
 | Blob Container | Contenedor privado `incidencias` |
 | Key Vault | Secreto `api-key` |
 | Managed Identity | Acceso seguro de App Service a Key Vault |

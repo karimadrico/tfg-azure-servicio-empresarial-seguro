@@ -10,6 +10,8 @@ El objetivo no es sustituir a una plataforma ITSM comercial, sino demostrar de e
 
 ![Arquitectura integral del TFG en Microsoft Azure](memoria/img/arquitectura_integral_tfg_azure.png)
 
+![Base de datos documental desplegada en Azure Cosmos DB](docs/evidencias/base-de-datos-azure-cosmos-db.png)
+
 ## Enlaces de evaluación
 
 | Recurso | Enlace |
@@ -145,6 +147,12 @@ Desde la raíz del repositorio:
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
+## Migración a Cosmos DB
+
+La persistencia final utiliza Azure Cosmos DB porque el modelo de datos del proyecto es documental: cada solicitud contiene campos semiestructurados, historial, aprobación, escalado y valoración. La primera versión cloud usó Blob Storage con una colección JSON única; la evolución a Cosmos DB mantiene el formato JSON, separa cada solicitud en un documento propio y reduce el riesgo de concentrar todo el estado en un único objeto.
+
+La migración se realizó con `scripts/migrate-blob-to-cosmos.ps1`, que lee las solicitudes existentes desde Blob Storage y las inserta o actualiza en la base de datos `tfg-solicitudes`, contenedor `solicitudes`. Tras la migración, `/health` confirma `storage_mode: cosmos` y la verificación HTTP comprueba creación, consulta, métricas y persistencia.
+
 ## Despliegue en Azure
 
 El despliegue real se realiza con PowerShell y Azure CLI:
@@ -231,3 +239,4 @@ La entrega requiere dos vídeos independientes, ambos de máximo cinco minutos:
 2. Vídeo de demostración funcional: recorrido real por portal, solicitud, bandeja TI, aprobación, SLA, Logic App, Azure y SonarCloud.
 
 El guion preparado para grabarlos está fuera del repositorio público de entrega, en la carpeta general del TFG.
+

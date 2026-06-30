@@ -8,7 +8,7 @@ Esta carpeta contiene capturas propias utilizadas para demostrar que el prototip
 
 ![Resource Group final](azure-resource-group-final.png)
 
-La captura muestra el grupo de recursos `rg-tfg-cloudautomation-dev` con los recursos principales del despliegue: App Service, Storage Account, Key Vault y App Service Plan. Sirve como evidencia de que la solución no es solo código local, sino una instancia real organizada en Azure.
+La captura muestra el grupo de recursos `rg-tfg-cloudautomation-dev` con los recursos principales del despliegue: App Service, Cosmos DB, Storage Account, Key Vault y App Service Plan. Sirve como evidencia de que la solución no es solo código local, sino una instancia real organizada en Azure.
 
 ### App Service
 
@@ -193,3 +193,7 @@ Captura complementaria de la aplicación web en Azure.
 ![Portal Home adicional](url-portal-home.png)
 
 Captura adicional del portal público usado para la demostración.
+
+## Base de datos Azure Cosmos DB
+
+- ase-de-datos-azure-cosmos-db.png: evidencia de la cuenta Cosmos DB, base de datos 	fg-solicitudes y contenedor solicitudes utilizados como persistencia documental final.

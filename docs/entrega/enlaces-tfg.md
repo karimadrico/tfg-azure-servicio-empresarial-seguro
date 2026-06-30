@@ -32,3 +32,7 @@ Formato de uso:
 ```text
 Authorization: Bearer <token-de-evaluacion>
 ```
+
+## Persistencia cloud
+
+La aplicación desplegada utiliza Azure Cosmos DB como base de datos documental. El endpoint público /health permite comprobar que el modo de almacenamiento activo es cosmos. Las solicitudes existentes se migraron desde Blob Storage mediante el script de migración del repositorio.

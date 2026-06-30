@@ -6,7 +6,7 @@ Este anexo describe el diseño general de la plataforma cloud para la automatiza
 
 \section{Diseño arquitectónico}
 
-La arquitectura sigue un modelo basado en servicios cloud desplegados sobre Microsoft Azure. La aplicación se ejecuta en Azure App Service, utiliza Azure Cosmos DB para persistir solicitudes, Azure Key Vault para secretos y Managed Identity para reducir la exposición de credenciales \cite{azure_appservice_python,azure_blob_python,azure_appservice_managed_identity,azure_appservice_keyvault_python}. Además, incorpora Azure Logic Apps como mecanismo de automatización de entrada y Application Insights/Azure Monitor para observabilidad básica del servicio \cite{azure_logic_apps,azure_monitor}.
+La arquitectura sigue un modelo basado en servicios cloud desplegados sobre Microsoft Azure. La aplicación se ejecuta en Azure App Service, utiliza Azure Cosmos DB para persistir solicitudes, Azure Key Vault para secretos y Managed Identity para reducir la exposición de credenciales \cite{azure_appservice_python,azure_cosmos_python,azure_appservice_managed_identity,azure_appservice_keyvault_python}. Además, incorpora Azure Logic Apps como mecanismo de automatización de entrada y Application Insights/Azure Monitor para observabilidad básica del servicio \cite{azure_logic_apps,azure_monitor}.
 
 Los principales componentes son:
 
@@ -430,7 +430,7 @@ La figura \ref{fig:secuencia-persistencia} muestra que todos los canales converg
 
 La implementación actual sigue un patrón de lectura, modificación en memoria y escritura completa con \texttt{overwrite=True}. No utiliza ETag, condición \texttt{If-Match}, transacción ni bloqueo distribuido. Si dos procesos leen la versión N, el primero guarda N+A y el segundo guarda después N+B, la segunda escritura puede sobrescribir la primera. También podrían calcular el mismo identificador. Un bloqueo en memoria no resolvería el problema entre varios trabajadores de Gunicorn o varias instancias de App Service.
 
-Esta decisión es aceptable para la demostración de bajo volumen, pero no para una plataforma ITSM con concurrencia real. La mejora mínima consistiría en descargar el ETag, realizar una escritura condicional con \texttt{If-Match} y reintentar la operación cuando la versión haya cambiado \cite{azure_blob_concurrency}. Una evolución más sólida separaría cada solicitud en un objeto o migraría a Azure Table Storage, Cosmos DB o Azure SQL, según las necesidades de consulta y transacción. El análisis completo de la decisión se conserva también en \path{docs/decisiones/concurrencia-blob.md}.
+La versión inicial con Blob Storage era suficiente para la demostración de bajo volumen, pero no para una plataforma ITSM con concurrencia real. La evolución a Cosmos DB separa cada solicitud en un documento propio y reduce el acoplamiento del blob único. Aun así, una implantación productiva debería reforzar el diseño con control de concurrencia optimista, particionado revisado, identidad individual, auditoría y políticas de retención. El análisis de esta evolución se conserva en \path{docs/decisiones/concurrencia-blob.md}.
 
 \section{Calidad y observabilidad}
 

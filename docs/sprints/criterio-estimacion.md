@@ -81,3 +81,8 @@ El backlog estimado suma 132 puntos. Zube registra 114 puntos cerrados dentro de
 ## Evidencias de seguimiento
 
 La estimación relativa se interpreta junto con las fechas previstas y reales, las tarjetas cerradas, el historial de Zube, los commits, las releases y los incrementos funcionales. Las horas del Anexo A se reservan para la estimación económica y no se convierten directamente en puntos.
+
+## Mejora final de persistencia
+
+La revisión final incorporó Cosmos DB como base documental porque el prototipo había evolucionado desde un registro sencillo hacia una gestión operativa con historial, aprobaciones, escalados, SLA y valoración. La mejora mantiene el formato JSON, pero separa cada solicitud en un documento propio y alinea mejor la solución con una arquitectura cloud empresarial. El cambio se documenta como mejora final de cierre, vinculada a la validación técnica posterior al Sprint 5 y al objetivo de dejar una persistencia más realista para la entrega.
+

@@ -7,7 +7,8 @@ Componentes principales:
 - Azure App Service
   - Ejecuta la API Python del sistema
 
-- Azure Storage Account
+- Azure Cosmos DB
+- Azure Storage Account como soporte de migración
   - Almacena incidencias y documentos
 
 - Azure Key Vault
@@ -23,3 +24,4 @@ Componentes principales:
 3. El sistema clasifica la incidencia.
 4. La incidencia se almacena en Azure Storage.
 5. El endpoint `/health`, los logs de App Service y Azure Portal permiten verificar el funcionamiento del sistema.
+
