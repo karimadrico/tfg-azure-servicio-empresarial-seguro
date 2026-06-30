@@ -24,7 +24,7 @@ La solución no pretende sustituir a una plataforma ITSM comercial, sino demostr
 | Documentación OpenAPI | https://app-tfg-incidencias-dev-fme6drcgg6bwenbg.swedencentral-01.azurewebsites.net/docs |
 | Zube, sprints y Kanban | https://zube.io/tfg-azure-servicio-empresarial/tfg-servicio-empresarial-seguro/w/workspace-1/kanban |
 | SonarCloud | https://sonarcloud.io/project/overview?id=karimadrico_tfg-azure-servicio-empresarial-seguro |
-| Release v1.1.0 | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.1.0 |
+| Release v1.2.0 | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro/releases/tag/v1.2.0 |
 
 Las operaciones públicas permiten registrar solicitudes y consultar la ayuda. Las operaciones internas del equipo TI requieren token Bearer; el token de evaluación se facilita en el PDF de enlaces entregado en UBUVirtual y corresponde al secreto `api-key` almacenado en Azure Key Vault.
 
@@ -206,7 +206,7 @@ $env:API_KEY = "<token-de-verificacion>"
 | PDF de enlaces | Se genera a partir de `docs/entrega/enlaces-tfg.md` cuando estén publicados los dos vídeos. |
 | Presentación de defensa | `docs/entrega/presentacion-defensa-tfg.pptx` |
 | Cartel A3 | `docs/entrega/cartel-a3.pdf` |
-| Release final | `v1.1.0` en GitHub Releases |
+| Release final | `v1.2.0` en GitHub Releases |
 | Licencia | `LICENSE` |
 
 Las direcciones de los vídeos, el token de evaluación y las instrucciones finales de acceso se entregan en el PDF de enlaces de UBUVirtual.
