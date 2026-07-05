@@ -14,7 +14,7 @@ resource "azurerm_linux_web_app" "app" { # NOSONAR
   https_only          = true
 
   client_certificate_enabled = true
-  client_certificate_mode    = "Optional" # NOSONAR
+  client_certificate_mode    = "Required"
 
   identity {
     type = "SystemAssigned"
@@ -29,6 +29,11 @@ resource "azurerm_linux_web_app" "app" { # NOSONAR
     ftps_state = "Disabled"
 
     app_command_line = "gunicorn --bind=0.0.0.0:8000 --workers=2 app:app" # NOSONAR
+  }
+
+  auth_settings {
+    enabled                       = true
+    unauthenticated_client_action = "Return401"
   }
 
   app_settings = {
