@@ -7,7 +7,7 @@ Este documento sirve como base para generar el PDF final de enlaces solicitado e
 | Recurso | URL |
 |---------|-----|
 | Repositorio GitHub | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro |
-| Vídeo de presentación | Pendiente de grabar y publicar |
+| Vídeo de presentación | https://youtu.be/f2bxGQOfg5o |
 | Vídeo de demostración funcional | Pendiente de grabar y publicar |
 
 ## Enlaces aportados
@@ -25,7 +25,7 @@ Este documento sirve como base para generar el PDF final de enlaces solicitado e
 
 Las operaciones públicas del portal permiten registrar solicitudes sin credenciales. Las operaciones de equipo TI, centro operativo, exportación, demostración y OpenAPI protegida requieren un token Bearer.
 
-El token de evaluación se facilita en la versión final de este PDF de enlaces entregado en UBUVirtual y corresponde al secreto `api-key` almacenado en Azure Key Vault. No se incluye en el repositorio público ni en capturas de evidencias.
+El token de evaluación se facilita únicamente en el PDF privado de enlaces entregado en UBUVirtual y corresponde al secreto `api-key` almacenado en Azure Key Vault (`kv-tfg-incidencias-dev`). No se incluye en el repositorio público, en vídeos ni en capturas de evidencias.
 
 Formato de uso:
 
