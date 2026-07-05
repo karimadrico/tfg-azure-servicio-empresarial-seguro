@@ -8,7 +8,7 @@ Este documento sirve como base para generar el PDF final de enlaces solicitado e
 |---------|-----|
 | Repositorio GitHub | https://github.com/karimadrico/tfg-azure-servicio-empresarial-seguro |
 | Vídeo de presentación | https://youtu.be/f2bxGQOfg5o |
-| Vídeo de demostración funcional | Pendiente de grabar y publicar |
+| Vídeo de demostración funcional | https://youtu.be/vd1W_dWM3os |
 
 ## Enlaces aportados
 

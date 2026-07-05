@@ -203,7 +203,7 @@ $env:API_KEY = "<token-de-verificacion>"
 | Código fuente | `src/`, `logicapp/`, `infra/`, `scripts/` |
 | Pruebas | `tests/` |
 | Evidencias | `docs/evidencias/` |
-| PDF de enlaces | Se genera a partir de `docs/entrega/enlaces-tfg.md` cuando estén publicados los dos vídeos. |
+| PDF de enlaces | Se genera a partir de `docs/entrega/enlaces-tfg.md` con los dos vídeos publicados y los datos privados de acceso para UBUVirtual. |
 | Presentación de defensa | `docs/entrega/presentacion-defensa-tfg.pptx` |
 | Cartel A3 | `docs/entrega/cartel-a3.pdf` |
 | Release final | `v1.2.0` en GitHub Releases |
