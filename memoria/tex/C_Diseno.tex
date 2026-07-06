@@ -340,7 +340,7 @@ El historial se almacena dentro de cada solicitud y se inicializa con un evento 
 
 \subsection{Reglas de validación y cálculo}
 
-La colección JSON no impone restricciones por sí misma; las reglas de la tabla \ref{tabla:reglas-modelo-documental} completan el modelo desde la API.
+El modelo documental no impone por sí mismo todas las restricciones de negocio; las reglas de la tabla \ref{tabla:reglas-modelo-documental} completan el modelo desde la API antes de guardar cada documento en Cosmos DB.
 
 \begin{table}[H]
 \centering
@@ -357,7 +357,7 @@ Aprobación & Exige decisión para acceso/configuración en contexto sensible. &
 Ciclo de vida & Valida transiciones entre abierta, en proceso y cerrada. & Una transición incompatible devuelve HTTP 409. \\
 Escalado & Exige actor y motivo; aumenta nivel y prioridad. & Registra el evento y reasigna al propietario. \\
 Valoración & Solo admite una valoración tras cierre y correo coincidente. & Actualiza satisfacción sin alterar el flujo previo. \\
-Persistencia & La API serializa la colección y sobrescribe el blob completo. & Mantiene formato único local/cloud, con límite de concurrencia. \\
+Persistencia & La API guarda cada solicitud como documento independiente en Cosmos DB. & Evita concentrar toda la colección en un único blob y mantiene compatibilidad documental. \\
 \end{tabularx}
 \caption{Reglas que completan el modelo documental}
 \label{tabla:reglas-modelo-documental}
