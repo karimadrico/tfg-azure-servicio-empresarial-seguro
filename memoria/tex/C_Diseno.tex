@@ -111,9 +111,9 @@ La tabla \ref{tabla:roles_operativos} diferencia los actores que intervienen en 
 \textbf{Rol} & \textbf{Responsabilidad} & \textbf{Acceso previsto} \\
 \hline
 Usuario interno & Registrar solicitudes operativas TI. & Portal web y creación de solicitudes. \\
-Sistema externo & Automatizar la entrada de solicitudes. & Trigger HTTP de Logic App, sin acceso directo a Storage ni Key Vault. \\
+Sistema externo & Automatizar la entrada de solicitudes. & Trigger HTTP de Logic App, sin acceso directo a Cosmos DB ni Key Vault. \\
 Equipo TI & Revisar, asignar, actualizar y cerrar solicitudes. & Bandeja operativa y endpoints protegidos de gestión. \\
-Administrador cloud & Mantener despliegue, configuración y secretos. & Azure App Service, Key Vault, Storage, Logic App y Monitor. \\
+Administrador cloud & Mantener despliegue, configuración y secretos. & Azure App Service, Cosmos DB, Key Vault, Logic App, Storage de apoyo y Monitor. \\
 Tribunal & Evaluar funcionamiento, documentación y calidad. & Portal, repositorio, SonarCloud, Zube y evidencias documentadas. \\
 \end{tabularx}
 \caption{Matriz de roles operativos del prototipo}
@@ -134,7 +134,7 @@ POL-01 & Recursos agrupados por proyecto y entorno. & Resource Group \texttt{rg-
 POL-02 & Uso de región europea para el despliegue. & Recursos desplegados en \texttt{Sweden Central}. \\
 POL-03 & Secretos fuera del código fuente. & API key almacenada en Azure Key Vault. \\
 POL-04 & Acceso a secretos mediante identidad administrada. & Managed Identity habilitada en App Service. \\
-POL-05 & Almacenamiento privado de datos. & Contenedor Blob privado para solicitudes. \\
+POL-05 & Almacenamiento privado de datos. & Contenedor Cosmos DB para documentos de solicitud y Storage privado como origen de migración. \\
 POL-06 & Comunicaciones públicas mediante HTTPS. & App Service y endpoints expuestos sobre HTTPS. \\
 POL-07 & Observabilidad mínima del servicio. & Application Insights, Azure Monitor, \texttt{/health} y \texttt{/metricas}. \\
 POL-08 & Calidad de código revisada externamente. & Quality Gate de SonarCloud aprobado. \\
@@ -215,7 +215,7 @@ La figura \ref{fig:seguridad-secretos} resume el modelo de seguridad aplicado pa
 \label{fig:seguridad-secretos}
 \end{figure}
 
-Las capturas individuales de App Service, Key Vault, Managed Identity y Storage Account se conservan en \path{docs/evidencias/}. En este anexo se priorizan el diagrama de arquitectura, las decisiones y los flujos para evitar repetir imágenes que no añaden información al diseño.
+Las capturas individuales de App Service, Cosmos DB, Key Vault, Managed Identity y Storage Account se conservan en \path{docs/evidencias/}. En este anexo se priorizan el diagrama de arquitectura, las decisiones y los flujos para evitar repetir imágenes que no añaden información al diseño.
 
 \section{Diseño de datos}
 
@@ -428,7 +428,7 @@ La figura \ref{fig:secuencia-persistencia} muestra que todos los canales converg
 
 \subsection{Concurrencia y evolución}
 
-La implementación actual sigue un patrón de lectura, modificación en memoria y escritura completa con \texttt{overwrite=True}. No utiliza ETag, condición \texttt{If-Match}, transacción ni bloqueo distribuido. Si dos procesos leen la versión N, el primero guarda N+A y el segundo guarda después N+B, la segunda escritura puede sobrescribir la primera. También podrían calcular el mismo identificador. Un bloqueo en memoria no resolvería el problema entre varios trabajadores de Gunicorn o varias instancias de App Service.
+La implementación final utiliza Cosmos DB y guarda cada solicitud como documento independiente mediante operaciones de inserción o actualización. Este cambio elimina la dependencia del blob único y reduce el riesgo de sobrescribir la colección completa. No obstante, el prototipo no implementa aún control de concurrencia optimista con ETag, condición \texttt{If-Match}, transacciones ni bloqueo distribuido. En una carga productiva, dos operaciones simultáneas sobre la misma solicitud deberían coordinarse con esas técnicas para evitar escrituras perdidas o decisiones contradictorias.
 
 La versión inicial con Blob Storage era suficiente para la demostración de bajo volumen, pero no para una plataforma ITSM con concurrencia real. La evolución a Cosmos DB separa cada solicitud en un documento propio y reduce el acoplamiento del blob único. Aun así, una implantación productiva debería reforzar el diseño con control de concurrencia optimista, particionado revisado, identidad individual, auditoría y políticas de retención. El análisis de esta evolución se conserva en \path{docs/decisiones/concurrencia-blob.md}.
 
