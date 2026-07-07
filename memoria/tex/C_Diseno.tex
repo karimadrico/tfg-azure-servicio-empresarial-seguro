@@ -28,7 +28,7 @@ La tabla \ref{tabla:decisiones_arquitectura} recoge las decisiones de arquitectu
 \textbf{Decisión} & \textbf{Alternativa considerada} & \textbf{Justificación} \\
 \hline
 App Service para la API & Máquina virtual Linux & Reduce administración de sistema operativo y facilita despliegue PaaS. \\
-Cosmos DB para persistencia & Blob Storage o base de datos relacional & El prototipo utiliza documentos JSON y necesita separar cada solicitud en un registro propio. \\
+Cosmos DB para persistencia & Almacenamiento de objetos o base de datos relacional & El prototipo utiliza documentos JSON y necesita separar cada solicitud en un registro propio. \\
 Key Vault para secretos & Variables locales o fichero \texttt{.env} & Evita almacenar credenciales en el repositorio y mejora seguridad. \\
 Managed Identity & Credenciales manuales entre servicios & Permite acceso a Key Vault sin secretos intermedios. \\
 PowerShell + Azure CLI & Pipeline remoto obligatorio & Hace el despliegue reproducible, auditable y demostrable desde el entorno local. \\
@@ -428,9 +428,9 @@ La figura \ref{fig:secuencia-persistencia} muestra que todos los canales converg
 
 \subsection{Concurrencia y evolución}
 
-La implementación final utiliza Cosmos DB y guarda cada solicitud como documento independiente mediante operaciones de inserción o actualización. Este cambio elimina la dependencia del blob único y reduce el riesgo de sobrescribir la colección completa. No obstante, el prototipo no implementa aún control de concurrencia optimista con ETag, condición \texttt{If-Match}, transacciones ni bloqueo distribuido. En una carga productiva, dos operaciones simultáneas sobre la misma solicitud deberían coordinarse con esas técnicas para evitar escrituras perdidas o decisiones contradictorias.
+La implementación final utiliza Cosmos DB y guarda cada solicitud como documento independiente mediante operaciones de inserción o actualización. Este cambio elimina la dependencia de una colección única y reduce el riesgo de sobrescribir el conjunto completo de solicitudes. No obstante, el prototipo no implementa aún control de concurrencia optimista con ETag, condición \texttt{If-Match}, transacciones ni bloqueo distribuido. En una carga productiva, dos operaciones simultáneas sobre la misma solicitud deberían coordinarse con esas técnicas para evitar escrituras perdidas o decisiones contradictorias.
 
-La versión inicial con Blob Storage era suficiente para la demostración de bajo volumen, pero no para una plataforma ITSM con concurrencia real. La evolución a Cosmos DB separa cada solicitud en un documento propio y reduce el acoplamiento del blob único. Aun así, una implantación productiva debería reforzar el diseño con control de concurrencia optimista, particionado revisado, identidad individual, auditoría y políticas de retención. El análisis de esta evolución se conserva en \path{docs/decisiones/concurrencia-blob.md}.
+La versión inicial basada en una colección JSON única era suficiente para la demostración de bajo volumen, pero no para una plataforma ITSM con concurrencia real. La evolución a Cosmos DB separa cada solicitud en un documento propio y reduce el acoplamiento de ese objeto único. Aun así, una implantación productiva debería reforzar el diseño con control de concurrencia optimista, particionado revisado, identidad individual, auditoría y políticas de retención. El análisis de esta evolución se conserva en \path{docs/decisiones/concurrencia-blob.md}.
 
 \section{Calidad y observabilidad}
 

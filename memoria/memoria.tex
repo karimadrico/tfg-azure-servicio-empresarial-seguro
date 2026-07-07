@@ -432,7 +432,7 @@ Para estudiar este problema se ha desarrollado un prototipo funcional desplegado
 
 La solución se ha implementado con una API Flask y un portal web alojados en Azure App Service, persistencia documental en Azure Cosmos DB, secretos en Azure Key Vault, identidad administrada y una Logic App para recibir solicitudes desde sistemas externos. El desarrollo se organizó en seis sprints y se validó mediante veintisiete pruebas automáticas, documentación OpenAPI, monitorización con Application Insights y análisis de código en SonarCloud.
 
-El resultado no pretende sustituir a una plataforma ITSM comercial, sino demostrar de forma reproducible cómo integrar automatización, seguridad y operación cloud en un caso empresarial acotado. La memoria expone las decisiones tomadas, las alternativas consideradas y la evolución de la persistencia desde un blob JSON inicial hasta una base de datos documental en Cosmos DB, más adecuada para separar solicitudes y evitar concentrar toda la colección en un único objeto.
+El resultado no pretende sustituir a una plataforma ITSM comercial, sino demostrar de forma reproducible cómo integrar automatización, seguridad y operación cloud en un caso empresarial acotado. La memoria expone las decisiones tomadas, las alternativas consideradas y la evolución de la persistencia desde un objeto JSON inicial hasta una base de datos documental en Cosmos DB, más adecuada para separar solicitudes y evitar concentrar toda la colección en un único objeto.
 \end{abstract}
 
 \renewcommand*\abstractname{Descriptores}
@@ -451,7 +451,7 @@ To study this problem, a working prototype was developed and deployed on Microso
 
 The solution uses a Flask API and web portal hosted on Azure App Service, document persistence in Azure Cosmos DB, secrets stored in Azure Key Vault, managed identity, and a Logic App for external systems. Development was organized into six sprints and validated through twenty-seven automated tests, OpenAPI documentation, Application Insights monitoring, and SonarCloud analysis.
 
-The result is not intended to replace a commercial ITSM platform. Its purpose is to demonstrate, in a reproducible and limited business case, how cloud automation, security, and operations can be integrated. The report discusses the decisions, alternatives, and the evolution of persistence from an initial JSON blob to a document database in Cosmos DB, which better separates requests and avoids concentrating the whole collection in a single object.
+The result is not intended to replace a commercial ITSM platform. Its purpose is to demonstrate, in a reproducible and limited business case, how cloud automation, security, and operations can be integrated. The report discusses the decisions, alternatives, and the evolution of persistence from an initial JSON object to a document database in Cosmos DB, which better separates requests and avoids concentrating the whole collection in a single object.
 \end{abstract}
 
 \renewcommand*\abstractname{Keywords}

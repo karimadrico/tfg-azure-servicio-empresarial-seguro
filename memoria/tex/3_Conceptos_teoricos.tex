@@ -67,7 +67,7 @@ Los principales servicios utilizados en este proyecto son:
 \begin{itemize}
     \item Azure App Service.
     \item Azure Cosmos DB.
-    \item Azure Blob Storage como persistencia inicial y origen de migración.
+    \item Azure Storage como soporte inicial de migración.
     \item Azure Key Vault.
     \item Managed Identity.
     \item Azure Monitor.
@@ -85,7 +85,7 @@ La tabla \ref{tabla:servicios_azure_tfg} relaciona los servicios Azure seleccion
 \hline
 App Service & Aloja la API Flask y el portal web. & Servicio PaaS adecuado para aplicaciones web y APIs REST. \\
 Cosmos DB & Guarda cada solicitud como documento JSON. & Base de datos documental gestionada, adecuada para datos semiestructurados y consultas por solicitud. \\
-Blob Storage & Conserva la persistencia inicial y sirve como origen de migración. & Almacenamiento sencillo y económico para objetos JSON. \\
+Azure Storage & Conserva el origen de migración anterior a Cosmos DB. & Almacenamiento gestionado utilizado como apoyo durante la evolución del prototipo. \\
 Key Vault & Almacena el token de autenticación. & Evita credenciales embebidas en código fuente. \\
 Managed Identity & Permite que App Service acceda a Key Vault. & Reduce la gestión manual de secretos y claves. \\
 Azure Monitor & Apoya la revisión de estado y logs. & Facilita observabilidad básica del despliegue. \\
@@ -94,7 +94,7 @@ Azure Monitor & Apoya la revisión de estado y logs. & Facilita observabilidad b
 \label{tabla:servicios_azure_tfg}
 \end{table}
 
-La figura \ref{fig:arquitectura-integral-azure} resume la relación entre los servicios cloud seleccionados y las evidencias del proceso de desarrollo. La suscripción de Azure contiene el grupo de recursos del TFG, donde App Service ejecuta el portal y la API Flask, Key Vault protege el secreto utilizado como token Bearer, Cosmos DB conserva las solicitudes, Blob Storage queda como soporte de migración y Azure Monitor recoge telemetría. Fuera de Azure quedan las herramientas que apoyan el seguimiento y la calidad: GitHub, Zube y SonarCloud.
+La figura \ref{fig:arquitectura-integral-azure} resume la relación entre los servicios cloud seleccionados y las evidencias del proceso de desarrollo. La suscripción de Azure contiene el grupo de recursos del TFG, donde App Service ejecuta el portal y la API Flask, Key Vault protege el secreto utilizado como token Bearer, Cosmos DB conserva las solicitudes, Azure Storage queda como soporte de migración y Azure Monitor recoge telemetría. Fuera de Azure quedan las herramientas que apoyan el seguimiento y la calidad: GitHub, Zube y SonarCloud.
 
 \begin{figure}[h]
 \centering
@@ -103,7 +103,7 @@ La figura \ref{fig:arquitectura-integral-azure} resume la relación entre los se
 \label{fig:arquitectura-integral-azure}
 \end{figure}
 
-Azure Cosmos DB es una base de datos NoSQL gestionada que permite trabajar con documentos JSON y contenedores particionados \cite{azure_cosmos_overview,azure_cosmos_nosql}. Azure Blob Storage está orientado al almacenamiento de objetos y datos no estructurados, y se utilizó como persistencia inicial y origen de migración \cite{azure_blob_overview,azure_blob_python}. Azure Key Vault centraliza secretos, claves y certificados, reduciendo la probabilidad de exponer información sensible en el código \cite{azure_keyvault_overview}. Las identidades administradas permiten que un recurso de Azure obtenga una identidad propia para acceder a otros servicios sin almacenar credenciales en la aplicación \cite{azure_managed_identities}.
+Azure Cosmos DB es una base de datos NoSQL gestionada que permite trabajar con documentos JSON y contenedores particionados \cite{azure_cosmos_overview,azure_cosmos_nosql}. Azure Key Vault centraliza secretos, claves y certificados, reduciendo la probabilidad de exponer información sensible en el código \cite{azure_keyvault_overview}. Las identidades administradas permiten que un recurso de Azure obtenga una identidad propia para acceder a otros servicios sin almacenar credenciales en la aplicación \cite{azure_managed_identities}.
 
 \section{Arquitectura basada en servicios}
 
@@ -128,9 +128,9 @@ En el prototipo, PowerShell y Azure CLI actúan sobre el plano de gestión duran
 
 \subsection{Persistencia documental y consistencia}
 
-La persistencia evolucionó durante el proyecto. La primera versión cloud utilizó Blob Storage con una colección JSON única; era sencilla y permitía inspeccionar el documento completo, pero obligaba a leer y escribir toda la colección en cada cambio. La versión actual utiliza Cosmos DB con API for NoSQL, manteniendo el formato JSON de las solicitudes y separando cada registro en un documento propio dentro del contenedor \texttt{solicitudes} \cite{azure_cosmos_overview,azure_cosmos_python}.
+La persistencia evolucionó durante el proyecto. La primera versión cloud utilizó una colección JSON única; era sencilla y permitía inspeccionar el documento completo, pero obligaba a leer y escribir toda la colección en cada cambio. La versión actual utiliza Cosmos DB con API for NoSQL, manteniendo el formato JSON de las solicitudes y separando cada registro en un documento propio dentro del contenedor \texttt{solicitudes} \cite{azure_cosmos_overview,azure_cosmos_python}.
 
-Esta evolución mejora la granularidad de los datos y responde a una limitación detectada en el diseño inicial: con un blob único, dos escrituras concurrentes podían partir de versiones distintas y sobrescribir cambios. Cosmos DB no convierte el prototipo en una plataforma ITSM completa, pero aporta una base documental más adecuada para consultas por solicitud, crecimiento incremental y particionado por atributos como el tipo de solicitud. La API sigue siendo la única responsable de validar, clasificar y modificar los datos; el portal y la Logic App nunca acceden directamente a la base de datos.
+Esta evolución mejora la granularidad de los datos y responde a una limitación detectada en el diseño inicial: con un objeto único, dos escrituras concurrentes podían partir de versiones distintas y sobrescribir cambios. Cosmos DB no convierte el prototipo en una plataforma ITSM completa, pero aporta una base documental más adecuada para consultas por solicitud, crecimiento incremental y particionado por atributos como el tipo de solicitud. La API sigue siendo la única responsable de validar, clasificar y modificar los datos; el portal y la Logic App nunca acceden directamente a la base de datos.
 
 \section{API REST}
 

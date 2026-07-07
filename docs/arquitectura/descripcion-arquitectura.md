@@ -9,7 +9,7 @@ Componentes principales:
 
 - Azure Cosmos DB
 - Azure Storage Account como soporte de migración
-  - Almacena incidencias y documentos
+  - Conserva evidencias de la persistencia inicial y sirve como soporte de migración
 
 - Azure Key Vault
   - Gestión segura de secretos y credenciales
@@ -22,6 +22,6 @@ Componentes principales:
 1. El usuario crea una incidencia.
 2. La API procesa la solicitud.
 3. El sistema clasifica la incidencia.
-4. La incidencia se almacena en Azure Storage.
+4. La incidencia se almacena en Azure Cosmos DB como documento JSON.
 5. El endpoint `/health`, los logs de App Service y Azure Portal permiten verificar el funcionamiento del sistema.
 

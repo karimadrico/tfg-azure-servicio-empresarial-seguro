@@ -22,7 +22,7 @@ El sistema implementa una plataforma cloud para gestionar solicitudes internas d
 
 - Persiste cada solicitud como documento JSON independiente.
 - Utiliza la base de datos `tfg-solicitudes` y el contenedor `solicitudes`.
-- Permite conservar histórico, estados, aprobaciones y valoraciones sin concentrar toda la colección en un único blob.
+- Permite conservar histórico, estados, aprobaciones y valoraciones sin concentrar toda la colección en un único objeto.
 
 ### Clasificador ligero
 

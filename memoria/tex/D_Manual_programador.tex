@@ -9,7 +9,7 @@ Este anexo describe la estructura técnica del repositorio y los pasos para ejec
 \begin{itemize}
     \item \texttt{src/app.py}: API principal Flask.
     \item \texttt{src/classifier.py}: clasificador automático de incidencias.
-    \item \texttt{src/storage.py}: persistencia local, Azure Blob Storage o Azure Cosmos DB.
+    \item \texttt{src/storage.py}: persistencia local, modo cloud anterior o Azure Cosmos DB.
     \item \texttt{src/config.py}: configuración por variables de entorno.
     \item \texttt{src/catalog.py}: catálogo de servicios, activos y responsables.
     \item \texttt{src/request\_workflow.py}: reglas de impacto, aprobación y SLA.
@@ -37,8 +37,13 @@ La API quedará disponible en \texttt{http://localhost:5000}.
 \section{Variables de entorno}
 
 \begin{itemize}
-    \item \texttt{STORAGE\_MODE}: \texttt{local} o \texttt{azure}.
-    \item \texttt{AZURE\_STORAGE\_CONNECTION\_STRING}: cadena de conexión del Storage Account.
+    \item \texttt{STORAGE\_MODE}: \texttt{local}, \texttt{azure} como modo cloud anterior, o \texttt{cosmos} como modo final desplegado.
+    \item Variables de Cosmos DB:
+    \begin{itemize}
+        \item \texttt{COSMOS\_ENDPOINT} y \texttt{COSMOS\_KEY}.
+        \item \texttt{COSMOS\_DATABASE} y \texttt{COSMOS\_CONTAINER}.
+    \end{itemize}
+    \item \texttt{AZURE\_STORAGE\_CONNECTION\_STRING}: cadena de conexión del Storage Account conservada para compatibilidad y migración.
     \item \texttt{KEY\_VAULT\_URL}: URI del Key Vault.
     \item \texttt{API\_KEY}: token Bearer opcional para desarrollo local.
 \end{itemize}
@@ -57,7 +62,7 @@ La tabla \ref{tabla:iac_comparativa} resume el papel de cada mecanismo utilizado
 \begin{tabularx}{\textwidth}{l X X}
 \textbf{Mecanismo} & \textbf{Uso en el proyecto} & \textbf{Ventaja principal} \\
 \hline
-PowerShell + Azure CLI & Despliegue real del App Service, configuración de variables, Key Vault y verificación. & Permite ejecutar y demostrar el despliegue desde el entorno local. \\
+PowerShell + Azure CLI & Despliegue real del App Service, Cosmos DB, configuración de variables, Key Vault y verificación. & Permite ejecutar y demostrar el despliegue desde el entorno local. \\
 Terraform & Definición declarativa de Resource Group, App Service, Storage, Key Vault, RBAC y Application Insights. & Documenta la infraestructura de forma portable y auditable. \\
 Bicep & Plantillas alternativas de recursos Azure, incluida la Logic App. & Expresa recursos Azure de forma nativa y revisable por SonarCloud. \\
 Portal Azure & Validación visual y capturas de evidencias. & Facilita al tribunal comprobar recursos reales desplegados. \\
@@ -93,7 +98,7 @@ La figura \ref{fig:despliegue-azure} resume el proceso de despliegue y verificac
 python -m unittest discover -s tests -p "test_*.py"
 \end{verbatim}
 
-La batería contiene veintisiete pruebas que verifican endpoints, autenticación, creación, consulta y actualización de solicitudes, persistencia, historial, transiciones inválidas, filtros, paginación, portal, clasificación y métricas con SLA. También cubre catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV, escenario de demostración, contrato OpenAPI, valoración tras el cierre y persistencia en Cosmos DB y compatibilidad con el modo Blob Storage anterior.
+La batería contiene veintisiete pruebas que verifican endpoints, autenticación, creación, consulta y actualización de solicitudes, persistencia, historial, transiciones inválidas, filtros, paginación, portal, clasificación y métricas con SLA. También cubre catálogo de servicios, cálculo de impacto, aprobación, escalado, centro operativo, exportación CSV, escenario de demostración, contrato OpenAPI, valoración tras el cierre, persistencia en Cosmos DB y compatibilidad con el modo cloud anterior.
 
 Las tablas \ref{tabla:pruebas_funcionales} y \ref{tabla:pruebas_tecnicas} resumen las comprobaciones principales aplicadas durante la validación del prototipo.
 
