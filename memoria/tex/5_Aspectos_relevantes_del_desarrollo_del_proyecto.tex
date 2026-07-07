@@ -29,7 +29,7 @@ La arquitectura implementada sigue un modelo de servicios gestionados en Microso
 
 \begin{itemize}
     \item \textbf{Azure App Service}: hospeda la API Flask y el portal web empresarial en Python 3.11.
-    \item \textbf{Azure Storage}: persiste las solicitudes operativas TI en un contenedor Blob privado.
+    \item \textbf{Azure Cosmos DB}: persiste las solicitudes operativas TI como documentos JSON independientes.
     \item \textbf{Azure Key Vault}: almacena el token de autenticación de la API.
     \item \textbf{Azure Logic Apps}: automatiza la entrada de solicitudes externas mediante un trigger HTTP.
     \item \textbf{Application Insights y Azure Monitor}: permiten revisar telemetría, métricas y comportamiento operativo del servicio desplegado.
@@ -61,7 +61,7 @@ La figura \ref{fig:arquitectura-general-memoria} representa este flujo dentro de
 
 La API es el punto de aplicación de las reglas del negocio. Tanto el portal como la Logic App llaman a la misma operación de creación; de este modo, añadir un canal de entrada no duplica validaciones ni clasificación. El portal se entrega como contenido estático desde el mismo App Service, una decisión que simplifica el prototipo y evita desplegar un segundo alojamiento. Esta unión sería revisable si el frontend necesitara un ciclo de publicación independiente, distribución mediante CDN o un equipo de desarrollo separado.
 
-Storage y Key Vault no son accesibles desde el navegador. La API actúa como frontera: valida el contenido antes de persistirlo y recupera el secreto mediante la identidad del App Service. La Logic App tampoco escribe directamente en el blob. Al conservar una única ruta de entrada se reduce el número de componentes capaces de alterar datos y se mantiene igual el resultado funcional con independencia del canal utilizado.
+Cosmos DB y Key Vault no son accesibles desde el navegador. La API actúa como frontera: valida el contenido antes de persistirlo y recupera el secreto mediante la identidad del App Service. La Logic App tampoco escribe directamente en la base de datos. Al conservar una única ruta de entrada se reduce el número de componentes capaces de alterar datos y se mantiene igual el resultado funcional con independencia del canal utilizado.
 
 La dependencia más sensible es la disponibilidad del almacenamiento. Si Cosmos DB falla, la aplicación puede seguir respondiendo en el endpoint de salud, pero no debe confirmar una solicitud que no haya quedado persistida. La implementación propaga el error y evita devolver un identificador de éxito falso. En un entorno de producción se añadirían reintentos controlados, telemetría específica y una cola para absorber interrupciones temporales; en el prototipo se prioriza que el fallo sea visible y reproducible.
 
@@ -187,7 +187,7 @@ El despliegue reproducible se concentra en \texttt{scripts/deploy-azure.ps1}. El
 
 \begin{enumerate}
     \item Comprueba la sesión de Azure CLI.
-    \item Obtiene la configuración de Azure Storage y Key Vault.
+    \item Obtiene la configuración de Cosmos DB, Azure Storage de apoyo y Key Vault.
     \item Habilita Managed Identity en Azure App Service.
     \item Concede a la aplicación permisos sobre el secreto almacenado en Key Vault.
     \item Configura variables de entorno y publica el código Python en Azure App Service.
@@ -201,7 +201,7 @@ La Logic App actúa como capa de orquestación para integrar la plataforma con o
 Este flujo resulta útil para un escenario empresarial realista: un formulario corporativo, una herramienta de soporte, un buzón automatizado o un sistema de atención interna podrían crear solicitudes sin acceder manualmente al portal. La Logic App no sustituye al equipo de TI ni al backend, sino que automatiza la entrada de trabajo. Si la API determina que el servicio, el activo y el entorno requieren aprobación, el flujo registra la notificación al aprobador y la solicitud permanece bloqueada hasta recibir una decisión. La asignación, el escalado, el seguimiento y el cierre se realizan en la bandeja operativa del portal.
 \section{Seguridad y gestión de secretos}
 
-La autenticación de la API utiliza un token Bearer almacenado en Azure Key Vault. La App Service accede al secreto mediante Managed Identity, evitando credenciales embebidas en el código fuente. El almacenamiento de solicitudes reside en un contenedor Blob con acceso privado.
+La autenticación de la API utiliza un token Bearer almacenado en Azure Key Vault. La App Service accede al secreto mediante Managed Identity, evitando credenciales embebidas en el código fuente. Las solicitudes se almacenan en Cosmos DB y el acceso a la base de datos queda concentrado en la API.
 
 \subsection{Modelo de amenazas aplicado}
 
@@ -217,7 +217,7 @@ Entrada malformada o excesiva & Datos incoherentes, errores o consumo innecesari
 Consulta sin autorización & Exposición de solicitudes e información operativa. & Token Bearer en listado, detalle, actualización y métricas. & El token es compartido y no identifica individualmente al operador. \\
 Secreto incluido en código & Filtración mediante Git o documentación. & Secreto en Key Vault, variables de entorno y exclusión de valores reales. & La rotación requiere una actuación administrativa. \\
 Acceso directo al almacenamiento & Modificación o lectura fuera de las reglas de la API. & Contenedor privado y acceso desde el backend. & La cadena de conexión conserva privilegios amplios sobre la cuenta. \\
-Tráfico sin cifrar & Interceptación de credenciales o datos. & HTTPS obligatorio en App Service y TLS en Storage. & No se han desplegado red privada ni puntos de conexión privados. \\
+Tráfico sin cifrar & Interceptación de credenciales o datos. & HTTPS obligatorio en App Service y TLS en los servicios de Azure. & No se han desplegado red privada ni puntos de conexión privados. \\
 Cambio no trazable & Dificultad para atribuir una decisión operativa. & Historial con actor, fecha y comentario. & El actor declarado no se valida contra un directorio corporativo. \\
 \end{tabularx}
 \caption{Amenazas, controles aplicados y riesgos residuales}
@@ -245,7 +245,7 @@ Despliegue público & Página raíz, portal y \texttt{/health}. & Servicio acces
 Proceso empresarial & Catálogo, alta, impacto, aprobación, escalado, SLA, valoración e informe CSV. & Solicitud persistida y gestionada con trazabilidad completa. \\
 Demostración y contrato & Escenario idempotente y operaciones descritas en OpenAPI. & Cinco casos reproducibles y documentación interactiva accesible. \\
 Flujo externo & Trigger HTTP de Logic App, alta en API y notificación de aprobación. & Ejecución correcta y respuesta de solicitud creada. \\
-Seguridad & Token Bearer, Key Vault, Managed Identity y blob privado. & Consultas protegidas y secreto fuera del repositorio. \\
+Seguridad & Token Bearer, Key Vault, Managed Identity y persistencia documental privada. & Consultas protegidas y secreto fuera del repositorio. \\
 Observabilidad & Application Insights, Azure Monitor y endpoint de salud. & Telemetría y métricas disponibles para inspección. \\
 Calidad estática & Revisión del repositorio en SonarCloud. & Duplicación nula y análisis externo documentado. \\
 \end{tabularx}

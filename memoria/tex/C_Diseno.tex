@@ -357,7 +357,7 @@ Aprobación & Exige decisión para acceso/configuración en contexto sensible. &
 Ciclo de vida & Valida transiciones entre abierta, en proceso y cerrada. & Una transición incompatible devuelve HTTP 409. \\
 Escalado & Exige actor y motivo; aumenta nivel y prioridad. & Registra el evento y reasigna al propietario. \\
 Valoración & Solo admite una valoración tras cierre y correo coincidente. & Actualiza satisfacción sin alterar el flujo previo. \\
-Persistencia & La API guarda cada solicitud como documento independiente en Cosmos DB. & Evita concentrar toda la colección en un único blob y mantiene compatibilidad documental. \\
+Persistencia & La API guarda cada solicitud como documento independiente en Cosmos DB. & Evita concentrar toda la colección en un único objeto y mantiene compatibilidad documental. \\
 \end{tabularx}
 \caption{Reglas que completan el modelo documental}
 \label{tabla:reglas-modelo-documental}

@@ -256,11 +256,11 @@ CU-07 Automatizar entrada & \textbf{Actor:} sistema externo.\newline \textbf{Pre
 \textbf{Caso} & \textbf{Excepción} & \textbf{Respuesta y efecto} \\
 \hline
 CU-01/02 & JSON incompleto, email inválido o catálogo incoherente. & HTTP 400; no se crea ni persiste ninguna solicitud. \\
-CU-03/04 & Cabecera ausente o token incorrecto. & HTTP 401; no se devuelve información ni se modifica el blob. \\
+CU-03/04 & Cabecera ausente o token incorrecto. & HTTP 401; no se devuelve información ni se modifica la persistencia. \\
 CU-03 & Identificador inexistente. & HTTP 404; el almacenamiento permanece sin cambios. \\
 CU-03 & Campo desconocido o valor inválido. & HTTP 400; se rechaza la actualización completa. \\
 CU-03 & Transición de estado, aprobación o escalado incompatible. & HTTP 409; se conserva el estado anterior. \\
-CU-07 & Firma del trigger inválida, JSON incorrecto o API no disponible. & Logic App rechaza la entrada o propaga el error; no existe escritura directa en Storage. \\
+CU-07 & Firma del trigger inválida, JSON incorrecto o API no disponible. & Logic App rechaza la entrada o propaga el error; no existe escritura directa en Cosmos DB. \\
 CU-08 & Solicitud activa, correo distinto o valoración repetida. & HTTP 403/409; no se altera la satisfacción ya registrada. \\
 \end{tabularx}
 \caption{Excepciones principales de los casos de uso}
